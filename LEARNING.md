@@ -96,3 +96,9 @@ What each slice taught, in plain English.
 - **Font weights are separate files.** The font request now asks for weight 700; without it the browser fakes bold by smearing the regular letters, which looks muddy. The test confirmed the real bold file loaded.
 - **Fallback fonts for other scripts:** EB Garamond has no Devanagari letters (भारत). `font-family` is a list: the browser uses the first font that has each letter. The second entry, Noto Serif Devanagari, fills in only what Garamond lacks. The font request includes `&text=` with just those four letters, so the download is tiny.
 - **`lang="hi"`** marks that word as Hindi, which helps screen readers pronounce it. **`role="img"` + `aria-label`** gives the emoji a spoken name ("back and forth") instead of its default description.
+
+### A pixel font for the switch label
+- **Where fonts load from:** the label font is requested in `theme.js` (which every page already runs), so there is one place to change it, instead of editing every page.
+- **`&text=ONFonf`** asks Google Fonts for only those letters, so the download is a few hundred bytes.
+- **Fallback:** `font-family: "Silkscreen", ui-monospace, monospace` shows a monospace font for an instant if the pixel font is slow, then swaps.
+- **Why a pixel font suits it:** pixel fonts are drawn on a grid, so at small sizes they look deliberate, like labels stamped on hardware. Other options I mocked up were a stamped monospace and a fully pixel-drawn switch.

@@ -18,7 +18,7 @@ Goal: super simple, with good taste. Personality comes from specific details (th
 - **Text:** near-black ink, with a softer gray for dates and captions.
 - **Accent:** a deep green (inspired by ronaldleung.co). Used sparingly: hover color, and the banner on the work page.
 - **Links:** blue and underlined, shifting to a darker blue over 0.2 seconds on hover (inspired by chinmay.blog). Green is saved for the work banner.
-- **Dark mode:** a small wall light switch drawn from scratch, fixed in the top-left corner of every page. Lever up with "on" is light mode; click it and the lever flips down with "off" and the page goes dark. It follows the device setting until the visitor chooses, then remembers the choice. It is a real button, so it works with a keyboard (Tab, then Space or Enter) and screen readers (announced as a switch).
+- **Dark mode:** a small wall light switch drawn from scratch, fixed in the top-left corner of every page. Lever up with "on" is light mode (the on/off label is in a pixel font, Silkscreen, like a stamped hardware label); click it and the lever flips down with "off" and the page goes dark. It follows the device setting until the visitor chooses, then remembers the choice. It is a real button, so it works with a keyboard (Tab, then Space or Enter) and screen readers (announced as a switch).
 
 ## Home page
 Modeled on rishigurjar.com:

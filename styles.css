@@ -173,8 +173,9 @@ nav li { margin: 0.05rem 0; }
 .switch .lever { transition: transform 0.18s ease; }
 .switch[aria-checked="false"] .lever { transform: translateY(12px); }   /* lever down = off */
 .switch-text {
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
+  font-family: "Silkscreen", ui-monospace, monospace;   /* pixel font, like a stamped hardware label */
+  font-size: 10px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--soft);
   transition: color 0.2s ease;
