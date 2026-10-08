@@ -103,21 +103,37 @@ nav li { margin: 0.05rem 0; }
 /* centered line at the bottom of the page */
 .foot { text-align: center; color: var(--soft); font-size: 0.9rem; margin: 2.5rem 0 0; }   /* 40px above: sets the sign-off apart from the links */
 
-/* ---- light / dark toggle (added by theme.js) ---- */
+/* ---- light / dark toggle (added by theme.js) ----
+   Clicking empty space switches the theme, so this button is hidden from view. It stays
+   in the page for keyboard and screen-reader users, and appears when you Tab to it. */
 .theme-toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+}
+.theme-toggle:focus {
   position: fixed;
   top: 1rem;
   right: 1rem;
-  background: none;
-  border: 0;
-  padding: 0.25rem 0.4rem;
-  font: inherit;
+  width: auto;
+  height: auto;
+  clip: auto;
+  overflow: visible;
+  padding: 0.25rem 0.6rem;
   font-size: 0.9rem;
-  color: var(--soft);
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--soft);
+  border-radius: 0.3rem;
   cursor: pointer;
-  transition: color 0.2s ease;
 }
-.theme-toggle:hover { color: var(--link-hover); }
 
 /* ---- home page only ----
    The home column is one third of the window width, so the photo and text scale
