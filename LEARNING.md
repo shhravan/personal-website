@@ -91,3 +91,8 @@ What each slice taught, in plain English.
 - **A CSS transition on `transform`** slides the lever: `translateY(12px)` moves it down, and `transition: transform 0.18s` makes the move smooth. `prefers-reduced-motion` turns the animation off for people who ask for that.
 - **Tab order:** the switch is the first thing in the page, so pressing Tab once lands on it.
 - Clicking empty space no longer switches the theme (it was easy to trigger by accident), so a click anywhere on the home page now changes the photo.
+
+### Bold, other writing systems, and emoji
+- **Font weights are separate files.** The font request now asks for weight 700; without it the browser fakes bold by smearing the regular letters, which looks muddy. The test confirmed the real bold file loaded.
+- **Fallback fonts for other scripts:** EB Garamond has no Devanagari letters (भारत). `font-family` is a list: the browser uses the first font that has each letter. The second entry, Noto Serif Devanagari, fills in only what Garamond lacks. The font request includes `&text=` with just those four letters, so the download is tiny.
+- **`lang="hi"`** marks that word as Hindi, which helps screen readers pronounce it. **`role="img"` + `aria-label`** gives the emoji a spoken name ("back and forth") instead of its default description.
