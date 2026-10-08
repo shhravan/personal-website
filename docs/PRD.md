@@ -15,7 +15,7 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 | **about** | a separate page where Shravan tells their story (written in their own voice) |
 | **work** | projects, experience, resume download (page layout inspired by hrishabhayush.com) |
 | **blog** | most important section. A list of posts (title + date); hovering a title shows a floating image |
-| **photography** | portfolio gallery. Instagram: instagram.com/opticsbyshrvn |
+| **photography** | a portfolio page, all on one page: a film roll of Shravan's film photos that scrolls like a strip of film, then separate sections (like a portfolio). Instagram: instagram.com/opticsbyshrvn |
 | **rabbit hole** | music (playlists) plus "all things cool": favorite bands, favorite facts, random things Shravan likes. Reached with a special transition (see Later) |
 
 ## Core features (v1)
@@ -23,7 +23,7 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 2. **Link list** on the home page to about, work, blog, photography, rabbit hole.
 3. **Blog**: posts are plain files in the repo. List page with hover images; each post is its own page.
 4. **Work page**: project cards (title, dates, one-line description, tech tags, links), experience list, resume download.
-5. **Photography page**: a simple gallery with short captions.
+5. **Photography page**: a "film roll" strip of film photos, plus portfolio sections on the same page. Photos are added by dropping files into a folder (see Open questions for Instagram).
 6. **Rabbit hole page**: minimal lists (music picks, favorites, facts).
 7. **Green accent banner** (inspired by ronaldleung.co) on the work page as a design element.
 
@@ -33,7 +33,8 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 - No print sales
 - No live Spotify integration (embeds and links only)
 - No dark mode
-- No horizontal-scroll storytelling
+- No horizontal-scroll storytelling (the film roll on the photography page is the one exception)
+- No automatic Instagram sync in v1
 
 ## Later (after v1)
 - The black-hole "fall in" transition for the rabbit hole link (inspired by somehowliving.tech; needs original artwork and animation)

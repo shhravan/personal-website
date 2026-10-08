@@ -42,15 +42,17 @@ Inspired by hrishabhayush.com, with the cream and green styling:
 - **Resume** download link.
 
 ## Photography
-- Grid of photos with short lowercase captions (inspired by chinmay.blog's "pictures" page).
-- Link to Instagram: opticsbyshrvn.
+All on one page, no camera details:
+1. **Film roll:** all film photos in one horizontal strip that looks like a roll of film (frame borders, sprocket holes) and rolls slowly across the page. Hovering or dragging can pause or scrub it. Designed from scratch, not copied from anywhere.
+2. **Portfolio sections** below it: named groups of photos (names chosen later by Shravan), each with a short lowercase caption per photo.
+3. Link to Instagram: opticsbyshrvn.
 
 ## Rabbit hole (music + all things cool)
 - Minimal lists, in the spirit of Rohan Kumar's "favorite facts": favorite bands, playlists (links or embeds), facts, random things Shravan likes.
 - Later: the "fall in" transition from the home link into this page, inspired by somehowliving.tech.
 
 ## Motion
-Almost none in v1. Allowed: the hero image rotation, link hover states, the blog hover image. Everything else is later.
+Almost none in v1. Allowed: the hero image rotation, link hover states, the blog hover image, and the film roll on the photography page. Everything else is later.
 
 ## Not doing
 - Horizontal scroll storytelling
