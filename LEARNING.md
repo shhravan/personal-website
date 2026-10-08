@@ -73,3 +73,9 @@ What each slice taught, in plain English.
 
 ### Choosing what part of a photo to show
 - A wide frame crops tall photos. **`object-position`** chooses which part stays: `50% 20%` means centered sideways, 20% down from the top. The `FOCUS` list in `script.js` sets it for individual photos; the rest stay centered.
+
+### Icon row
+- **Inline SVG:** an icon is a small drawing written as code (`<svg><path d="..."/></svg>`). Placed straight in the page it needs no extra download, and `fill: currentColor` makes it use the text color, so it switches with light and dark mode automatically.
+- **`justify-content: space-between`** in a flex row puts the first item on the left edge, the last on the right edge, and shares the leftover space evenly. That is how the icons line up exactly with the photo above.
+- **Tap targets:** a 22px icon is hard to tap, so each link has 8px of padding, and the row is pulled out 8px on each side (negative margin) so the visible icons, not the padding, align with the edges.
+- **`aria-label`** gives an icon-only link a name for screen readers.
