@@ -144,16 +144,13 @@ if (img && HERO_IMAGES.length > 1) {
     startTimer();
   }
 
-  // Clicking or tapping anywhere on the page content (the photo, the name, the text)
-  // changes the photo. Three exceptions:
-  //  - links, which should just open;
-  //  - empty space, which theme.js uses to switch light/dark;
+  // Clicking or tapping anywhere on the home page changes the photo: the photo itself,
+  // the text, even the empty space around it. Two exceptions:
+  //  - links and buttons (including the light switch), which do their own thing;
   //  - when you are selecting text to copy it.
-  const home = document.querySelector("main.home");
-  home.addEventListener("click", (e) => {
-    if (e.target === home) return;               // empty space inside the column
-    if (e.target.closest("a")) return;           // a link
-    if (String(window.getSelection())) return;   // text is selected
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("a, button")) return;
+    if (String(window.getSelection())) return;
     skip();
   });
 
