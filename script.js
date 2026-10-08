@@ -32,6 +32,12 @@ const HERO_IMAGES = [
   "images/hero/tumbbad.jpg",
   "images/hero/view-from-ad-white-house-hill-1930-rmc20.jpg",
 ];
+// Photos that crop badly in the wide frame can name where to focus: "x% y%".
+// "50% 20%" means centered sideways, and 20% of the way down from the top.
+const FOCUS = {
+  "images/hero/ab67616d0000b27319497200ef054bccfab27d0c.jpg": "50% 20%",
+};
+
 const SECONDS = 1; // seconds each photo stays (use 0.5 for two photos per second)
 
 const img = document.getElementById("hero-img");
@@ -51,6 +57,12 @@ if (img && HERO_IMAGES.length > 1) {
       [list[i], list[j]] = [list[j], list[i]];   // swap two items
     }
     return list;
+  }
+
+  // Show a photo, using its focus point if it has one (otherwise the center).
+  function setPhoto(src) {
+    img.style.objectPosition = FOCUS[src] || "";
+    img.src = src;
   }
 
   let queue = [];        // photos still to come, in order
@@ -75,7 +87,7 @@ if (img && HERO_IMAGES.length > 1) {
   // Start on a random photo.
   fill(3);
   current = queue.shift();
-  img.src = current;
+  setPhoto(current);
   preloadAhead();
 
   // Show the next photo. We load it first, so the swap is instant and never blank.
@@ -84,7 +96,7 @@ if (img && HERO_IMAGES.length > 1) {
     const next = queue.shift();
     const loader = new Image();
     loader.onload = () => {
-      img.src = next;       // instant swap, no fade
+      setPhoto(next);       // instant swap, no fade
       current = next;
       preloadAhead();
     };

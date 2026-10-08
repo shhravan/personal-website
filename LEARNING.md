@@ -70,3 +70,6 @@ What each slice taught, in plain English.
 - **`e.target`** is the exact element that was clicked. Comparing it (the page, the body or `main` means "empty space"; `closest("a")` means "inside a link") lets one click mean different things in different places.
 - **Hidden but accessible:** the theme button is clipped to 1 pixel so you cannot see it, but it still exists, so keyboard and screen-reader users can Tab to it (it becomes visible on focus).
 - **Testing tip:** an automatic timer can make tests lie. I turned rotation off (reduced-motion mode) to test clicks alone.
+
+### Choosing what part of a photo to show
+- A wide frame crops tall photos. **`object-position`** chooses which part stays: `50% 20%` means centered sideways, 20% down from the top. The `FOCUS` list in `script.js` sets it for individual photos; the rest stay centered.
