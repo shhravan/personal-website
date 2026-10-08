@@ -22,7 +22,8 @@ index.html          home page
 about/index.html    each page is a folder with an index.html (clean URLs: /about/)
 work/  blog/  photography/  rabbit-hole/
 styles.css          one shared stylesheet
-script.js           shared small scripts (add page-specific files only if needed)
+script.js           home page scripts (hero rotation, email links)
+theme.js            light/dark mode, loaded in the <head> of every page
 images/             hero/, film/, blog/, ...
 docs/               PRD, DESIGN, TECH_RULES
 ```

@@ -7,7 +7,7 @@ const HERO_IMAGES = [
   "images/hero/placeholder-3.jpg",
   "images/hero/placeholder-4.jpg",
 ];
-const SECONDS = 5; // how long each photo stays
+const SECONDS = 2; // how long between photo changes
 
 const img = document.getElementById("hero-img");
 
@@ -39,9 +39,16 @@ if (img && HERO_IMAGES.length > 1) {
           img.src = next;                         // swap while invisible
           current = next;
           img.classList.remove("fading");         // fade back in
-        }, 600);                                  // matches the 0.6s in styles.css
+        }, 300);                                  // matches the 0.3s in styles.css
       };
       loader.src = next;
     }, SECONDS * 1000);
   }
 }
+
+// Turn each email into a real clickable mailto: link.
+// The address is stored in two pieces in the HTML (data-user and data-domain) so simple
+// bots reading the page text don't find a complete address.
+document.querySelectorAll("a.email").forEach((a) => {
+  a.href = "mailto:" + a.dataset.user + "@" + a.dataset.domain;
+});
