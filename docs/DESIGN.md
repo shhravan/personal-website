@@ -22,10 +22,10 @@ Goal: super simple, with good taste. Personality comes from specific details (th
 
 ## Home page
 Modeled on rishigurjar.com:
-1. **Rounded-corner hero image** at the top, centered. Cycles through random images from a folder every 2 seconds, with a quick fade. Images are Shravan's own photos and references that mean something to them.
+1. **Rounded-corner hero image** at the top, centered. Cycles through random images from a folder every 2 seconds, swapping instantly with no fade (like rishigurjar.com). Images are Shravan's own photos and references that mean something to them.
 2. Name, location (ithaca, ny, traveling between new york, boston and india), and two emails written as `name [at] domain` so bots can't easily harvest them; script.js turns them into clickable mailto links.
 3. A short intro (two lines) that runs the full width of the photo, then the plain list of links (about, work, blog, photography, rabbit hole), with no bullet points.
-4. The last line, centered: "for if you have some taste, checkout @opticsbyshrvn" (links to Instagram).
+4. The last line, centered: "for if you have taste, *opticsbyshrvn*" (the italic handle links to Instagram).
 
 Sizing follows rishigurjar.com, measured: the column is one third of the window width (kept between 20rem and 32rem), the space above the photo is about 18% of the window height, and spacing follows an 8px scale. On a phone the column fills the screen with 32px side padding.
 

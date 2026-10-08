@@ -78,10 +78,8 @@ a:hover { color: var(--link-hover); }
   width: 100%;
   height: 100%;
   object-fit: cover;             /* fills the frame, cropping if needed */
-  display: block;
-  transition: opacity 0.3s ease; /* script.js fades the photo out and in */
+  display: block;                /* photos swap instantly (script.js), no fade */
 }
-.hero img.fading { opacity: 0; }
 
 /* ---- name block ---- */
 .id { margin-bottom: 1.5rem; }

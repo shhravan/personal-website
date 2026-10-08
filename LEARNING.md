@@ -45,3 +45,7 @@ What each slice taught, in plain English.
 - **`theme.js` in the `<head>`.** It runs before the page is drawn, so the right theme is already set and you never see a flash of the wrong one. The button remembers your choice in **`localStorage`**, the browser's small per-site memory.
 - **`data-` attributes** (`data-user`, `data-domain`) store small pieces of information in the HTML. script.js joins them into a `mailto:` link, so the full address never sits in the page text for simple bots to read.
 - **No bullets:** `list-style: none` on the nav list.
+
+### Instant photo swap
+- To remove the fade, the CSS `transition: opacity` and the `fading` class are gone, and the script simply sets `img.src = next` once the next photo has loaded in the background (`new Image()` preloads it). Preloading is what stops a blank flash even without a fade.
+- `<em>` inside a link makes italic text that is still clickable.

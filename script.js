@@ -12,7 +12,7 @@ const SECONDS = 2; // how long between photo changes
 const img = document.getElementById("hero-img");
 
 if (img && HERO_IMAGES.length > 1) {
-  // Respect people who ask their device to reduce motion: show one photo, no fading.
+  // Respect people who ask their device to reduce motion: show one photo, no rotating.
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // Pick a random photo that is not the one currently showing.
@@ -31,15 +31,11 @@ if (img && HERO_IMAGES.length > 1) {
   if (!reduceMotion) {
     setInterval(() => {
       const next = pickNext(current);
-      // Load the next photo in the background so it doesn't flash blank.
+      // Load the next photo in the background first, so the swap is instant and never blank.
       const loader = new Image();
       loader.onload = () => {
-        img.classList.add("fading");              // fade out
-        setTimeout(() => {
-          img.src = next;                         // swap while invisible
-          current = next;
-          img.classList.remove("fading");         // fade back in
-        }, 300);                                  // matches the 0.3s in styles.css
+        img.src = next;                           // instant swap, no fade
+        current = next;
       };
       loader.src = next;
     }, SECONDS * 1000);
