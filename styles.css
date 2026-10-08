@@ -1,25 +1,69 @@
-/* Colors live here as named variables so we can change them in one place. */
+/* Colors are named once here so we can change the palette in one place. */
 :root {
   --cream: #f8f6f0;   /* warm background */
   --ink: #1a1a1a;     /* near-black text */
   --soft: #6b6b6b;    /* gray for secondary text */
+  --green: #2d5a46;   /* accent, used for hovers (and the work banner later) */
 }
 
 body {
   margin: 0;
   background: var(--cream);
   color: var(--ink);
-  font-family: "EB Garamond", Georgia, serif; /* Georgia is the backup if the font fails to load */
-  font-size: 1.125rem;  /* about 18px */
-  line-height: 1.6;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 1.25rem;   /* 20px: Garamond runs small, so this is a little bigger than usual */
+  line-height: 1.55;
 }
 
-/* One narrow column, centered. */
+/* One narrow centered column. */
 main {
   max-width: 34rem;
   margin: 0 auto;
-  padding: 6rem 1.5rem;
+  padding: 4rem 1.5rem 5rem;
 }
 
-h1 { font-weight: 500; font-size: 2rem; margin: 0 0 0.5rem; }
-p  { color: var(--soft); margin: 0; }
+h1 { font-weight: 500; font-size: 1.6rem; margin: 0 0 0.25rem; }
+p  { margin: 0 0 0.6rem; }
+
+a { color: var(--ink); text-decoration: none; }
+a:hover { color: var(--green); text-decoration: underline; text-underline-offset: 0.2em; }
+
+/* ---- hero image ---- */
+.hero {
+  aspect-ratio: 12 / 7;          /* keeps the frame the same size for every photo */
+  border-radius: 0.9rem;         /* rounded corners */
+  overflow: hidden;              /* crops the image to the rounded frame */
+  background: #e9e5da;
+  margin-bottom: 2rem;
+}
+.hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;             /* fills the frame, cropping if needed */
+  display: block;
+  transition: opacity 0.6s ease; /* script.js fades the photo out and in */
+}
+.hero img.fading { opacity: 0; }
+
+/* ---- name block ---- */
+.id { margin-bottom: 2rem; }
+.id p { color: var(--soft); margin: 0; }
+
+/* ---- two columns ---- */
+.cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+.left p { color: var(--soft); }
+nav ul { list-style: none; margin: 1.4rem 0 0; padding: 0; }
+nav li { margin: 0.1rem 0; }
+
+/* On phones the columns stack into one. */
+@media (max-width: 34rem) {
+  .cols { grid-template-columns: 1fr; gap: 0; }
+  .right { display: none; }
+}
+
+/* Stub pages ("coming soon") */
+.back { display: inline-block; margin-bottom: 2rem; color: var(--soft); }
