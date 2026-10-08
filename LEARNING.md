@@ -63,3 +63,10 @@ What each slice taught, in plain English.
 - **Web-safe file names:** lowercase letters, numbers and hyphens, no spaces or symbols, so links never break.
 - **Hidden metadata (EXIF)** in photos can include camera model and sometimes GPS location. Re-saving strips it, which matters on a public site.
 - **Keep the original name different from the new one** when converting: I once overwrote an original by reusing its name, then deleted it in cleanup. Git still had the original, which is why every change goes through git.
+
+### Shuffling, click zones, and invisible controls
+- **Shuffle like a deck of cards** (Fisher-Yates): walk the list from the end and swap each item with a random earlier one. Showing the whole shuffled list before reshuffling means every photo appears once per round, and a check at the seam stops the same photo appearing twice in a row.
+- **Preloading ahead:** quietly downloading the next two photos (`new Image().src = ...`) lets each swap at one per second be instant.
+- **`e.target`** is the exact element that was clicked. Comparing it (the page, the body or `main` means "empty space"; `closest("a")` means "inside a link") lets one click mean different things in different places.
+- **Hidden but accessible:** the theme button is clipped to 1 pixel so you cannot see it, but it still exists, so keyboard and screen-reader users can Tab to it (it becomes visible on focus).
+- **Testing tip:** an automatic timer can make tests lie. I turned rotation off (reduced-motion mode) to test clicks alone.

@@ -32,37 +32,63 @@ const HERO_IMAGES = [
   "images/hero/tumbbad.jpg",
   "images/hero/view-from-ad-white-house-hill-1930-rmc20.jpg",
 ];
-const SECONDS = 2; // how long between photo changes
+const SECONDS = 1; // seconds each photo stays (use 0.5 for two photos per second)
 
 const img = document.getElementById("hero-img");
 
 if (img && HERO_IMAGES.length > 1) {
   // Respect people who ask their device to reduce motion: no automatic rotating.
-  // (Clicking the photo still works, because that is the visitor's own choice.)
+  // (Clicking still changes the photo, because that is the visitor's own choice.)
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Pick a random photo that is not the one currently showing.
-  function pickNext(current) {
-    let next;
-    do {
-      next = HERO_IMAGES[Math.floor(Math.random() * HERO_IMAGES.length)];
-    } while (next === current);
-    return next;
+  // ---- fully random order ----
+  // Shuffle the whole list like a deck of cards, show every photo once, then reshuffle.
+  // This is "fully random" without ever repeating a photo back to back, and no photo
+  // gets shown more often than the others.
+  function shuffle(list) {
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];   // swap two items
+    }
+    return list;
   }
 
-  // Start on a random photo, not always the first.
-  let current = pickNext("");
-  img.src = current;
+  let queue = [];        // photos still to come, in order
+  let current = "";      // the photo showing now
 
-  // Show another random photo. Load it in the background first, so the swap is
-  // instant and never blank.
+  // Make sure at least `n` photos are lined up in the queue.
+  function fill(n) {
+    while (queue.length < n) {
+      const deck = shuffle(HERO_IMAGES.slice());
+      const last = queue.length ? queue[queue.length - 1] : current;
+      if (deck[0] === last) [deck[0], deck[1]] = [deck[1], deck[0]]; // no repeat at the seam
+      queue = queue.concat(deck);
+    }
+  }
+
+  // Quietly download the next couple of photos now, so each swap is instant.
+  function preloadAhead() {
+    fill(3);
+    queue.slice(0, 2).forEach((src) => { new Image().src = src; });
+  }
+
+  // Start on a random photo.
+  fill(3);
+  current = queue.shift();
+  img.src = current;
+  preloadAhead();
+
+  // Show the next photo. We load it first, so the swap is instant and never blank.
   function showNext() {
-    const next = pickNext(current);
+    fill(3);
+    const next = queue.shift();
     const loader = new Image();
     loader.onload = () => {
-      img.src = next;   // instant swap, no fade
+      img.src = next;       // instant swap, no fade
       current = next;
+      preloadAhead();
     };
+    loader.onerror = () => {};  // if one photo fails to load, just skip it
     loader.src = next;
   }
 
@@ -75,14 +101,28 @@ if (img && HERO_IMAGES.length > 1) {
   }
   startTimer();
 
-  // Clicking (or pressing Enter / Space on) the photo jumps to another one,
-  // and the 2-second countdown starts over so it doesn't change again right away.
-  const hero = img.parentElement;
+  // Jump to the next photo now, and start the countdown over so it doesn't
+  // change again right away.
   function skip() {
     showNext();
     startTimer();
   }
-  hero.addEventListener("click", skip);
+
+  // Clicking or tapping anywhere on the page content (the photo, the name, the text)
+  // changes the photo. Three exceptions:
+  //  - links, which should just open;
+  //  - empty space, which theme.js uses to switch light/dark;
+  //  - when you are selecting text to copy it.
+  const home = document.querySelector("main.home");
+  home.addEventListener("click", (e) => {
+    if (e.target === home) return;               // empty space inside the column
+    if (e.target.closest("a")) return;           // a link
+    if (String(window.getSelection())) return;   // text is selected
+    skip();
+  });
+
+  // Keyboard: Enter or Space while the photo is focused.
+  const hero = img.parentElement;
   hero.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();   // stop Space from scrolling the page
