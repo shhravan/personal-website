@@ -19,26 +19,25 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 | **rabbit hole** | music (playlists) plus "all things cool": favorite bands, favorite facts, random things Shravan likes. Reached with a special transition (see Later) |
 
 ## Core features (v1)
-1. **Rotating hero image** on the home page. Cycles through a folder of Shravan's photos and references every ~5 seconds, picked randomly. This is the main personality moment.
+1. **Rotating hero image** on the home page. Cycles through a folder of Shravan's photos and references every 2 seconds, picked randomly. This is the main personality moment.
 2. **Link list** on the home page to about, work, blog, photography, rabbit hole.
 3. **Blog**: posts are plain files in the repo. List page with hover images; each post is its own page.
 4. **Work page**: project cards (title, dates, one-line description, tech tags, links), experience list, resume download.
 5. **Photography page**: a "film roll" strip of film photos, plus portfolio sections on the same page. Photos are added by dropping files into a folder (see Open questions for Instagram).
 6. **Rabbit hole page**: minimal lists (music picks, favorites, facts).
-7. **Green accent banner** with flickering grain (inspired by ronaldleung.co) on the work page as a design element.
+7. **Dark mode:** a light/dark toggle on every page that remembers the visitor's choice.
+8. **Green accent banner** with flickering grain (inspired by ronaldleung.co) on the work page as a design element.
 
 ## Non-goals for v1
 - No login, database or accounts (fully static)
 - No blog admin panel or comments
 - No print sales
 - No live Spotify integration (embeds and links only)
-- No dark mode
 - No horizontal-scroll storytelling (the film roll on the photography page is the one exception)
 - No automatic Instagram sync in v1
 
 ## Later (after v1)
 - The black-hole "fall in" transition for the rabbit hole link (inspired by somehowliving.tech; needs original artwork and animation)
-- Dark mode
 - Custom domain `shravanlad.com` (bought on Namecheap, pointed at GitHub Pages)
 
 ## Content status

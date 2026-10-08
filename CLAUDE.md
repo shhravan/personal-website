@@ -43,6 +43,6 @@ Source of truth docs (read before building):
 - Never push to `main` directly. Never open a PR without being asked, except as the workflow above says.
 - Reference sites are inspiration only. **Adapt and customize; never copy** their code, text, images or artwork.
 - Placeholder content is fine (bio, project descriptions, photos). Mark it clearly, and help Shravan draft the real copy.
-- Out of scope for v1: login, database, accounts, blog admin or comments, print sales, live Spotify integration, dark mode, heavy animation. See the PRD.
+- Out of scope for v1: login, database, accounts, blog admin or comments, print sales, live Spotify integration, heavy animation. See the PRD.
 - Voice on the site is lowercase and casual (see DESIGN).
 - Keep things simple. Prefer fewer files and no build tools or frameworks unless TECH_RULES says otherwise.

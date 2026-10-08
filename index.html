@@ -11,11 +11,13 @@
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%232d5a46%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2722%27 text-anchor=%27middle%27 fill=%27%23f8f6f0%27 font-family=%27Georgia,serif%27%3Es%3C/text%3E%3C/svg%3E">
+  <!-- Runs right away (before the page paints) so the right light/dark theme is used with no flash. -->
+  <script src="theme.js"></script>
 </head>
 <body>
-  <main>
+  <main class="home">
 
-    <!-- Hero image. script.js swaps the picture every ~5 seconds.
+    <!-- Hero image. script.js swaps the picture every 2 seconds (instantly, no fade).
          The <img> below is what shows if JavaScript is off. -->
     <div class="hero">
       <img id="hero-img" src="images/hero/placeholder-1.jpg" alt="a photo from shravan's collection">
@@ -24,35 +26,33 @@
     <!-- Name block -->
     <header class="id">
       <h1>shravan lad</h1>
-      <!-- PLACEHOLDERS: replace the location and email with the real ones. -->
-      <p>[your location]</p>
-      <p>you [at] example [dot] com</p>
+      <p>ithaca, ny (traveling between new york, boston and india)</p>
+      <!-- Emails are written with [at] so bots can't easily collect them.
+           script.js turns them into real clickable mailto: links using the data- parts. -->
+      <p><a class="email" data-user="sl2848" data-domain="cornell.edu">sl2848 [at] cornell.edu</a></p>
+      <p><a class="email" data-user="shravanlad20" data-domain="gmail.com">shravanlad20 [at] gmail.com</a></p>
     </header>
 
-    <!-- Two columns: words and links on the left; the right column is empty for now. -->
-    <section class="cols">
-      <div class="left">
-        <!-- PLACEHOLDER intro: rewrite in your own words. -->
-        <p>[placeholder] student at cornell. i make things, take film photos, and write.</p>
-        <p>[placeholder] this site is the one place to get to know me.</p>
-
-        <nav aria-label="main">
-          <!-- Small spaced-out label above the links. Wording is a placeholder: change it. -->
-          <p class="label">explore</p>
-          <ul>
-            <li><a href="about/">about</a></li>
-            <li><a href="work/">work</a></li>
-            <li><a href="blog/">blog</a></li>
-            <li><a href="photography/">photography</a></li>
-            <li><a href="rabbit-hole/">rabbit hole</a></li>
-          </ul>
-        </nav>
-      </div>
-      <div class="right"><!-- reserved: a quote or something else later --></div>
+    <!-- Intro. DRAFT written from facts Shravan has shared (cornell, learning to code, film photos,
+         writing, music). Edit these two lines into your own words. -->
+    <section class="intro">
+      <p>student at cornell, learning to code by building this site.</p>
+      <p>i take film photos, write, and keep a pile of music i love. this is the one place to get to know me.</p>
     </section>
 
-    <!-- Small centered line at the bottom. -->
-    <p class="foot">film photos on <a href="https://www.instagram.com/opticsbyshrvn/">instagram</a></p>
+    <nav aria-label="main">
+      <p class="label">explore</p>
+      <ul>
+        <li><a href="about/">about</a></li>
+        <li><a href="work/">work</a></li>
+        <li><a href="blog/">blog</a></li>
+        <li><a href="photography/">photography</a></li>
+        <li><a href="rabbit-hole/">rabbit hole</a></li>
+      </ul>
+    </nav>
+
+    <!-- Last line, centered. -->
+    <p class="foot">for if you have taste, <a href="https://www.instagram.com/opticsbyshrvn/"><em>opticsbyshrvn</em></a></p>
 
   </main>
   <script src="script.js"></script>

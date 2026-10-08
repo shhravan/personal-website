@@ -17,13 +17,17 @@ Goal: super simple, with good taste. Personality comes from specific details (th
 - **Background:** warm cream (inspired by somehowliving.tech). Exact value chosen during the first build slice.
 - **Text:** near-black ink, with a softer gray for dates and captions.
 - **Accent:** a deep green (inspired by ronaldleung.co). Used sparingly: hover color, and the banner on the work page.
-- No dark mode in v1.
+- **Links:** blue and underlined, shifting to a darker blue over 0.2 seconds on hover (inspired by chinmay.blog). Green is saved for the work banner.
+- **Dark mode:** a small "dark" / "light" text toggle in the top-right corner of every page. It follows the device setting until the visitor picks one, then remembers the choice. Dark palette: warm near-black background, off-white text, lighter blue links.
 
 ## Home page
 Modeled on rishigurjar.com:
-1. **Rounded-corner hero image** at the top, centered. Cycles through random images from a folder about every 5 seconds. Images are Shravan's own photos and references that mean something to them.
-2. Name, location, email (written so bots can't easily harvest it).
-3. Below that, Rishi's two-column block: on the left, a short statement or two about who Shravan is, then the plain list of links (about, work, blog, photography, rabbit hole). The right column is where Rishi has his quote; we leave it empty for now, with the layout ready if Shravan adds something later (a quote, a favorite line, a small image). On a phone it collapses to one column.
+1. **Rounded-corner hero image** at the top, centered. Cycles through random images from a folder every 2 seconds, swapping instantly with no fade (like rishigurjar.com). Images are Shravan's own photos and references that mean something to them.
+2. Name, location (ithaca, ny, traveling between new york, boston and india), and two emails written as `name [at] domain` so bots can't easily harvest them; script.js turns them into clickable mailto links.
+3. A short intro (two lines) that runs the full width of the photo, then the plain list of links (about, work, blog, photography, rabbit hole), with no bullet points.
+4. The last line, centered: "for if you have taste, *opticsbyshrvn*" (the italic handle links to Instagram).
+
+Sizing follows rishigurjar.com, measured: the column is one third of the window width (kept between 20rem and 32rem), the space above the photo is about 18% of the window height, and spacing follows an 8px scale. On a phone the column fills the screen with 32px side padding.
 
 ## About
 Separate page with a long-form personal story, written in Shravan's voice, set as plain readable text (inspired by chinmay.blog).
@@ -56,5 +60,5 @@ Almost none in v1. Allowed: the hero image rotation, link hover states, the blog
 ## Not doing
 - Horizontal scroll storytelling
 - 3D illustrations
-- A floating nav dock or dark mode toggle
+- A floating nav dock
 - A quote on the home page (for now)

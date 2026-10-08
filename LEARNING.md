@@ -31,3 +31,21 @@ What each slice taught, in plain English.
 - **`clamp(min, preferred, max)`** gives the top padding a size that grows with window height but never goes below or above set limits.
 - **`aspect-ratio: 3 / 1`** makes the hero a wide, short banner; a media query makes it taller on phones.
 - **`text-transform: uppercase`** shows capitals on screen while the HTML stays lowercase, used for the small spaced-out "explore" label.
+
+### Home layout, measured from the reference site
+- Measuring a site you like (in the browser's inspector) beats guessing. Rishi's column is **one third of the window width** (`calc(100vw / 3)`), with the space above the photo about **18% of the window height** (`calc(100vh / 5.5)`).
+- We keep ours from getting too small or big with `clamp(20rem, 33.333vw, 32rem)`.
+- A **modifier class** (`<main class="home">`) lets only the home page use that narrow column, while other pages keep their own width.
+- An **8px spacing scale** (8, 16, 24, 32, 60) keeps gaps consistent: 24px under the photo, 16px between columns.
+- Garamond has a smaller x-height than Inter, so it looks smaller at the same font size. That is why our body text is about 18px where his is 16px.
+
+### Links, dark mode and emails
+- **Link style.** `a { color: var(--link); text-decoration: underline; transition: color 0.2s }` plus `a:hover { color: darker }` gives blue links that ease to a darker blue when you point at them.
+- **Light and dark with CSS variables.** Every color is a variable (`--bg`, `--ink`, ...). Dark mode only redefines the variables, so none of the other rules change. `@media (prefers-color-scheme: dark)` follows the device; `:root[data-theme="dark"]` is the manual switch.
+- **`theme.js` in the `<head>`.** It runs before the page is drawn, so the right theme is already set and you never see a flash of the wrong one. The button remembers your choice in **`localStorage`**, the browser's small per-site memory.
+- **`data-` attributes** (`data-user`, `data-domain`) store small pieces of information in the HTML. script.js joins them into a `mailto:` link, so the full address never sits in the page text for simple bots to read.
+- **No bullets:** `list-style: none` on the nav list.
+
+### Instant photo swap
+- To remove the fade, the CSS `transition: opacity` and the `fading` class are gone, and the script simply sets `img.src = next` once the next photo has loaded in the background (`new Image()` preloads it). Preloading is what stops a blank flash even without a fade.
+- `<em>` inside a link makes italic text that is still clickable.
