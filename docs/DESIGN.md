@@ -23,8 +23,7 @@ Goal: super simple, with good taste. Personality comes from specific details (th
 Modeled on rishigurjar.com:
 1. **Rounded-corner hero image** at the top, centered. Cycles through random images from a folder about every 5 seconds. Images are Shravan's own photos and references that mean something to them.
 2. Name, location, email (written so bots can't easily harvest it).
-3. A short statement or two about who Shravan is.
-4. A plain list of links: about, work, blog, photography, rabbit hole. No quote for now.
+3. Below that, Rishi's two-column block: on the left, a short statement or two about who Shravan is, then the plain list of links (about, work, blog, photography, rabbit hole). The right column is where Rishi has his quote; we leave it empty for now, with the layout ready if Shravan adds something later (a quote, a favorite line, a small image). On a phone it collapses to one column.
 
 ## About
 Separate page with a long-form personal story, written in Shravan's voice, set as plain readable text (inspired by chinmay.blog).
@@ -36,7 +35,7 @@ Separate page with a long-form personal story, written in Shravan's voice, set a
 
 ## Work
 Inspired by hrishabhayush.com, with the cream and green styling:
-- **Banner** at the top: green with a subtle grainy texture (inspired by ronaldleung.co).
+- **Banner** at the top: deep green with a grain texture that flickers like TV static, a 1.5s CSS loop (the effect Shravan liked on ronaldleung.co; we build our own version). Where else it could appear is still open.
 - **Experience list:** one row per role, with name, title and date range.
 - **Project cards** in a two-column grid: title, dates, one-line description, small tech tags, and links.
 - **Resume** download link.
@@ -52,7 +51,7 @@ All on one page, no camera details:
 - Later: the "fall in" transition from the home link into this page, inspired by somehowliving.tech.
 
 ## Motion
-Almost none in v1. Allowed: the hero image rotation, link hover states, the blog hover image, and the film roll on the photography page. Everything else is later.
+Almost none in v1. Allowed: the hero image rotation, link hover states, the blog hover image, the green banner grain, and the film roll on the photography page. Everything else is later.
 
 ## Not doing
 - Horizontal scroll storytelling
