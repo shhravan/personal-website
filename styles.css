@@ -1,0 +1,25 @@
+/* Colors live here as named variables so we can change them in one place. */
+:root {
+  --cream: #f8f6f0;   /* warm background */
+  --ink: #1a1a1a;     /* near-black text */
+  --soft: #6b6b6b;    /* gray for secondary text */
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: "EB Garamond", Georgia, serif; /* Georgia is the backup if the font fails to load */
+  font-size: 1.125rem;  /* about 18px */
+  line-height: 1.6;
+}
+
+/* One narrow column, centered. */
+main {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 6rem 1.5rem;
+}
+
+h1 { font-weight: 500; font-size: 2rem; margin: 0 0 0.5rem; }
+p  { color: var(--soft); margin: 0; }
