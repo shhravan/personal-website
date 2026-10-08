@@ -19,7 +19,7 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 | **rabbit hole** | music (playlists) plus "all things cool": favorite bands, favorite facts, random things Shravan likes. Reached with a special transition (see Later) |
 
 ## Core features (v1)
-1. **Rotating hero image** on the home page. Cycles through a folder of Shravan's photos and references every second in a fully shuffled order. Clicking anything on the page content also changes the photo. This is the main personality moment.
+1. **Rotating hero image** on the home page. Cycles through a folder of Shravan's photos and references every second in a truly random order, each photo framed for the wide shape. Clicking anything on the page content also changes the photo. This is the main personality moment.
 2. **Link list** on the home page to about, work, blog, photography, rabbit hole.
 3. **Blog**: posts are plain files in the repo. List page with hover images; each post is its own page.
 4. **Work page**: project cards (title, dates, one-line description, tech tags, links), experience list, resume download.

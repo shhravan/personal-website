@@ -79,3 +79,8 @@ What each slice taught, in plain English.
 - **`justify-content: space-between`** in a flex row puts the first item on the left edge, the last on the right edge, and shares the leftover space evenly. That is how the icons line up exactly with the photo above.
 - **Tap targets:** a 22px icon is hard to tap, so each link has 8px of padding, and the row is pulled out 8px on each side (negative margin) so the visible icons, not the padding, align with the edges.
 - **`aria-label`** gives an icon-only link a name for screen readers.
+
+### Framing photos, true randomness, vertical icons
+- **Framing:** `object-position` picks which part of a photo stays in view and `transform: scale()` with `transform-origin` zooms toward that point. Each photo has its own `[x, y, zoom]` in the `FOCUS` list. I looked at every photo before choosing, because a computer cannot tell what the subject is.
+- **True randomness vs. a shuffled deck:** a shuffled deck guarantees variety but is secretly predictable (every photo once per round). Independent random picks are unpredictable, so some photos repeat sooner and some come up less. I checked with numbers: over 451 picks every photo appeared, none twice in a row, and there was no repeating pattern.
+- **Flexbox column:** `flex-direction: column` with `justify-content: space-between` stacks the icons vertically and spreads them over the height of the link list beside them.
