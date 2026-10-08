@@ -8,9 +8,9 @@ One slice per branch and PR. Plan first, then build, then check in the browser, 
 
 ## Pages
 - [x] 2. Home: cream background, EB Garamond, name/email/location, short intro, link list (links go to stubs)
-- [x] 3. Home: rotating hero image (shuffled from a folder, every 1s; click anything to change)
+- [x] 3. Home: rotating hero image (truly random from a folder, every 1s, each photo framed by hand; click anything to change)
 - [x] 3b. Dark mode (click empty space) on every page
-- [x] 3c. Profile icons row on home (LinkedIn, X, YouTube Music, GitHub): links pending
+- [x] 3c. Profile icons on home, stacked vertically beside the links (LinkedIn, X, YouTube Music, GitHub)
 - [ ] 4. About: separate page for the story (placeholder text first)
 - [ ] 5. Work: green banner, experience list, project cards, resume download
 - [ ] 6. Blog: Python build script + GitHub Action; Markdown posts become the list page and post pages

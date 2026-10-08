@@ -95,29 +95,39 @@ a:hover { color: var(--link-hover); }
   letter-spacing: 0.14em;
   text-transform: uppercase;   /* shows capitals even though we type lowercase */
   color: var(--soft);
-  margin: 1.2rem 0 0.3rem;
+  margin: 0 0 0.3rem;
+  line-height: 1.2rem;
 }
 nav ul { list-style: none; margin: 0; padding: 0; }   /* no bullet points */
 nav li { margin: 0.05rem 0; }
 
-/* ---- profile icons ----
-   One straight row. justify-content: space-between pushes the first icon to the left edge
-   of the column and the last to the right edge, so the row lines up with the photo above.
-   Each link has 8px of padding to make it easier to tap, and the row is pulled out 8px on
-   each side so the visible icons (not the padding) line up with the edges. */
-.social ul {
+/* ---- link list + profile icons, side by side ----
+   The link list sits on the left. The profile icons are stacked in a vertical column on the
+   right, with their right edge exactly on the right edge of the photo. */
+.links {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin: 1.5rem -0.5rem 0;
+  align-items: stretch;
+  margin-top: 1.2rem;
 }
+.links nav:first-child { flex: 1; }
+.social ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;   /* spreads the icons from the top link to the bottom link */
+  align-items: flex-end;
+  height: calc(100% - 1.5rem);      /* 1.5rem = the height of the "explore" label above the links */
+  margin: 1.5rem -0.4rem 0 0;       /* -0.4rem cancels the tap padding so the icon, not the padding, meets the edge */
+}
+.social { display: flex; }
+.social ul { flex: 1; }
 .social-link {
   display: block;
-  padding: 0.5rem;
+  padding: 0.4rem;
   color: var(--soft);
   line-height: 0;
 }
-.social-link svg { width: 1.4rem; height: 1.4rem; fill: currentColor; display: block; }
+.social-link svg { width: 1.3rem; height: 1.3rem; fill: currentColor; display: block; }
 .social-link:hover { color: var(--link-hover); }
 
 /* centered line at the bottom of the page */
