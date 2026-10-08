@@ -37,6 +37,13 @@
       '</g>' +
     '</svg>';
 
+  // The little "on" / "off" label uses a pixel font (Silkscreen). Every page has this script,
+  // so it loads the font here once, asking for only the three letters it needs (O, N, F).
+  var pixel = document.createElement("link");
+  pixel.rel = "stylesheet";
+  pixel.href = "https://fonts.googleapis.com/css2?family=Silkscreen&text=ONFonf&display=swap";
+  document.head.appendChild(pixel);
+
   document.addEventListener("DOMContentLoaded", function () {
     // role="switch" tells screen readers it is an on/off switch; aria-checked is its state.
     var btn = document.createElement("button");
