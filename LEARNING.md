@@ -26,3 +26,8 @@ What each slice taught, in plain English.
   - a CSS class (`fading`) plus a `transition` does the fade
 - **Reduced motion.** `prefers-reduced-motion` is a setting some people turn on; the script respects it by not rotating.
 - **Placeholders** are clearly marked `[placeholder]` in the HTML. The real location, email, intro and photos still need to be added.
+
+### Slice 2 follow-up: matching the reference layout
+- **`clamp(min, preferred, max)`** gives the top padding a size that grows with window height but never goes below or above set limits.
+- **`aspect-ratio: 3 / 1`** makes the hero a wide, short banner; a media query makes it taller on phones.
+- **`text-transform: uppercase`** shows capitals on screen while the HTML stays lowercase, used for the small spaced-out "explore" label.

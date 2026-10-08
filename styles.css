@@ -11,18 +11,20 @@ body {
   background: var(--cream);
   color: var(--ink);
   font-family: "EB Garamond", Georgia, serif;
-  font-size: 1.25rem;   /* 20px: Garamond runs small, so this is a little bigger than usual */
-  line-height: 1.55;
+  font-size: 1.15rem;   /* a little bigger than 16px: Garamond runs small */
+  line-height: 1.5;
 }
 
 /* One narrow centered column. */
 main {
-  max-width: 34rem;
+  max-width: 46rem;
   margin: 0 auto;
-  padding: 4rem 1.5rem 5rem;
+  /* Lots of empty space above the content, like a page that starts a little way down.
+     clamp(min, preferred, max) scales with the window height but stays within limits. */
+  padding: clamp(2.5rem, 16vh, 9rem) 1.5rem 4rem;
 }
 
-h1 { font-weight: 500; font-size: 1.6rem; margin: 0 0 0.25rem; }
+h1 { font-weight: 400; font-size: 1.4rem; margin: 0 0 0.2rem; color: #444; }
 p  { margin: 0 0 0.6rem; }
 
 a { color: var(--ink); text-decoration: none; }
@@ -30,11 +32,11 @@ a:hover { color: var(--green); text-decoration: underline; text-underline-offset
 
 /* ---- hero image ---- */
 .hero {
-  aspect-ratio: 12 / 7;          /* keeps the frame the same size for every photo */
+  aspect-ratio: 3 / 1;           /* a wide, short banner; same shape for every photo */
   border-radius: 0.9rem;         /* rounded corners */
   overflow: hidden;              /* crops the image to the rounded frame */
   background: #e9e5da;
-  margin-bottom: 2rem;
+  margin-bottom: 1.6rem;
 }
 .hero img {
   width: 100%;
@@ -46,21 +48,39 @@ a:hover { color: var(--green); text-decoration: underline; text-underline-offset
 .hero img.fading { opacity: 0; }
 
 /* ---- name block ---- */
-.id { margin-bottom: 2rem; }
+.id { margin-bottom: 2.4rem; }
 .id p { color: var(--soft); margin: 0; }
 
 /* ---- two columns ---- */
 .cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 3rem;
 }
 .left p { color: var(--soft); }
-nav ul { list-style: none; margin: 1.4rem 0 0; padding: 0; }
-nav li { margin: 0.1rem 0; }
+.left > p { margin-bottom: 0.3rem; }
+
+/* small letter-spaced label above the links */
+.label {
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;   /* shows capitals even though we type lowercase */
+  color: var(--soft);
+  margin: 1.2rem 0 0.3rem;
+}
+nav ul { list-style: none; margin: 0; padding: 0; }
+nav li { margin: 0.05rem 0; }
+nav a { color: var(--soft); }
+nav a:hover { color: var(--green); }
+
+/* centered line at the bottom of the page */
+.foot { text-align: center; color: var(--soft); font-size: 0.95rem; margin: 3.5rem 0 0; }
+.foot a { text-decoration: underline; text-underline-offset: 0.2em; color: var(--soft); }
+.foot a:hover { color: var(--green); }
 
 /* On phones the columns stack into one. */
-@media (max-width: 34rem) {
+@media (max-width: 36rem) {
+  .hero { aspect-ratio: 2 / 1; }   /* a bit taller so the photo isn't a thin sliver */
   .cols { grid-template-columns: 1fr; gap: 0; }
   .right { display: none; }
 }
