@@ -57,3 +57,9 @@ What each slice taught, in plain English.
 
 ### Space below the last line
 - A page needs breathing room at the bottom as well as the top. `padding: 0 0 4rem` on the home column leaves 64px under the last line, and a bigger gap above it (`margin-top: 2.5rem`) separates the sign-off from the links. Roughly: more space between groups than within them.
+
+### Preparing photos for the web
+- **File size matters.** A 2.7 MB photo is far bigger than needed for a 512px-wide frame. Resizing to about 1600px wide and saving as JPEG at quality ~80 cut the hero folder from 17.9 MB to 4.7 MB with no visible loss.
+- **Web-safe file names:** lowercase letters, numbers and hyphens, no spaces or symbols, so links never break.
+- **Hidden metadata (EXIF)** in photos can include camera model and sometimes GPS location. Re-saving strips it, which matters on a public site.
+- **Keep the original name different from the new one** when converting: I once overwrote an original by reusing its name, then deleted it in cleanup. Git still had the original, which is why every change goes through git.
