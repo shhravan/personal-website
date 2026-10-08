@@ -8,7 +8,7 @@ One slice per branch and PR. Plan first, then build, then check in the browser, 
 
 ## Pages
 - [x] 2. Home: cream background, EB Garamond, name/email/location, short intro, link list (links go to stubs)
-- [x] 3. Home: rotating hero image (random from a folder, every 2s)
+- [x] 3. Home: rotating hero image (shuffled from a folder, every 1s; click anything to change)
 - [x] 3b. Dark mode (click empty space) on every page
 - [ ] 4. About: separate page for the story (placeholder text first)
 - [ ] 5. Work: green banner, experience list, project cards, resume download
