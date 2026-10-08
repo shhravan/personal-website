@@ -3,12 +3,12 @@
 One slice per branch and PR. Plan first, then build, then check in the browser, PR, explain, LEARNING.md.
 
 ## Setup
-- [ ] 0. Merge PR #1 (CLAUDE.md, PRD, DESIGN, TECH_RULES, todo)
-- [ ] 1. Hello world page + GitHub Pages live at shhravan.github.io/personal-website
+- [x] 0. Merge PR #1 (CLAUDE.md, PRD, DESIGN, TECH_RULES, todo)
+- [x] 1. Hello world page + GitHub Pages live at shhravan.github.io/personal-website
 
 ## Pages
-- [ ] 2. Home: cream background, EB Garamond, name/email/location, short intro, link list (links go to stubs)
-- [ ] 3. Home: rotating hero image (random from a folder, every ~5s)
+- [x] 2. Home: cream background, EB Garamond, name/email/location, short intro, link list (links go to stubs)
+- [x] 3. Home: rotating hero image (random from a folder, every ~5s)
 - [ ] 4. About: separate page for the story (placeholder text first)
 - [ ] 5. Work: green banner, experience list, project cards, resume download
 - [ ] 6. Blog: Python build script + GitHub Action; Markdown posts become the list page and post pages
