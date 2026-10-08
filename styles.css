@@ -19,12 +19,10 @@ body {
 main {
   max-width: 38rem;
   margin: 0 auto;
-  /* Lots of empty space above the content, like a page that starts a little way down.
-     clamp(min, preferred, max) scales with the window height but stays within limits. */
-  padding: clamp(3rem, 18vh, 10rem) 1.5rem 4rem;
+  padding: 3.75rem 2rem 4rem;   /* 60px above, 32px at the sides */
 }
 
-h1 { font-weight: 400; font-size: 1.4rem; margin: 0 0 0.2rem; color: #444; }
+h1 { font-weight: 400; font-size: 1.3rem; margin: 0 0 0.2rem; color: #444; }
 p  { margin: 0 0 0.6rem; }
 
 a { color: var(--ink); text-decoration: none; }
@@ -32,11 +30,11 @@ a:hover { color: var(--green); text-decoration: underline; text-underline-offset
 
 /* ---- hero image ---- */
 .hero {
-  aspect-ratio: 3.4 / 1;         /* a wide, short banner; same shape for every photo */
-  border-radius: 0.9rem;         /* rounded corners */
+  aspect-ratio: 1.9 / 1;         /* same shape for every photo, so crops stay consistent */
+  border-radius: 0.4rem;         /* softly rounded corners */
   overflow: hidden;              /* crops the image to the rounded frame */
   background: #e9e5da;
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.5rem;         /* 24px between photo and name (8px grid) */
 }
 .hero img {
   width: 100%;
@@ -48,14 +46,14 @@ a:hover { color: var(--green); text-decoration: underline; text-underline-offset
 .hero img.fading { opacity: 0; }
 
 /* ---- name block ---- */
-.id { margin-bottom: 2.4rem; }
+.id { margin-bottom: 1.5rem; }
 .id p { color: var(--soft); margin: 0; }
 
 /* ---- two columns ---- */
 .cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
+  gap: 1rem;                     /* 16px between the two columns */
 }
 .left p { color: var(--soft); }
 .left > p { margin-bottom: 0.3rem; }
@@ -74,13 +72,29 @@ nav a { color: var(--soft); }
 nav a:hover { color: var(--green); }
 
 /* centered line at the bottom of the page */
-.foot { text-align: center; color: var(--soft); font-size: 0.95rem; margin: 3.5rem 0 0; }
+.foot { text-align: center; color: var(--soft); font-size: 0.9rem; margin: 1.5rem 0 0; }
 .foot a { text-decoration: underline; text-underline-offset: 0.2em; color: var(--soft); }
 .foot a:hover { color: var(--green); }
 
-/* On phones the columns stack into one. */
-@media (max-width: 36rem) {
-  .hero { aspect-ratio: 2 / 1; }   /* a bit taller so the photo isn't a thin sliver */
+/* ---- home page only ----
+   The home column is one third of the window width, so the photo and text scale
+   with the screen. clamp(min, preferred, max) keeps it from getting too small or too big. */
+@media (min-width: 48rem) {
+  main.home {
+    width: clamp(20rem, 33.333vw, 32rem);
+    max-width: none;
+    padding: 0;
+    margin-top: 3.75rem;   /* 60px above the photo on medium screens */
+  }
+}
+/* On large screens the space above grows with the window height (about 18%). */
+@media (min-width: 64rem) {
+  main.home { margin-top: calc(100vh / 5.5); }
+}
+
+/* On phones the columns stack into one and the photo gets a taller shape. */
+@media (max-width: 47.99rem) {
+  .home .hero { aspect-ratio: 4 / 3; }
   .cols { grid-template-columns: 1fr; gap: 0; }
   .right { display: none; }
 }
