@@ -25,7 +25,7 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 4. **Work page**: project cards (title, dates, one-line description, tech tags, links), experience list, resume download.
 5. **Photography page**: a "film roll" strip of film photos, plus portfolio sections on the same page. Photos are added by dropping files into a folder (see Open questions for Instagram).
 6. **Rabbit hole page**: minimal lists (music picks, favorites, facts).
-7. **Green accent banner** (inspired by ronaldleung.co) on the work page as a design element.
+7. **Green accent banner** with flickering grain (inspired by ronaldleung.co) on the work page as a design element.
 
 ## Non-goals for v1
 - No login, database or accounts (fully static)
@@ -38,7 +38,6 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 
 ## Later (after v1)
 - The black-hole "fall in" transition for the rabbit hole link (inspired by somehowliving.tech; needs original artwork and animation)
-- Subtle shifting texture on the green banner, if it isn't in v1
 - Dark mode
 - Custom domain `shravanlad.com` (bought on Namecheap, pointed at GitHub Pages)
 
