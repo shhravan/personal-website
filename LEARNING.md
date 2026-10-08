@@ -54,3 +54,6 @@ What each slice taught, in plain English.
 - **Functions** (`showNext`, `startTimer`, `skip`) give a name to a chunk of work so it can be reused from the timer and from a click.
 - **`addEventListener("click", ...)`** runs code when the visitor clicks. `clearInterval` + `setInterval` restarts the 2-second countdown so a click isn't followed by an instant automatic change.
 - **Keyboard access:** `role="button"`, `tabindex="0"` and a `keydown` handler for Enter and Space let people without a mouse use it too.
+
+### Space below the last line
+- A page needs breathing room at the bottom as well as the top. `padding: 0 0 4rem` on the home column leaves 64px under the last line, and a bigger gap above it (`margin-top: 2.5rem`) separates the sign-off from the links. Roughly: more space between groups than within them.

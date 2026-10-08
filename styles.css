@@ -101,7 +101,7 @@ nav ul { list-style: none; margin: 0; padding: 0; }   /* no bullet points */
 nav li { margin: 0.05rem 0; }
 
 /* centered line at the bottom of the page */
-.foot { text-align: center; color: var(--soft); font-size: 0.9rem; margin: 1.5rem 0 0; }
+.foot { text-align: center; color: var(--soft); font-size: 0.9rem; margin: 2.5rem 0 0; }   /* 40px above: sets the sign-off apart from the links */
 
 /* ---- light / dark toggle (added by theme.js) ---- */
 .theme-toggle {
@@ -126,7 +126,7 @@ nav li { margin: 0.05rem 0; }
   main.home {
     width: clamp(20rem, 33.333vw, 32rem);
     max-width: none;
-    padding: 0;
+    padding: 0 0 4rem;     /* 64px of breathing room below the last line */
     margin-top: 3.75rem;   /* 60px above the photo on medium screens */
   }
 }
