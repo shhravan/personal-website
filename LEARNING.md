@@ -84,3 +84,10 @@ What each slice taught, in plain English.
 - **Framing:** `object-position` picks which part of a photo stays in view and `transform: scale()` with `transform-origin` zooms toward that point. Each photo has its own `[x, y, zoom]` in the `FOCUS` list. I looked at every photo before choosing, because a computer cannot tell what the subject is.
 - **True randomness vs. a shuffled deck:** a shuffled deck guarantees variety but is secretly predictable (every photo once per round). Independent random picks are unpredictable, so some photos repeat sooner and some come up less. I checked with numbers: over 451 picks every photo appeared, none twice in a row, and there was no repeating pattern.
 - **Flexbox column:** `flex-direction: column` with `justify-content: space-between` stacks the icons vertically and spreads them over the height of the link list beside them.
+
+### The light switch
+- **`role="switch"` and `aria-checked`** tell assistive technology this button is an on/off switch and which way it is set. We keep them in sync with the theme, so the lever, the "on/off" text, and what a screen reader announces always agree.
+- **Drawing with SVG shapes:** the switch is a few `<rect>`, `<path>` and `<circle>` shapes. The two side strips fake a 3D box. Colors come from CSS variables, so it re-colors itself for dark mode.
+- **A CSS transition on `transform`** slides the lever: `translateY(12px)` moves it down, and `transition: transform 0.18s` makes the move smooth. `prefers-reduced-motion` turns the animation off for people who ask for that.
+- **Tab order:** the switch is the first thing in the page, so pressing Tab once lands on it.
+- Clicking empty space no longer switches the theme (it was easy to trigger by accident), so a click anywhere on the home page now changes the photo.

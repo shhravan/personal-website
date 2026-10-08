@@ -10,6 +10,9 @@
   --link-hover: #1e40af;  /* darker blue when you point at one */
   --green: #2d5a46;       /* accent, saved for the work banner later */
   --photo-bg: #e9e5da;    /* shown behind a photo while it loads */
+  --plate: #ece8de;       /* the light switch: wall plate, slot and lever */
+  --slot: #fbfaf6;
+  --lever: #d6d1c4;
 }
 
 /* Dark colors, used in two cases:
@@ -26,6 +29,9 @@
     --link-hover: #a9c1ff;
     --green: #6fae93;
     --photo-bg: #25231f;
+    --plate: #2a2823;
+    --slot: #0d0c0a;
+    --lever: #4d493f;
   }
 }
 :root[data-theme="dark"] {
@@ -37,6 +43,9 @@
   --link-hover: #a9c1ff;
   --green: #6fae93;
   --photo-bg: #25231f;
+  --plate: #2a2823;
+  --slot: #0d0c0a;
+  --lever: #4d493f;
 }
 
 body {
@@ -133,36 +142,46 @@ nav li { margin: 0.05rem 0; }
 /* centered line at the bottom of the page */
 .foot { text-align: center; color: var(--soft); font-size: 0.9rem; margin: 2.5rem 0 0; }   /* 40px above: sets the sign-off apart from the links */
 
-/* ---- light / dark toggle (added by theme.js) ----
-   Clicking empty space switches the theme, so this button is hidden from view. It stays
-   in the page for keyboard and screen-reader users, and appears when you Tab to it. */
-.theme-toggle {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-  padding: 0;
-  background: none;
-  font: inherit;
-}
-.theme-toggle:focus {
+/* ---- the light switch (added by theme.js) ----
+   A wall switch fixed in the top-left corner of every page. Lever up and "on" is light mode;
+   lever down and "off" is dark mode. */
+.switch {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
-  width: auto;
-  height: auto;
-  clip: auto;
-  overflow: visible;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.9rem;
-  color: var(--ink);
-  background: var(--bg);
-  border: 1px solid var(--soft);
+  top: 0.55rem;
+  left: 0.7rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem;
+  background: none;
+  border: 0;
   border-radius: 0.3rem;
+  color: var(--ink);
+  font: inherit;
   cursor: pointer;
+}
+.switch:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
+.switch svg { width: 1.7rem; height: 2.4rem; display: block; overflow: visible; }
+.switch svg * { stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+.switch .plate { fill: var(--plate); }
+.switch .side { fill: var(--lever); }
+.switch .screw { fill: none; stroke-width: 0.9; }
+.switch .slot { fill: var(--slot); }
+.switch .lever-face { fill: var(--lever); }
+.switch .lever-lip { fill: var(--plate); }
+.switch .lever { transition: transform 0.18s ease; }
+.switch[aria-checked="false"] .lever { transform: translateY(12px); }   /* lever down = off */
+.switch-text {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--soft);
+  transition: color 0.2s ease;
+}
+.switch:hover .switch-text { color: var(--link-hover); }
+@media (prefers-reduced-motion: reduce) {
+  .switch .lever { transition: none; }
 }
 
 /* ---- home page only ----
