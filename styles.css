@@ -52,7 +52,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: "EB Garamond", Georgia, serif;
+  font-family: "EB Garamond", "Noto Serif Devanagari", Georgia, serif;   /* the Devanagari font only fills in letters EB Garamond lacks */
   font-size: 1.15rem;   /* a little bigger than 16px: Garamond runs small */
   line-height: 1.5;
 }
@@ -64,7 +64,7 @@ main {
   padding: 3.75rem 2rem 4rem;   /* 60px above, 32px at the sides */
 }
 
-h1 { font-weight: 400; font-size: 1.3rem; margin: 0 0 0.2rem; color: var(--name); }
+h1 { font-weight: 700; font-size: 1.3rem; margin: 0 0 0.2rem; color: var(--ink); }   /* bold */
 p  { margin: 0 0 0.6rem; }
 
 /* Links: blue and underlined, shifting to a darker blue over 0.2s when you point at them. */
