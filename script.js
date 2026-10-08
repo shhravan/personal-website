@@ -12,7 +12,8 @@ const SECONDS = 2; // how long between photo changes
 const img = document.getElementById("hero-img");
 
 if (img && HERO_IMAGES.length > 1) {
-  // Respect people who ask their device to reduce motion: show one photo, no rotating.
+  // Respect people who ask their device to reduce motion: no automatic rotating.
+  // (Clicking the photo still works, because that is the visitor's own choice.)
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // Pick a random photo that is not the one currently showing.
@@ -28,18 +29,41 @@ if (img && HERO_IMAGES.length > 1) {
   let current = pickNext("");
   img.src = current;
 
-  if (!reduceMotion) {
-    setInterval(() => {
-      const next = pickNext(current);
-      // Load the next photo in the background first, so the swap is instant and never blank.
-      const loader = new Image();
-      loader.onload = () => {
-        img.src = next;                           // instant swap, no fade
-        current = next;
-      };
-      loader.src = next;
-    }, SECONDS * 1000);
+  // Show another random photo. Load it in the background first, so the swap is
+  // instant and never blank.
+  function showNext() {
+    const next = pickNext(current);
+    const loader = new Image();
+    loader.onload = () => {
+      img.src = next;   // instant swap, no fade
+      current = next;
+    };
+    loader.src = next;
   }
+
+  // The automatic timer. We keep its id so a click can restart the countdown.
+  let timer = null;
+  function startTimer() {
+    if (reduceMotion) return;
+    clearInterval(timer);
+    timer = setInterval(showNext, SECONDS * 1000);
+  }
+  startTimer();
+
+  // Clicking (or pressing Enter / Space on) the photo jumps to another one,
+  // and the 2-second countdown starts over so it doesn't change again right away.
+  const hero = img.parentElement;
+  function skip() {
+    showNext();
+    startTimer();
+  }
+  hero.addEventListener("click", skip);
+  hero.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();   // stop Space from scrolling the page
+      skip();
+    }
+  });
 }
 
 // Turn each email into a real clickable mailto: link.

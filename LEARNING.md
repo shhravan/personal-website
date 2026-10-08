@@ -49,3 +49,8 @@ What each slice taught, in plain English.
 ### Instant photo swap
 - To remove the fade, the CSS `transition: opacity` and the `fading` class are gone, and the script simply sets `img.src = next` once the next photo has loaded in the background (`new Image()` preloads it). Preloading is what stops a blank flash even without a fade.
 - `<em>` inside a link makes italic text that is still clickable.
+
+### Click to change the photo
+- **Functions** (`showNext`, `startTimer`, `skip`) give a name to a chunk of work so it can be reused from the timer and from a click.
+- **`addEventListener("click", ...)`** runs code when the visitor clicks. `clearInterval` + `setInterval` restarts the 2-second countdown so a click isn't followed by an instant automatic change.
+- **Keyboard access:** `role="button"`, `tabindex="0"` and a `keydown` handler for Enter and Space let people without a mouse use it too.

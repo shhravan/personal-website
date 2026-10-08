@@ -73,6 +73,7 @@ a:hover { color: var(--link-hover); }
   overflow: hidden;              /* crops the image to the rounded frame */
   background: var(--photo-bg);
   margin-bottom: 1.5rem;         /* 24px between photo and name (8px grid) */
+  cursor: pointer;               /* clicking shows another photo */
 }
 .hero img {
   width: 100%;
