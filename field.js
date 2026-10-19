@@ -64,6 +64,8 @@
     "uniform float uRippleWidth;      // wave thickness, in cells",
     "uniform float uBase;             // normal letter strength (very faint)",
     "uniform float uBright;           // strength of letters on a ripple's wave",
+    "uniform sampler2D uSea;          // the Great Wave, cut out (transparent sky)",
+    "uniform vec3 uSeaH;              // its height, width and left edge on screen, in cells",
     "uniform float uDark;             // 1 in dark mode",
     "uniform vec3 uColor;             // normal letter color (the text color)",
     "uniform vec4 uQuiet;             // the content column (x0, y0, x1, y1 in cells): letters are fainter there",
@@ -118,25 +120,20 @@
     "  vec3 tint = uColor;",
     "  vec4 tile = vec4(0.0);",
     "",
-    "  // Moving sea along the bottom of the window, built from tiles. The surface is a sum of",
-    "  // sine waves that travel sideways, so the water rolls; each cell under it becomes a tile",
-    "  // colored by depth (light blue near the top, deep blue lower), with foam at the crests.",
-    "  float xw = cell.x / uGrid.x;",
-    "  float surface = uGrid.y * 0.80",
-    "    + uGrid.y * (0.025 * sin(xw * 9.0 - uTime * 0.6) + 0.015 * sin(xw * 21.0 + uTime * 0.9)",
-    "    + 0.008 * sin(xw * 47.0 - uTime * 1.7));",
-    "  float depth = cell.y - surface;",
-    "  if (depth > 0.0) {",
-    "    float d = clamp(depth / (uGrid.y * 0.2), 0.0, 1.0);",
-    "    vec3 deep = vec3(0.10, 0.20, 0.42), mid = vec3(0.24, 0.43, 0.68), shallow = vec3(0.62, 0.77, 0.88);",
-    "    vec3 sea = d < 0.35 ? mix(shallow, mid, d / 0.35) : mix(mid, deep, (d - 0.35) / 0.65);",
-    "    float foam = step(depth, 1.5) + step(depth, 3.5) * step(0.6, hash(cell + floor(uTime * 2.0)));",
-    "    sea = mix(sea, vec3(0.96, 0.95, 0.91), clamp(foam, 0.0, 1.0));",
-    "    sea *= 0.9 + 0.2 * hash(cell);   // small per-tile variation, like a mosaic",
-    "    float behind = 1.0 - 0.6 * quiet;",
-    "    tile = vec4(sea, 0.85 * behind * (1.0 - near) * (1.0 - off));",
-    "    tint = uDark > 0.5 ? mix(sea, vec3(1.0), 0.55) : mix(sea, vec3(0.0), 0.6);",
-    "    alpha = 0.9 * behind * (1.0 + 0.3 * twinkle);",
+    "  // The Great Wave (Hokusai), cut out of its sky, stretched across the bottom of the window",
+    "  // and rebuilt from tiles. Slow sine motion sways the picture so the water swells and rolls.",
+    "  vec2 m = vec2((cell.x - uSeaH.z) / uSeaH.y, (cell.y - (uGrid.y - uSeaH.x)) / uSeaH.x);",
+    "  m.x = 1.0 - abs(mod(m.x + 1.0, 2.0) - 1.0);   // mirror-repeat sideways",
+    "  if (m.y >= 0.0 && m.y < 1.0) {",
+    "    m.x += 0.006 * sin(m.y * 8.0 + uTime * 0.6) + 0.003 * sin(m.y * 21.0 - uTime * 1.1);",
+    "    m.y += 0.012 * sin(m.x * 6.0 + uTime * 0.7) + 0.004 * sin(m.x * 17.0 + uTime * 1.3);",
+    "    vec4 sea = texture(uSea, clamp(m, 0.001, 0.999));",
+    "    if (sea.a > 0.5) {",
+    "      float behind = 1.0 - 0.6 * quiet;",
+    "      tile = vec4(sea.rgb, 0.9 * behind * (1.0 - near) * (1.0 - off));",
+    "      tint = uDark > 0.5 ? mix(sea.rgb, vec3(1.0), 0.55) : mix(sea.rgb, vec3(0.0), 0.6);",
+    "      alpha = 0.9 * behind * (1.0 + 0.3 * twinkle);",
+    "    }",
     "  }",
     "  vColor = tint;",
     "  vTile = tile;",
@@ -190,7 +187,7 @@
   var U = {};
   ["uGrid", "uAtlasGrid", "uAspect", "uTime", "uText", "uTextLen", "uMouse", "uHover", "uRadius",
    "uRippleStart", "uRippleCenter", "uRippleCount", "uRippleMax", "uRippleWidth", "uBase", "uBright",
-   "uAtlas", "uColor", "uQuiet", "uDark"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+   "uAtlas", "uColor", "uQuiet", "uDark", "uSea", "uSeaH"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
   // One cell = two triangles. Every cell reuses this shape; the shader moves it into place.
   var quad = new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]);
@@ -217,6 +214,31 @@
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   gl.uniform1i(U.uText, 1);
   gl.uniform1f(U.uTextLen, codes.length);
+
+  // ---- the Great Wave picture, loaded once; it spans the window width, anchored to the bottom ----
+  var seaAspect = 640 / 442;
+  gl.activeTexture(gl.TEXTURE2);
+  gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));
+  gl.uniform1i(U.uSea, 2);
+  var seaImg = new Image();
+  seaImg.onload = function () {
+    seaAspect = seaImg.width / seaImg.height;
+    gl.activeTexture(gl.TEXTURE2);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, seaImg);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    fitSea(); draw();
+  };
+  seaImg.src = "images/field/great-wave.png";
+  // The picture fills the bottom half of the window at its natural shape; beyond its right edge
+  // it repeats as a mirror image, so the sea always spans the full width.
+  function fitSea() {
+    var h = window.innerHeight * 0.5, w = h * seaAspect;
+    // The mirror seam sits at the window's center, so the two curls land in the side margins.
+    gl.uniform3f(U.uSeaH, h / CELL_H, w / CELL_W, (window.innerWidth / 2 - w) / CELL_W);
+  }
 
   // ---- the atlas: every glyph drawn once, in EB Garamond, onto a small canvas ----
   var ATLAS_COLS = 8, ATLAS_ROWS = Math.ceil(GLYPHS.length / 8), TILE_W = 36, TILE_H = 60;
@@ -282,6 +304,7 @@
     gl.uniform1f(U.uRadius, HOVER_RADIUS / CELL_W);
     gl.uniform1f(U.uRippleMax, Math.max(w, h) * 0.75 / CELL_W);
     gl.uniform1f(U.uRippleWidth, RIPPLE_WIDTH / CELL_W);
+    fitSea();
   }
 
   // The content column, in cells, padded a little. Updated on resize and scroll.

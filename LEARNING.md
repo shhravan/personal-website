@@ -127,3 +127,7 @@ What each slice taught, in plain English.
 ### 80% size and a tiled sea
 - **`zoom: 0.8`** shrinks the home column like zooming the browser out. Because zoom also shrinks widths, the column width and top spacing are divided by 0.8 to keep the same proportions.
 - **Procedural waves:** no image this time. The shader computes a surface height from three sine waves moving at different speeds; any cell below it becomes a tile, colored by how deep it is, with foam just under the surface.
+
+### Hokusai's wave as tiles
+- The sky was removed from the painting by testing each pixel's color (beige or gray = sky, made transparent). Only cells that land on wave pixels become tiles.
+- **Mirror repeat:** `1 - abs(mod(x + 1, 2) - 1)` makes the picture flip at its edge instead of stopping, so one painting covers any window width, with the seam centered.
