@@ -127,3 +127,6 @@ What each slice taught, in plain English.
 ### 80% size and a tiled sea
 - **`zoom: 0.8`** shrinks the home column like zooming the browser out. Because zoom also shrinks widths, the column width and top spacing are divided by 0.8 to keep the same proportions.
 - **Procedural waves:** no image this time. The shader computes a surface height from three sine waves moving at different speeds; any cell below it becomes a tile, colored by how deep it is, with foam just under the surface.
+
+### Subtle, monochrome sea
+- Tiles now use the text color at low opacity, so they follow light/dark mode automatically. The foam is one thin line whose width breathes with a slow sine, and the sea fades by 85% behind the content so every word stays readable.
