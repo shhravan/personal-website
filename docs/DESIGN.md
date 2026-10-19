@@ -14,7 +14,7 @@ Goal: super simple, with good taste. Personality comes from specific details (th
 - Hierarchy through size and weight only.
 
 ## Color
-- **Background:** warm cream (inspired by somehowliving.tech). Exact value chosen during the first build slice.
+- **Background:** creamy (`#f3ecdc`, inspired by somehowliving.tech).
 - **Text:** near-black ink, with a softer gray for dates and captions.
 - **Accent:** a deep green (inspired by ronaldleung.co). Used sparingly: hover color, and the banner on the work page.
 - **Links:** everywhere, in the full text color (a step brighter than the soft grey text) and underlined; the underline fades on hover. Green is saved for the work banner.

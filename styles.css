@@ -2,7 +2,7 @@
    Named once here so we can change the palette in one place.
    Light is the default. Dark overrides the same names. */
 :root {
-  --bg: #f8f6f0;          /* warm cream background */
+  --bg: #f3ecdc;          /* creamy background */
   --ink: #1a1a1a;         /* near-black text */
   --name: #444444;        /* the name, a touch softer than body ink */
   --soft: #6b6b6b;        /* gray for secondary text */
