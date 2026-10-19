@@ -133,3 +133,6 @@ What each slice taught, in plain English.
 
 ### Shore foam
 - `0.5 - 0.5 * cos(time * 2π / 4.5)` goes smoothly from 0 to 1 and back every 4.5 s; it sets how far the foam reaches up. **Value noise** (`vnoise`, smooth random bumps) at two sizes makes the edge and the lace look frothy instead of straight.
+
+### Realistic swash
+- The cycle is lopsided: a fast surge (ease-out over 27% of a 4.8 s period) and a slow backwash. A noise-based time offset (`lag`) per column makes parts of the shore arrive at different moments, and `strength` gives each wave its own height.
