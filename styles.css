@@ -320,3 +320,17 @@ body::before {
 }
 @media (min-width: 48rem) { body::before { height: 4.6vw; } }
 @media (max-width: 47.99rem) { body::before { height: 3.9rem; } }
+
+/* Clear by default; the strip only fades in once the page has scrolled and content would pass
+   under the bar. Soft frosted look with a faded bottom edge instead of a hard line. */
+body::before {
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  -webkit-mask: linear-gradient(to bottom, #000 70%, transparent);
+  mask: linear-gradient(to bottom, #000 70%, transparent);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.scrolled body::before { opacity: 1; }

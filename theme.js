@@ -138,6 +138,11 @@
       else if (ytReady) yt.playVideo();
     });
 
+    // The top bar's backdrop shows only once the page has scrolled (see .scrolled in styles.css).
+    function onScroll() { root.classList.toggle("scrolled", window.scrollY > 4); }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
     // If the device setting changes and you haven't chosen yourself, follow it.
     media.addEventListener("change", render);
   });
