@@ -305,3 +305,18 @@ body:has(main.home) {
   nav li { margin: 0.2rem 0; }
   .foot { margin-top: 3rem; }
 }
+
+/* ---- top bar stays put while scrolling ----
+   The logo is fixed like the switch and record, and a strip in the page color sits behind all
+   three, so content scrolls underneath instead of overlapping them. */
+.logo { position: fixed; z-index: 10; }
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4rem;
+  background: var(--bg);
+  z-index: 9;
+}
+@media (min-width: 48rem) { body::before { height: 4.6vw; } }
+@media (max-width: 47.99rem) { body::before { height: 3.9rem; } }
