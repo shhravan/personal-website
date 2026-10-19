@@ -109,3 +109,6 @@ What each slice taught, in plain English.
 - **Saving battery:** the field redraws every frame only while you hover or a ripple runs; otherwise about 20 times a second for the twinkle, and not at all when the tab is hidden.
 - **WebP** images are about half the size of the JPEGs; phones get a 700px version. `devicePixelRatio` tells how sharp the screen is, so sharp screens get the 1200px file.
 - **Shuffle bag:** shuffle all photos, deal them out, reshuffle only when empty, so nothing repeats until everything has shown. `setTimeout` with a fresh random wait (0.4 to 1 s) each time makes the timing unpredictable.
+
+### Darker field, quiet zone behind the writing
+- Stronger letters (opacity 0.14 light, 0.16 dark) made the field visible, but it fought the text. The shader now measures each cell's distance from the content column (`uQuiet`) and fades letters to about a third there, with a soft edge (`smoothstep`) so there is no visible box.
