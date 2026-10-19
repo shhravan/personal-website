@@ -12,6 +12,8 @@ One slice per branch and PR. Plan first, then build, then check in the browser, 
 - [x] 3b. Dark mode on every page, switched with a wall light switch in the top-left corner
 - [x] 3c. Profile icons on home, stacked vertically beside the links (LinkedIn, X, YouTube Music, GitHub)
 - [x] 3d. Letter field behind the home page (hover circle, click ripple); photos as WebP, shuffled, 0.4–1s
+- [x] 3e. Top bar: name mark, turntable that plays a song, fixed while scrolling, zoom-proof
+- [x] 3f. Phone layout spacing; security audit (CSP, referrer policy, docs/SECURITY_*)
 - [ ] 4. About: separate page for the story (placeholder text first)
 - [ ] 5. Work: green banner, experience list, project cards, resume download
 - [ ] 6. Blog: Python build script + GitHub Action; Markdown posts become the list page and post pages
@@ -25,5 +27,6 @@ One slice per branch and PR. Plan first, then build, then check in the browser, 
 - [ ] 12. Custom domain shravanlad.com
 
 ## Later
+- Owner: GitHub MFA and branch protection on main
 - Fall-in (black-hole) transition into the rabbit hole
 - Automatic Instagram sync

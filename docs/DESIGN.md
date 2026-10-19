@@ -21,16 +21,19 @@ Goal: super simple, with good taste. Personality comes from specific details (th
 - **Dark mode:** a small wall light switch drawn from scratch, fixed in the top-left corner of every page. Lever up with "on" is light mode (the on/off label is in a pixel font, Silkscreen, like a stamped hardware label); click it and the lever flips down with "off" and the page goes dark. It follows the device setting until the visitor chooses, then remembers the choice. It is a real button, so it works with a keyboard (Tab, then Space or Enter) and screen readers (announced as a switch).
 
 ## Home page
-A small name mark (श्रवण लाड / SHRAVAN LAD) sits at the top center, level with the light switch, drawn as a mask in the text color so it flips with the theme.
-Shown at 80% size (`zoom: 0.8` on the home column, with widths compensated) so it fits on one screen.
-Modeled on rishigurjar.com:
-1. **Rounded-corner hero image** at the top, centered. Cycles through random images from a folder every 0.4 to 1 second (a random length each time), shuffled like a deck so no photo repeats until all of them have shown, and never the same photo twice in a row, swapping instantly with no fade (like rishigurjar.com). Every photo is framed by hand so it looks good in the wide frame: a focal point and, where the subject is small or a painting has a frame to cut off, a zoom (the `FOCUS` list in `script.js`). Clicking or tapping anywhere on the home page, including the empty space around the content, jumps to the next photo and restarts the countdown. Links and the light switch still do their own thing, and a click while text is selected does nothing. Images are Shravan's own photos and references that mean something to them.
-2. **Shravan Lad** in bold, then the location line "Ithaca, NY 🔁 Boston, New York & भारत", then two emails written as `name [at] domain [dot] tld` so bots can't easily harvest them; script.js turns them into clickable mailto links. The name and place names use normal capitals; the rest of the page stays lowercase.
-3. A short intro in Shravan's own words (two lines: "student at cornell, intellectually curious about things as they come." and "i take cool photos, have a genre-bending music taste, play few instruments. this is the one place to get to know me.") that runs the full width of the photo, then the plain list of links (about, work, blog, photography, rabbit hole), with no bullet points.
-4. A row with the link list on the left and the profile icons stacked vertically on the right (LinkedIn, X, YouTube Music, GitHub), the icons' right edge exactly on the photo's right edge. Icons are inline SVG from Simple Icons (CC0).
-5. The last line, centered: "for if you have taste, *opticsbyshrvn*" (the italic handle links to Instagram).
+Top bar (every page), fixed while scrolling, sized in `vw` on wide screens so browser zoom doesn't change it:
+- **left:** wall light switch with pixel-font on/off label (light/dark mode)
+- **center:** name mark श्रवण लाड / SHRAVAN LAD (`images/logo.png` used as a mask in the text color, so it flips with the theme), same height as the switch
+- **right:** turntable record with tonearm; click swings the needle on and plays Shravan's song (YouTube `ZoSD4l32m2I` from 0:28) in a hidden YouTube player; click again pauses
+- the bar is transparent at the top; a soft frosted strip fades in only after scrolling, so content passes under it cleanly
 
-Sizing follows rishigurjar.com, measured: the column is one third of the window width (kept between 20rem and 32rem), the space above the photo is about 18% of the window height, and spacing follows an 8px scale. On a phone the column fills the screen with 32px side padding.
+Content column, centered vertically and horizontally in the window (`zoom: 0.8` on wide screens so it fits one screen):
+1. **Rounded hero photo** (1.9:1, 4:3 on phones). Swaps every 0.4–1 s (random length), shuffled so none repeats until all have shown, never twice in a row, instant swap. Each photo framed by hand (`FOCUS` in `script.js`). Click anywhere on the page (not links/buttons, not while selecting text) to skip to the next.
+2. **Intro**, Shravan's words: "student at cornell, intellectually curious about things as they come." / "i take cool photos, have a genre-bending music taste, play few instruments. this is the one place to get to know me."
+3. **Links** (about, work, blog, photography, rabbit hole) on the left; profile icons stacked on the right (LinkedIn, X, YouTube Music, GitHub), right edge aligned with the photo. Icons from Simple Icons (CC0).
+4. **Last line**, centered: "for if you have taste, *opticsbyshrvn*" (Instagram).
+
+Phones: smaller top bar, 1.75rem side margins, slightly smaller text, extra spacing between blocks. The name, location and email lines were removed by choice.
 
 ## About
 Separate page with a long-form personal story, written in Shravan's voice, set as plain readable text (inspired by chinmay.blog).
@@ -61,7 +64,7 @@ All on one page, no camera details:
 A faint field of small letters (EB Garamond, in the text color) covers the whole window behind the home page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A subtle shore along the bottom edge: lacy monochrome foam (text color, low opacity) surges up quickly (~1.3 s) and drains back slowly (~3.5 s), with each stretch of shore and each wave a little different, like a beach seen from above, nearly invisible behind the writing. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
 
 ## Motion
-Almost none in v1. Allowed: the hero image rotation, link hover states, the blog hover image, the green banner grain, and the film roll on the photography page. Everything else is later.
+Deliberate, limited motion: hero photo rotation, the letter field and shore (home), the light switch lever, the spinning record and tonearm, link hovers, and later the blog hover image, work banner grain and film roll. All of it stops for reduced-motion users.
 
 ## Not doing
 - Horizontal scroll storytelling

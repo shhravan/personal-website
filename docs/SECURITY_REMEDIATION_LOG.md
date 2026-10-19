@@ -13,4 +13,4 @@
 
 **Not run:** tests against GitHub account/repo settings (no access); real-device checks.
 
-**Pending owner decisions:** MFA, branch protection, third-party images (see SECURITY_AUDIT.md).
+**Pending owner decisions:** MFA, branch protection, third-party images (see docs/SECURITY_AUDIT.md).

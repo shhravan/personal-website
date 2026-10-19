@@ -11,7 +11,7 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 
 | Page | What it is |
 |---|---|
-| **home** | name, email, rotating hero image, a short intro, and a plain list of links to everything else |
+| **home** | top bar (light switch, name mark, record player), rotating hero photo, short intro, links, profile icons, Instagram line |
 | **about** | a separate page where Shravan tells their story (written in their own voice) |
 | **work** | projects, experience, resume download (page layout inspired by hrishabhayush.com) |
 | **blog** | most important section. A list of posts (title + date); hovering a title shows a floating image |
@@ -26,8 +26,9 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 5. **Photography page**: a "film roll" strip of film photos, plus portfolio sections on the same page. Photos are added by dropping files into a folder (see Open questions for Instagram).
 6. **Rabbit hole page**: minimal lists (music picks, favorites, facts).
 7. **Dark mode:** a wall light switch in the top-left corner of every page (lever up and "on" for light, down and "off" for dark) that remembers the visitor's choice.
-8. **Letter field:** a faint animated field of letters behind the home page, with a hover circle and click ripples.
-9. **Green accent banner** with flickering grain (inspired by ronaldleung.co) on the work page as a design element.
+8. **Record player:** a turntable in the top-right corner plays Shravan's song in-page.
+9. **Letter field:** a faint animated field of letters behind the home page, with a hover circle and click ripples.
+10. **Green accent banner** with flickering grain (inspired by ronaldleung.co) on the work page as a design element.
 
 ## Non-goals for v1
 - No login, database or accounts (fully static)
@@ -42,7 +43,7 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 - Custom domain `shravanlad.com` (bought on Namecheap, pointed at GitHub Pages)
 
 ## Content status
-- **Have:** resume, one photo.
+- **Have:** resume, 28 hero photos, intro text, logo, profile links, one song for the record player.
 - **Need:** bio and about story, project descriptions, more photos for the hero and gallery, blog posts, favorites lists. Placeholders go in first; Claude helps draft the real text.
 
 ## Address
@@ -54,7 +55,6 @@ Start at `shhravan.github.io/personal-website`, then move to `shravanlad.com`.
 - It feels like Shravan: simple, personal, tasteful.
 
 ## Open questions
-- Which images go in the hero rotation (photos, art, references)?
 - What the about story covers.
 - Whether the resume is a PDF linked from work.
 - Which posts the blog launches with.
