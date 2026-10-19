@@ -142,3 +142,7 @@ What each slice taught, in plain English.
 
 ### Cache-busting
 - Browsers keep old copies of `styles.css`. When the new HTML arrived with old CSS, the logo got the old (huge) size. Adding `?v=2` to the stylesheet link makes browsers fetch the new file; bump the number when CSS changes matter.
+
+### Zoom-proof top bar and the record player
+- Sizes in `vw` (a share of the window width) stay the same on screen when the browser zooms, because zooming changes how many CSS pixels fit across the window. The switch, logo and vinyl use vw on wide screens.
+- The vinyl is a link whose `href` is picked at random from a list at the moment you click. YouTube Music has no public API for this, so the list is maintained by hand.
