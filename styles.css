@@ -208,3 +208,13 @@ nav li { margin: 0.05rem 0; }
 
 /* Stub pages ("coming soon") */
 .back { display: inline-block; margin-bottom: 2rem; }
+
+/* ---- the letter field behind the home page (drawn by field.js) ----
+   Fixed to the window, behind all content, and it never catches clicks itself. */
+.field {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  pointer-events: none;
+}

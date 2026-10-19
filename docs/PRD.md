@@ -19,14 +19,15 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 | **rabbit hole** | music (playlists) plus "all things cool": favorite bands, favorite facts, random things Shravan likes. Reached with a special transition (see Later) |
 
 ## Core features (v1)
-1. **Rotating hero image** on the home page. Cycles through a folder of Shravan's photos and references every second in a truly random order, each photo framed for the wide shape. Clicking anywhere on the home page also changes the photo. This is the main personality moment.
+1. **Rotating hero image** on the home page. Cycles through a folder of Shravan's photos and references every 0.4 to 1 second in a shuffled order (no repeats until all have shown), each photo framed for the wide shape. Clicking anywhere on the home page also changes the photo. This is the main personality moment.
 2. **Link list** on the home page to about, work, blog, photography, rabbit hole.
 3. **Blog**: posts are plain files in the repo. List page with hover images; each post is its own page.
 4. **Work page**: project cards (title, dates, one-line description, tech tags, links), experience list, resume download.
 5. **Photography page**: a "film roll" strip of film photos, plus portfolio sections on the same page. Photos are added by dropping files into a folder (see Open questions for Instagram).
 6. **Rabbit hole page**: minimal lists (music picks, favorites, facts).
 7. **Dark mode:** a wall light switch in the top-left corner of every page (lever up and "on" for light, down and "off" for dark) that remembers the visitor's choice.
-8. **Green accent banner** with flickering grain (inspired by ronaldleung.co) on the work page as a design element.
+8. **Letter field:** a faint animated field of letters behind the home page, with a hover circle and click ripples.
+9. **Green accent banner** with flickering grain (inspired by ronaldleung.co) on the work page as a design element.
 
 ## Non-goals for v1
 - No login, database or accounts (fully static)
