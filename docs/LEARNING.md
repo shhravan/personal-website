@@ -158,3 +158,10 @@ What each slice taught, in plain English.
 - Because scripts no longer re-run on every page, page code listens for a custom `page:load` event and sets itself up again (and cleans up the old page's timers first).
 - Every section page now reuses the home page's skeleton, so new pages get the look for free.
 
+## Work page
+- Rows use flexbox with `justify-content: space-between` to push dates and places to the right edge, and `flex-wrap` on phones so long titles drop onto a second line instead of squashing.
+- Project cards use CSS grid (`grid-template-columns: 1fr 1fr`): two equal columns, collapsing to one on phones.
+- Each role row is a `<details>` element: a built-in HTML open/close box. The `<summary>` is the always-visible row; the rest shows when clicked, with no JavaScript.
+- The water used to be glued to the bottom of the window. Now field.js works out where the bottom of the *page* is on screen (`scrollHeight - scrollY`) and draws the shore there, so long pages only show it at the end.
+- The banner grain is an SVG noise image (feTurbulence) moved around in jumps with `steps()`, which reads as flicker instead of smooth motion.
+

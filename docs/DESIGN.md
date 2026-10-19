@@ -49,7 +49,14 @@ Separate page with a long-form personal story, written in Shravan's voice, set a
 - Each post is its own simple page with a "← back" link.
 
 ## Work
-Inspired by hrishabhayush.com, with the cream and green styling:
+Built. Row layout inspired by hrishabhayush.com, page organisation by ronaldleung.co, in this site's fonts and colors. Normal capitalization on this page (Shravan's choice; the rest of the site stays lowercase).
+- **Banner:** deep green box with flickering TV-static grain (CSS, 1.5 s loop), "Work" and a one-line subtitle.
+- **Panels:** About, Work Experience, Education and Honors each sit in a soft rounded box.
+- **Rows:** rounded logo (links to the organisation's site where there is one), name in bold, small grey lines underneath, dates on the right; click a row for details.
+- **Projects:** heading, then simple stacked cards (title + one line). For now one "Coming Soon" card.
+- Logos in `images/logos/`, from Shravan; Cornell's seal (SVG) from Wikimedia Commons.
+
+Still planned:
 - **Banner** at the top: deep green with a grain texture that flickers like TV static, a 1.5s CSS loop (the effect Shravan liked on ronaldleung.co; we build our own version). Where else it could appear is still open.
 - **Experience list:** one row per role, with name, title and date range.
 - **Project cards** in a two-column grid: title, dates, one-line description, small tech tags, and links.
@@ -66,7 +73,7 @@ All on one page, no camera details:
 - Later: the "fall in" transition from the home link into this page, inspired by somehowliving.tech.
 
 ## Letter field (every page)
-A faint field of small letters (EB Garamond, in the text color) covers the whole window behind every page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A subtle shore along the bottom edge: lacy monochrome foam (text color, low opacity) surges up quickly (~1.3 s) and drains back slowly (~3.5 s), with each stretch of shore and each wave a little different, like a beach seen from above, nearly invisible behind the writing. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
+A faint field of small letters (EB Garamond, in the text color) covers the whole window behind every page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A subtle shore along the bottom edge: lacy monochrome foam (text color, low opacity) sits at the bottom of the page (not the window, so on long pages it appears as you scroll to the end) and surges up quickly (~1.3 s) and drains back slowly (~3.5 s), with each stretch of shore and each wave a little different, like a beach seen from above, nearly invisible behind the writing. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
 
 ## Motion
 Deliberate, limited motion: hero photo rotation, the letter field and shore (every page), the light switch lever, the spinning record and tonearm, link hovers, and later the blog hover image, work banner grain and film roll. All of it stops for reduced-motion users.

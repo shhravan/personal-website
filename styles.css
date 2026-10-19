@@ -348,3 +348,76 @@ body::before {
 .vinyl .hole { fill: #111; }
 :root[data-theme="dark"] .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; } }
+
+/* ---- work page (layout inspired by hrishabhayush.com, in this site's fonts and colors) ---- */
+.work section { margin-bottom: 2.4rem; }
+.work h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 0.8rem; }
+.about-work { color: var(--soft); }
+.about-work a { color: var(--ink); text-decoration-color: color-mix(in srgb, var(--ink) 40%, transparent); }
+.roles { list-style: none; margin: 0; padding: 0; }
+.roles li { margin: 0 0 0.35rem; }
+.role summary {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  list-style: none; cursor: pointer; padding: 0.3rem 0;
+}
+.role summary::-webkit-details-marker { display: none; }
+/* Logos: square tiles get rounded corners; round and see-through logos sit straight on the page. */
+.logo-mark { width: 2.5rem; height: 2.5rem; border-radius: 0.55rem; flex: none; object-fit: contain; }
+:root[data-theme="dark"] .logo-mark.ink { filter: invert(1); }   /* black mark turns light in dark mode */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo-mark.ink { filter: invert(1); } }
+.role-text { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.3; }
+.role-text b { font-weight: 500; }
+.role-title { color: var(--soft); font-size: 0.9rem; }
+.dates { color: var(--soft); font-size: 0.82rem; padding-top: 0.2rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.role summary:hover b { color: var(--link-hover); }
+.role-note { margin: 0.2rem 0 0.6rem 3.35rem; font-size: 0.92rem; color: var(--soft); }
+
+.role-row { display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.3rem 0; }
+.logo-link { line-height: 0; flex: none; border-radius: 0.55rem; transition: transform 0.15s ease; }
+.logo-link:hover { transform: scale(1.06); }   /* logos that link to the organisation's site */
+
+/* banner: deep green with TV-static grain that flickers (a 1.5s loop of jumps) */
+.banner {
+  position: relative; overflow: hidden;
+  background: #1f5a44; color: #f1eee7;
+  border-radius: 0.6rem; padding: 1.4rem 1.5rem 1.3rem; margin-bottom: 1.2rem;
+}
+.banner::before {
+  content: ""; position: absolute; inset: -50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.22; mix-blend-mode: overlay; pointer-events: none;
+  animation: grain 1.5s steps(6) infinite;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); } 20% { transform: translate(-6%, 4%); } 40% { transform: translate(5%, -7%); }
+  60% { transform: translate(-3%, 8%); } 80% { transform: translate(7%, 2%); } 100% { transform: translate(0, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .banner::before { animation: none; } }
+.banner h1 { position: relative; color: inherit; font-size: 1.7rem; font-weight: 500; margin: 0; }
+.banner p { position: relative; margin: 0; opacity: 0.8; }
+
+/* panels: each section sits in a soft rounded box, like ronaldleung.co */
+.panel {
+  background: color-mix(in srgb, var(--ink) 4%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+  border-radius: 0.6rem; padding: 1.1rem 1.3rem 0.9rem;
+  margin-bottom: 1.2rem !important;
+}
+.panel .about-work { margin: 0 0 0.2rem; }
+
+/* projects: heading, then stacked cards in the same soft style */
+.projects h2 { padding-left: 1.3rem; }
+.card {
+  background: color-mix(in srgb, var(--bg) 70%, #fff);
+  border: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+  border-radius: 0.6rem; padding: 0.8rem 1.1rem; margin-bottom: 0.6rem;
+}
+:root[data-theme="dark"] .card { background: color-mix(in srgb, var(--ink) 6%, var(--bg)); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .card { background: color-mix(in srgb, var(--ink) 6%, var(--bg)); } }
+.card-title { font-weight: 500; margin: 0; }
+.card-text { font-size: 0.92rem; color: var(--soft); margin: 0.1rem 0 0; }
+@media (max-width: 47.99rem) {
+  .panel { padding: 1rem 1rem 0.8rem; }
+  .role summary { align-items: flex-start; }
+  .dates { font-size: 0.75rem; padding-top: 0.15rem; }
+}

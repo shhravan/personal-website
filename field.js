@@ -66,6 +66,7 @@
     "uniform float uBright;           // strength of letters on a ripple's wave",
     "uniform float uDark;             // 1 in dark mode",
     "uniform vec3 uColor;             // normal letter color (the text color)",
+    "uniform float uShore;            // the bottom of the page, in rows from the top of the window",
     "uniform vec4 uQuiet;             // the content column (x0, y0, x1, y1 in cells): letters are fainter there",
     "out vec2 vUv;",
     "out float vAlpha;",
@@ -121,10 +122,10 @@
     "  vec3 tint = uColor;",
     "  vec4 tile = vec4(0.0);",
     "",
-    "  // Shore: foam washing up from the bottom edge of the window, like a beach seen from above",
+    "  // Shore: foam washing up from the bottom edge of the page, like a beach seen from above",
     "  // (upside down). The edge rises for a moment and slides back every ~4.5 seconds; its lacy",
     "  // outline comes from noise, so it never looks like a straight line.",
-    "  float up = uGrid.y - cell.y;                       // cells above the bottom edge",
+    "  float up = uShore - cell.y;                        // cells above the bottom of the page",
     "  float xw = cell.x / uGrid.x;",
     "  // Real swash is lopsided: the foam surges up fast (~1.3 s), then drains back slowly (~3.5 s).",
     "  // Different stretches of the shore are a bit ahead or behind each other, and each wave",
@@ -200,7 +201,7 @@
   var U = {};
   ["uGrid", "uAtlasGrid", "uAspect", "uTime", "uText", "uTextLen", "uMouse", "uHover", "uRadius",
    "uRippleStart", "uRippleCenter", "uRippleCount", "uRippleMax", "uRippleWidth", "uBase", "uBright",
-   "uAtlas", "uColor", "uQuiet", "uDark"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+   "uAtlas", "uColor", "uQuiet", "uShore", "uDark"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
   // One cell = two triangles. Every cell reuses this shape; the shader moves it into place.
   var quad = new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]);
@@ -300,6 +301,10 @@
     if (!main) return;
     var r = main.getBoundingClientRect();
     gl.uniform4f(U.uQuiet, (r.left - 12) / CELL_W, (r.top - 12) / CELL_H, (r.right + 12) / CELL_W, (r.bottom + 12) / CELL_H);
+    // The water sits at the bottom of the page, not the window: on a long page it stays out of
+    // sight below and rolls into view as you scroll to the end.
+    var bottom = Math.max(window.innerHeight, document.documentElement.scrollHeight - window.scrollY);
+    gl.uniform1f(U.uShore, bottom / CELL_H);
   }
   window.addEventListener("scroll", function () { updateQuiet(); draw(); }, { passive: true });
   document.addEventListener("page:load", function () { updateQuiet(); draw(); });   // new page, new column
@@ -367,6 +372,7 @@
     if (document.hidden) { cancelAnimationFrame(frame); frame = 0; } else wake();
   });
   window.addEventListener("resize", function () { resize(); updateQuiet(); draw(); });
+  window.addEventListener("load", function () { updateQuiet(); draw(); });   // page height settles once fonts and images load
 
   function start() {
     document.body.insertBefore(canvas, document.body.firstChild);
