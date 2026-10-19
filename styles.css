@@ -201,7 +201,7 @@ nav li { margin: 0.05rem 0; }
 }
 /* On large screens the space above grows with the window height (about 18%). */
 @media (min-width: 64rem) {
-  main.home { margin-top: calc(100vh / 9); }
+  main.home { margin-top: calc(100vh / 6); }
 }
 
 /* On phones the photo gets a taller shape. */
@@ -226,9 +226,12 @@ nav li { margin: 0.05rem 0; }
    The logo image is used as a mask (only its shape counts); the color comes from --ink,
    so it is dark on cream and light in dark mode. */
 .logo {
-  width: 55%;
+  position: absolute;          /* top center of the page, level with the light switch */
+  top: 1.05rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 11rem;
   aspect-ratio: 900 / 197;
-  margin: 0 auto 1.5rem;
   background: var(--ink);
   -webkit-mask: url("images/logo.png") center / contain no-repeat;
   mask: url("images/logo.png") center / contain no-repeat;
