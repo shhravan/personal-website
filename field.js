@@ -28,12 +28,16 @@
 
   // Placeholder text: random lowercase "words". Shravan will supply real words later.
   // GLYPHS are all the characters the field can show (index 0 is a space).
-  var GLYPHS = " abcdefghijklmnopqrstuvwxyz·";
+  // Letters come from two scripts, English (Latin) and Devanagari, mixed at random.
+  var LATIN = "abcdefghijklmnopqrstuvwxyz";
+  var DEVANAGARI = "अआइउएओकखगघचछजझटठडढतथदधनपफबभमयरलवशसह";
+  var GLYPHS = " ·" + LATIN + DEVANAGARI;
   function placeholderText() {
     var out = "";
-    while (out.length < 600) {
-      var len = 2 + Math.floor(Math.random() * 7);
-      for (var i = 0; i < len; i++) out += GLYPHS[1 + Math.floor(Math.random() * 26)];
+    while (out.length < 700) {
+      var letters = Math.random() < 0.5 ? LATIN : DEVANAGARI;   // each word is one script or the other
+      var len = 2 + Math.floor(Math.random() * 6);
+      for (var i = 0; i < len; i++) out += letters[Math.floor(Math.random() * letters.length)];
       out += Math.random() < 0.12 ? " · " : " ";
     }
     return out;
@@ -60,6 +64,8 @@
     "uniform float uRippleWidth;      // wave thickness, in cells",
     "uniform float uBase;             // normal letter strength (very faint)",
     "uniform float uBright;           // strength of letters on a ripple's wave",
+    "uniform sampler2D uWave;         // the Great Wave, as a map of how strong each spot is (0 to 1)",
+    "uniform vec4 uWaveFit;           // scale and offset that make the picture cover the window",
     "uniform vec4 uQuiet;             // the content column (x0, y0, x1, y1 in cells): letters are fainter there",
     "out vec2 vUv;",
     "out float vAlpha;",
@@ -105,7 +111,14 @@
     "  // Quieter behind the writing so the text stays easy to read; soft edges, no hard box.",
     "  vec2 outside = max(uQuiet.xy - cell, cell - uQuiet.zw);",
     "  float quiet = 1.0 - smoothstep(-1.0, 6.0, max(outside.x, outside.y));",
-    "  float alpha = uBase * (1.0 + 1.5 * twinkle) * (1.0 - 0.65 * quiet);",
+    "  // The wave: find this cell's spot in the picture, rolled by slow sine motion so the water",
+    "  // swells and drifts. Letters are strong where the wave is dark, faint in foam and sky.",
+    "  vec2 uv = (cell + 0.5) / uGrid * uWaveFit.xy + uWaveFit.zw;",
+    "  uv.x += 0.010 * sin(uv.y * 9.0 + uTime * 0.55) + 0.004 * sin(uv.y * 23.0 - uTime * 0.9);",
+    "  uv.y += 0.008 * sin(uv.x * 7.0 + uTime * 0.7) + 0.003 * sin(uv.x * 19.0 + uTime * 1.3);",
+    "  float ink = texture(uWave, clamp(uv, 0.0, 1.0)).r;",
+    "  float strength = 0.05 + 3.2 * pow(ink, 1.7);",
+    "  float alpha = uBase * strength * (1.0 + 1.5 * twinkle) * (1.0 - 0.5 * quiet);",
     "  alpha *= 1.0 - near;",
     "  alpha = mix(alpha, 0.0, off);",
     "  alpha = mix(alpha, uBright, lit);",
@@ -151,7 +164,7 @@
   var U = {};
   ["uGrid", "uAtlasGrid", "uAspect", "uTime", "uText", "uTextLen", "uMouse", "uHover", "uRadius",
    "uRippleStart", "uRippleCenter", "uRippleCount", "uRippleMax", "uRippleWidth", "uBase", "uBright",
-   "uAtlas", "uColor", "uQuiet"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+   "uAtlas", "uColor", "uQuiet", "uWave", "uWaveFit"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
   // One cell = two triangles. Every cell reuses this shape; the shader moves it into place.
   var quad = new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]);
@@ -179,6 +192,33 @@
   gl.uniform1i(U.uText, 1);
   gl.uniform1f(U.uTextLen, codes.length);
 
+  // ---- the wave picture (images/field/wave.png): grayscale, white = dark ink in the painting ----
+  var waveTex = gl.createTexture(), waveAspect = 480 / 331;
+  gl.activeTexture(gl.TEXTURE2);
+  gl.bindTexture(gl.TEXTURE_2D, waveTex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
+  gl.uniform1i(U.uWave, 2);
+  var wave = new Image();
+  wave.onload = function () {
+    waveAspect = wave.width / wave.height;
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, waveTex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, wave);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    fitWave();
+    draw();
+  };
+  wave.src = "images/field/wave.png";
+  // "Cover" the window like a background photo: fill it completely, cropping the extra edges.
+  function fitWave() {
+    var screenAspect = (cols * CELL_W) / (rows * CELL_H), sx = 1, sy = 1;
+    if (screenAspect > waveAspect) sy = waveAspect / screenAspect; else sx = screenAspect / waveAspect;
+    gl.uniform4f(U.uWaveFit, sx, sy, (1 - sx) / 2, (1 - sy) / 2);
+  }
+
   // ---- the atlas: every glyph drawn once, in EB Garamond, onto a small canvas ----
   var ATLAS_COLS = 8, ATLAS_ROWS = Math.ceil(GLYPHS.length / 8), TILE_W = 36, TILE_H = 60;
   var atlasTex = gl.createTexture();
@@ -190,7 +230,7 @@
     ctx.fillStyle = "#fff";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.font = "50px 'EB Garamond', Georgia, serif";
+    ctx.font = "46px 'EB Garamond', 'Noto Serif Devanagari', Georgia, serif";
     for (var g = 0; g < GLYPHS.length; g++) {
       ctx.fillText(GLYPHS[g], (g % ATLAS_COLS + 0.5) * TILE_W, (Math.floor(g / ATLAS_COLS) + 0.55) * TILE_H);
     }
@@ -242,6 +282,7 @@
     gl.uniform1f(U.uRadius, HOVER_RADIUS / CELL_W);
     gl.uniform1f(U.uRippleMax, Math.max(w, h) * 0.75 / CELL_W);
     gl.uniform1f(U.uRippleWidth, RIPPLE_WIDTH / CELL_W);
+    fitWave();
   }
 
   // The content column, in cells, padded a little. Updated on resize and scroll.
