@@ -49,7 +49,9 @@ Separate page with a long-form personal story, written in Shravan's voice, set a
 - Each post is its own simple page with a "← back" link.
 
 ## Work
-Inspired by hrishabhayush.com, with the cream and green styling:
+Built (layout inspired by hrishabhayush.com, in this site's fonts and colors): a short intro paragraph, then small uppercase section labels for **experience**, **education** and **projects**. Each role is a row: organisation (bold) with dates on the right, role (italic, soft) with place on the right, then a one-line note; thin dividers between rows. Projects are cards in a two-column grid (one column on phones); for now a single dashed "coming soon" card. Content from Shravan's LinkedIn; the intro is a placeholder draft. No company logos, no skills row (yet).
+
+Still planned:
 - **Banner** at the top: deep green with a grain texture that flickers like TV static, a 1.5s CSS loop (the effect Shravan liked on ronaldleung.co; we build our own version). Where else it could appear is still open.
 - **Experience list:** one row per role, with name, title and date range.
 - **Project cards** in a two-column grid: title, dates, one-line description, small tech tags, and links.

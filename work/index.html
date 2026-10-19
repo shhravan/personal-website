@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <!-- EB Garamond has no Devanagari letters, so this loads a matching font containing only the letters of भारत and the Devanagari letters in the background field. -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400&text=%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4%E0%A4%85%E0%A4%86%E0%A4%87%E0%A4%89%E0%A4%8F%E0%A4%93%E0%A4%95%E0%A4%96%E0%A4%97%E0%A4%98%E0%A4%9A%E0%A4%9B%E0%A4%9C%E0%A4%9D%E0%A4%9F%E0%A4%A0%E0%A4%A1%E0%A4%A2%E0%A4%A4%E0%A4%A5%E0%A4%A6%E0%A4%A7%E0%A4%A8%E0%A4%AA%E0%A4%AB%E0%A4%AC%E0%A4%AD%E0%A4%AE%E0%A4%AF%E0%A4%B0%E0%A4%B2%E0%A4%B5%E0%A4%B6%E0%A4%B8%E0%A4%B9&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=10">
+  <link rel="stylesheet" href="../styles.css?v=11">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%232d5a46%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2722%27 text-anchor=%27middle%27 fill=%27%23f8f6f0%27 font-family=%27Georgia,serif%27%3Es%3C/text%3E%3C/svg%3E">
   <!-- Runs right away (before the page paints) so the right light/dark theme is used with no flash. -->
   <script src="../theme.js?v=10"></script>
@@ -21,11 +21,62 @@
 <body>
   <!-- Same top bar, letter field and sign-off as the home page (see docs/DESIGN.md), minus the photo. -->
   <a class="logo" href="../" aria-label="श्रवण लाड · Shravan Lad, home"></a>
-  <main class="col page">
+  <main class="col page work">
     <a class="back" href="../">← home</a>
     <h1>work</h1>
-    <p class="lede">projects, experience and a resume.</p>
-    <p>coming soon.</p>  <!-- placeholder -->
+
+    <!-- Short intro: placeholder draft from LinkedIn; Shravan to edit. -->
+    <section class="about-work">
+      <p>student at cornell studying applied economics and management + information science, concentrating in finance and data science. right now i'm on gtm &amp; growth at structured ai. before that: research on ai in southeast asia, an education non-profit i founded, and summers in banking, real estate and corporate finance.</p>
+    </section>
+
+    <!-- One row per role: organisation and dates on top, role and place underneath, then a note. -->
+    <h2>experience</h2>
+    <ul class="rows">
+      <li class="row">
+        <div class="row-head"><b>structured ai</b><span class="dates">jun 2026 – aug 2026</span></div>
+        <div class="row-sub">gtm &amp; growth engineer, internship<span class="place">new york</span></div>
+        <p class="row-note">$5M seed, backed by y combinator, 20vc, cherry, sequoia scout and others.</p>
+      </li>
+      <li class="row">
+        <div class="row-head"><b>cornell emerging markets institute</b><span class="dates">2025</span></div>
+        <div class="row-sub">research assistant<span class="place">ithaca</span></div>
+        <p class="row-note">ai in southeast asia.</p>
+      </li>
+      <li class="row">
+        <div class="row-head"><b>ecofinlysis</b><span class="dates">2022 – 2025</span></div>
+        <div class="row-sub">founder<span class="place">surat, india</span></div>
+        <p class="row-note">educational non-profit, built from 0 → 1.</p>
+      </li>
+      <li class="row">
+        <div class="row-head"><b>various companies</b><span class="dates">2023 – 2024</span></div>
+        <div class="row-sub">summer analyst, real estate &amp; banking<span class="place">uk · mumbai</span></div>
+        <p class="row-note">gulf succession partners (s'24, uk): emerging markets search fund, tmt.<br>polymath advisors (s'24, mumbai): mid-market advisory, financial sponsors, pca/pfg.<br>veritas red (s'23, mumbai): residential real estate, single &amp; multi-family.</p>
+      </li>
+      <li class="row">
+        <div class="row-head"><b>arcelormittal nippon steel india</b><span class="dates">2022</span></div>
+        <div class="row-sub">corporate finance intern<span class="place">surat, india</span></div>
+        <p class="row-note">steel manufacturing (industrials), fp&amp;a. hosted the board of directors: led one-on-one conversations with ceo aditya mittal and executive chairman laxmi mittal during their visit to essar international school.</p>
+      </li>
+    </ul>
+
+    <h2>education</h2>
+    <ul class="rows">
+      <li class="row">
+        <div class="row-head"><b>cornell university</b><span class="dates">2023 – 2027</span></div>
+        <div class="row-sub">b.s. applied economics &amp; management + information science<span class="place">ithaca</span></div>
+        <p class="row-note">dual majors, concentrations in finance and data science. international scholar (foreign scholarship recipient), jiang fellow.</p>
+      </li>
+    </ul>
+
+    <!-- Projects: cards in a two-column grid (title, dates, one line, tags, links). None yet. -->
+    <h2>projects</h2>
+    <div class="cards">
+      <article class="card empty">
+        <p class="card-title">coming soon</p>
+        <p class="row-note">things i'm building will show up here.</p>
+      </article>
+    </div>
 
     <p class="foot">for if you have taste, <a href="https://www.instagram.com/opticsbyshrvn/"><em>opticsbyshrvn</em></a></p>
   </main>

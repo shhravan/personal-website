@@ -348,3 +348,24 @@ body::before {
 .vinyl .hole { fill: #111; }
 :root[data-theme="dark"] .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; } }
+
+/* ---- work page: experience and education rows, project cards (layout inspired by
+   hrishabhayush.com, written for this site's fonts and colors) ---- */
+.work h2 { font-size: 0.78rem; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); margin: 2.2rem 0 0.8rem; }
+.about-work p { color: var(--soft); }
+.rows { list-style: none; margin: 0; padding: 0; }
+.row { padding: 0.7rem 0; border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); }
+.row:first-child { border-top: 0; padding-top: 0; }
+.row-head, .row-sub { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+.row-head b { font-weight: 500; }
+.row-sub { color: var(--soft); font-style: italic; }
+.dates, .place { color: var(--soft); font-size: 0.85rem; font-style: normal; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.row-note { margin: 0.3rem 0 0; font-size: 0.95rem; color: var(--ink); }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.card { border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); border-radius: 0.4rem; padding: 0.9rem 1rem; background: color-mix(in srgb, var(--bg) 85%, transparent); }
+.card-title { font-weight: 500; margin: 0; }
+.card.empty { border-style: dashed; }
+@media (max-width: 47.99rem) {
+  .cards { grid-template-columns: 1fr; }
+  .row-head, .row-sub { flex-wrap: wrap; gap: 0 1rem; }
+}

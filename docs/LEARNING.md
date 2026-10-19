@@ -158,3 +158,7 @@ What each slice taught, in plain English.
 - Because scripts no longer re-run on every page, page code listens for a custom `page:load` event and sets itself up again (and cleans up the old page's timers first).
 - Every section page now reuses the home page's skeleton, so new pages get the look for free.
 
+## Work page
+- Rows use flexbox with `justify-content: space-between` to push dates and places to the right edge, and `flex-wrap` on phones so long titles drop onto a second line instead of squashing.
+- Project cards use CSS grid (`grid-template-columns: 1fr 1fr`): two equal columns, collapsing to one on phones.
+
