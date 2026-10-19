@@ -123,3 +123,7 @@ What each slice taught, in plain English.
 - Thin colored letters alone looked gray at small sizes. Giving each cell inside the painting a **tile** of the painting's color, with the letter drawn on top in a contrasting shade (darker in light mode, lighter in dark), turned it into a clear mosaic of the Great Wave.
 - The fragment shader now mixes two layers per cell: `letter` on top, `tile` showing around it, both pre-multiplied by opacity.
 - The painting's box is computed from the content column's position (`getBoundingClientRect`), so it always sits in the left margin and disappears when there is no room.
+
+### 80% size and a tiled sea
+- **`zoom: 0.8`** shrinks the home column like zooming the browser out. Because zoom also shrinks widths, the column width and top spacing are divided by 0.8 to keep the same proportions.
+- **Procedural waves:** no image this time. The shader computes a surface height from three sine waves moving at different speeds; any cell below it becomes a tile, colored by how deep it is, with foam just under the surface.

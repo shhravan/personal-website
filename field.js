@@ -64,8 +64,6 @@
     "uniform float uRippleWidth;      // wave thickness, in cells",
     "uniform float uBase;             // normal letter strength (very faint)",
     "uniform float uBright;           // strength of letters on a ripple's wave",
-    "uniform sampler2D uWave;         // the Great Wave, in color",
-    "uniform vec4 uWaveRect;          // where the painting sits, in cells: left, top, width, height (width 0 = hidden)",
     "uniform float uDark;             // 1 in dark mode",
     "uniform vec3 uColor;             // normal letter color (the text color)",
     "uniform vec4 uQuiet;             // the content column (x0, y0, x1, y1 in cells): letters are fainter there",
@@ -120,23 +118,25 @@
     "  vec3 tint = uColor;",
     "  vec4 tile = vec4(0.0);",
     "",
-    "  // Inside the painting: letters take the painting's own colors and are strong where the",
-    "  // painting is (dark blues in light mode, bright foam in dark mode). Slow sine motion sways",
-    "  // the picture underneath so the water rolls. The edges fade so there is no hard box.",
-    "  vec2 m = (cell + 0.5 - uWaveRect.xy) / uWaveRect.zw;",
-    "  if (uWaveRect.z > 0.0 && m.x >= 0.0 && m.x < 1.0 && m.y >= 0.0 && m.y < 1.0) {",
-    "    float edge = smoothstep(0.0, 0.07, min(min(m.x, 1.0 - m.x), min(m.y, 1.0 - m.y)));",
-    "    m.x += 0.008 * sin(m.y * 9.0 + uTime * 0.55) + 0.003 * sin(m.y * 23.0 - uTime * 0.9);",
-    "    m.y += 0.006 * sin(m.x * 7.0 + uTime * 0.7) + 0.002 * sin(m.x * 19.0 + uTime * 1.3);",
-    "    vec3 paint = texture(uWave, clamp(m, 0.0, 1.0)).rgb;",
-    "    float light = dot(paint, vec3(0.299, 0.587, 0.114));",
-    "    float weight = uDark > 0.5 ? light : 1.0 - light;",
-    "    // Each cell becomes a small tile of the painting's color (together they form the image),",
-    "    // and its letter is a contrasting shade of the same color: darker in light mode, lighter in dark.",
-    "    tile = vec4(paint, 0.8 * edge * (1.0 - near) * (1.0 - off));",
-    "    vec3 letterColor = uDark > 0.5 ? mix(paint, vec3(1.0), 0.55) : mix(paint, vec3(0.0), 0.6);",
-    "    alpha = mix(alpha, 0.9 * (1.0 + 0.3 * twinkle), edge);",
-    "    tint = mix(tint, letterColor, edge);",
+    "  // Moving sea along the bottom of the window, built from tiles. The surface is a sum of",
+    "  // sine waves that travel sideways, so the water rolls; each cell under it becomes a tile",
+    "  // colored by depth (light blue near the top, deep blue lower), with foam at the crests.",
+    "  float xw = cell.x / uGrid.x;",
+    "  float surface = uGrid.y * 0.80",
+    "    + uGrid.y * (0.025 * sin(xw * 9.0 - uTime * 0.6) + 0.015 * sin(xw * 21.0 + uTime * 0.9)",
+    "    + 0.008 * sin(xw * 47.0 - uTime * 1.7));",
+    "  float depth = cell.y - surface;",
+    "  if (depth > 0.0) {",
+    "    float d = clamp(depth / (uGrid.y * 0.2), 0.0, 1.0);",
+    "    vec3 deep = vec3(0.10, 0.20, 0.42), mid = vec3(0.24, 0.43, 0.68), shallow = vec3(0.62, 0.77, 0.88);",
+    "    vec3 sea = d < 0.35 ? mix(shallow, mid, d / 0.35) : mix(mid, deep, (d - 0.35) / 0.65);",
+    "    float foam = step(depth, 1.5) + step(depth, 3.5) * step(0.6, hash(cell + floor(uTime * 2.0)));",
+    "    sea = mix(sea, vec3(0.96, 0.95, 0.91), clamp(foam, 0.0, 1.0));",
+    "    sea *= 0.9 + 0.2 * hash(cell);   // small per-tile variation, like a mosaic",
+    "    float behind = 1.0 - 0.6 * quiet;",
+    "    tile = vec4(sea, 0.85 * behind * (1.0 - near) * (1.0 - off));",
+    "    tint = uDark > 0.5 ? mix(sea, vec3(1.0), 0.55) : mix(sea, vec3(0.0), 0.6);",
+    "    alpha = 0.9 * behind * (1.0 + 0.3 * twinkle);",
     "  }",
     "  vColor = tint;",
     "  vTile = tile;",
@@ -190,7 +190,7 @@
   var U = {};
   ["uGrid", "uAtlasGrid", "uAspect", "uTime", "uText", "uTextLen", "uMouse", "uHover", "uRadius",
    "uRippleStart", "uRippleCenter", "uRippleCount", "uRippleMax", "uRippleWidth", "uBase", "uBright",
-   "uAtlas", "uColor", "uQuiet", "uWave", "uWaveRect", "uDark"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+   "uAtlas", "uColor", "uQuiet", "uDark"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
   // One cell = two triangles. Every cell reuses this shape; the shader moves it into place.
   var quad = new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]);
@@ -217,37 +217,6 @@
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   gl.uniform1i(U.uText, 1);
   gl.uniform1f(U.uTextLen, codes.length);
-
-  // ---- the wave painting (images/field/wave-color.webp), shown small in the left margin ----
-  var waveTex = gl.createTexture(), waveAspect = 480 / 331;
-  gl.activeTexture(gl.TEXTURE2);
-  gl.bindTexture(gl.TEXTURE_2D, waveTex);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
-  gl.uniform1i(U.uWave, 2);
-  var wave = new Image();
-  wave.onload = function () {
-    waveAspect = wave.width / wave.height;
-    gl.activeTexture(gl.TEXTURE2);
-    gl.bindTexture(gl.TEXTURE_2D, waveTex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, wave);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    fitWave();
-    draw();
-  };
-  wave.src = "images/field/wave-color.webp";
-  // Place the painting in the empty space left of the content column, centered there and in
-  // the window's height. If that space is too narrow (phones, small windows) it is hidden.
-  function fitWave() {
-    var main = document.querySelector("main");
-    var left = main ? main.getBoundingClientRect().left : 0;
-    var w = Math.min(left - 64, 460);
-    if (w < 220) { gl.uniform4f(U.uWaveRect, 0, 0, 0, 0); return; }
-    var h = w / waveAspect, x = (left - w) / 2, y = (window.innerHeight - h) / 2;
-    gl.uniform4f(U.uWaveRect, x / CELL_W, y / CELL_H, w / CELL_W, h / CELL_H);
-  }
 
   // ---- the atlas: every glyph drawn once, in EB Garamond, onto a small canvas ----
   var ATLAS_COLS = 8, ATLAS_ROWS = Math.ceil(GLYPHS.length / 8), TILE_W = 36, TILE_H = 60;
@@ -313,7 +282,6 @@
     gl.uniform1f(U.uRadius, HOVER_RADIUS / CELL_W);
     gl.uniform1f(U.uRippleMax, Math.max(w, h) * 0.75 / CELL_W);
     gl.uniform1f(U.uRippleWidth, RIPPLE_WIDTH / CELL_W);
-    fitWave();
   }
 
   // The content column, in cells, padded a little. Updated on resize and scroll.

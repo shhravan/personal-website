@@ -189,16 +189,19 @@ nav li { margin: 0.05rem 0; }
    The home column is one third of the window width, so the photo and text scale
    with the screen. clamp(min, preferred, max) keeps it from getting too small or too big. */
 @media (min-width: 48rem) {
+  /* zoom: 0.8 shows the home page at 80% size (as if the browser were zoomed out), so it fits
+     on one screen. Widths and spacing are divided by 0.8 so the layout keeps its proportions. */
   main.home {
-    width: clamp(20rem, 33.333vw, 32rem);
+    zoom: 0.8;
+    width: clamp(25rem, 41.667vw, 40rem);
     max-width: none;
-    padding: 0 0 4rem;     /* 64px of breathing room below the last line */
-    margin-top: 3.75rem;   /* 60px above the photo on medium screens */
+    padding: 0 0 4rem;
+    margin-top: 4.7rem;
   }
 }
 /* On large screens the space above grows with the window height (about 18%). */
 @media (min-width: 64rem) {
-  main.home { margin-top: calc(100vh / 5.5); }
+  main.home { margin-top: calc(100vh / 4.4); }
 }
 
 /* On phones the photo gets a taller shape. */
