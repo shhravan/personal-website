@@ -136,7 +136,7 @@
     "  float cycle = p < 0.27 ? 1.0 - pow(1.0 - p / 0.27, 3.0)        // surge: quick, slowing at the top",
     "                         : 1.0 - smoothstep(0.0, 1.0, (p - 0.27) / 0.73);   // backwash: slow drain",
     "  float strength = 0.55 + 0.6 * vnoise(vec2(cell.x * 0.03, floor(tt) * 1.7));   // each wave differs",
-    "  float reach = uGrid.y * (0.035 + 0.085 * cycle * strength)",
+    "  float reach = uGrid.y * (0.045 + 0.12 * cycle * strength)",
     "    + 2.5 * vnoise(vec2(cell.x * 0.12, uTime * 0.4)) + 1.5 * vnoise(vec2(cell.x * 0.5, uTime * 0.9));",
     "  float edgeDist = reach - up;                       // > 0 inside the water",
     "  if (edgeDist > -1.0) {",
