@@ -230,7 +230,7 @@ nav li { margin: 0.05rem 0; }
   top: 1.05rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 11rem;
+  height: 2.4rem;              /* same height as the light switch */
   aspect-ratio: 900 / 197;
   background: var(--ink);
   -webkit-mask: url("images/logo.png") center / contain no-repeat;

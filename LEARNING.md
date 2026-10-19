@@ -139,3 +139,6 @@ What each slice taught, in plain English.
 
 ### Logo that follows the theme
 - The logo image is used as a CSS **mask**: only its shape matters, and the fill is `background: var(--ink)`, so it is dark on cream and light in dark mode with no second file.
+
+### Cache-busting
+- Browsers keep old copies of `styles.css`. When the new HTML arrived with old CSS, the logo got the old (huge) size. Adding `?v=2` to the stylesheet link makes browsers fetch the new file; bump the number when CSS changes matter.
