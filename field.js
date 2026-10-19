@@ -60,6 +60,7 @@
     "uniform float uRippleWidth;      // wave thickness, in cells",
     "uniform float uBase;             // normal letter strength (very faint)",
     "uniform float uBright;           // strength of letters on a ripple's wave",
+    "uniform vec4 uQuiet;             // the content column (x0, y0, x1, y1 in cells): letters are fainter there",
     "out vec2 vUv;",
     "out float vAlpha;",
     "",
@@ -101,7 +102,10 @@
     "  float near = (1.0 - smoothstep(0.0, uRadius, dist(cell - uMouse))) * uHover;",
     "  float off = step(r, near * 2.5) * step(0.001, near);",
     "",
-    "  float alpha = uBase * (1.0 + 1.5 * twinkle);",
+    "  // Quieter behind the writing so the text stays easy to read; soft edges, no hard box.",
+    "  vec2 outside = max(uQuiet.xy - cell, cell - uQuiet.zw);",
+    "  float quiet = 1.0 - smoothstep(-1.0, 6.0, max(outside.x, outside.y));",
+    "  float alpha = uBase * (1.0 + 1.5 * twinkle) * (1.0 - 0.65 * quiet);",
     "  alpha *= 1.0 - near;",
     "  alpha = mix(alpha, 0.0, off);",
     "  alpha = mix(alpha, uBright, lit);",
@@ -147,7 +151,7 @@
   var U = {};
   ["uGrid", "uAtlasGrid", "uAspect", "uTime", "uText", "uTextLen", "uMouse", "uHover", "uRadius",
    "uRippleStart", "uRippleCenter", "uRippleCount", "uRippleMax", "uRippleWidth", "uBase", "uBright",
-   "uAtlas", "uColor"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+   "uAtlas", "uColor", "uQuiet"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
   // One cell = two triangles. Every cell reuses this shape; the shader moves it into place.
   var quad = new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]);
@@ -211,7 +215,7 @@
     gl.uniform3f(U.uColor, (n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255);
     var dark = document.documentElement.getAttribute("data-theme") === "dark" ||
       (!document.documentElement.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    gl.uniform1f(U.uBase, dark ? 0.09 : 0.07);
+    gl.uniform1f(U.uBase, dark ? 0.16 : 0.14);
     gl.uniform1f(U.uBright, dark ? 0.8 : 0.7);
   }
   new MutationObserver(function () { applyTheme(); draw(); })
@@ -239,6 +243,15 @@
     gl.uniform1f(U.uRippleMax, Math.max(w, h) * 0.75 / CELL_W);
     gl.uniform1f(U.uRippleWidth, RIPPLE_WIDTH / CELL_W);
   }
+
+  // The content column, in cells, padded a little. Updated on resize and scroll.
+  function updateQuiet() {
+    var main = document.querySelector("main");
+    if (!main) return;
+    var r = main.getBoundingClientRect();
+    gl.uniform4f(U.uQuiet, (r.left - 12) / CELL_W, (r.top - 12) / CELL_H, (r.right + 12) / CELL_W, (r.bottom + 12) / CELL_H);
+  }
+  window.addEventListener("scroll", function () { updateQuiet(); draw(); }, { passive: true });
 
   // ---- cursor and clicks ----
   var mouse = { x: -999, y: -999 }, target = { x: -999, y: -999 }, hover = 0, hoverTarget = 0;
@@ -302,11 +315,12 @@
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) { cancelAnimationFrame(frame); frame = 0; } else wake();
   });
-  window.addEventListener("resize", function () { resize(); draw(); });
+  window.addEventListener("resize", function () { resize(); updateQuiet(); draw(); });
 
   function start() {
     document.body.insertBefore(canvas, document.body.firstChild);
     resize();
+    updateQuiet();
     applyTheme();
     draw();
     wake();
