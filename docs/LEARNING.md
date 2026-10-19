@@ -149,3 +149,6 @@ What each slice taught, in plain English.
 
 ### Turntable
 - The record is a button; `aria-pressed` toggles CSS that swings the tonearm and spins the record. Songs play through YouTube's embeddable IFrame player, hidden at 1px. `body:has(main.home)` with flexbox centers the home page in the window.
+
+### Switch click sound
+- The light switch plays a short click made with the Web Audio API: a 25 ms noise burst through a high-pass filter (the snap) plus a falling low tone (the thump). No audio file, so nothing extra to download and nothing for the security policy to allow.
