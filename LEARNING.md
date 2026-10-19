@@ -130,3 +130,6 @@ What each slice taught, in plain English.
 
 ### Subtle, monochrome sea
 - Tiles now use the text color at low opacity, so they follow light/dark mode automatically. The foam is one thin line whose width breathes with a slow sine, and the sea fades by 85% behind the content so every word stays readable.
+
+### Shore foam
+- `0.5 - 0.5 * cos(time * 2π / 4.5)` goes smoothly from 0 to 1 and back every 4.5 s; it sets how far the foam reaches up. **Value noise** (`vnoise`, smooth random bumps) at two sizes makes the edge and the lace look frothy instead of straight.
