@@ -102,3 +102,10 @@ What each slice taught, in plain English.
 - **`&text=ONFonf`** asks Google Fonts for only those letters, so the download is a few hundred bytes.
 - **Fallback:** `font-family: "Silkscreen", ui-monospace, monospace` shows a monospace font for an instant if the pixel font is slow, then swaps.
 - **Why a pixel font suits it:** pixel fonts are drawn on a grid, so at small sizes they look deliberate, like labels stamped on hardware. Other options I mocked up were a stamped monospace and a fully pixel-drawn switch.
+
+### The letter field, and faster, fairer photos
+- **WebGL instancing:** one small shape (a cell) is drawn thousands of times in one go; the shader moves each copy into place and picks its letter from an "atlas" image of all the glyphs. That is why the field stays smooth.
+- **Bugs worth remembering:** at first the field was almost invisible. Blending was multiplying each letter's opacity by itself, and the browser expected "pre-multiplied" colors (color already scaled by opacity). Using pre-multiplied output with `blendFunc(ONE, ONE_MINUS_SRC_ALPHA)` fixed both light and dark mode.
+- **Saving battery:** the field redraws every frame only while you hover or a ripple runs; otherwise about 20 times a second for the twinkle, and not at all when the tab is hidden.
+- **WebP** images are about half the size of the JPEGs; phones get a 700px version. `devicePixelRatio` tells how sharp the screen is, so sharp screens get the 1200px file.
+- **Shuffle bag:** shuffle all photos, deal them out, reshuffle only when empty, so nothing repeats until everything has shown. `setTimeout` with a fresh random wait (0.4 to 1 s) each time makes the timing unpredictable.

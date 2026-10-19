@@ -11,6 +11,7 @@ One slice per branch and PR. Plan first, then build, then check in the browser, 
 - [x] 3. Home: rotating hero image (truly random from a folder, every 1s, each photo framed by hand; click anything to change)
 - [x] 3b. Dark mode on every page, switched with a wall light switch in the top-left corner
 - [x] 3c. Profile icons on home, stacked vertically beside the links (LinkedIn, X, YouTube Music, GitHub)
+- [x] 3d. Letter field behind the home page (hover circle, click ripple); photos as WebP, shuffled, 0.4–1s
 - [ ] 4. About: separate page for the story (placeholder text first)
 - [ ] 5. Work: green banner, experience list, project cards, resume download
 - [ ] 6. Blog: Python build script + GitHub Action; Markdown posts become the list page and post pages

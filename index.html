@@ -19,10 +19,10 @@
 <body>
   <main class="home">
 
-    <!-- Hero image. script.js swaps the picture every second (instantly, no fade, in random order), and also when you click anything on the page.
+    <!-- Hero image. script.js swaps the picture every 0.4 to 1 second (instantly, no fade, shuffled so none repeats until all have shown), and also when you click anything on the page.
          The <img> below is what shows if JavaScript is off. -->
     <div class="hero" role="button" tabindex="0" aria-label="show another photo">
-      <img id="hero-img" src="images/hero/classicu-2024-06-12-171241-154.jpg" alt="a photo from shravan's collection">
+      <img id="hero-img" src="images/hero/classicu-2024-06-12-171241-154.webp" alt="a photo from shravan's collection">
     </div>
 
     <!-- Name block -->
@@ -68,6 +68,8 @@
     <p class="foot">for if you have taste, <a href="https://www.instagram.com/opticsbyshrvn/"><em>opticsbyshrvn</em></a></p>
 
   </main>
+  <!-- The faint field of letters behind the page (hover dissolves it, clicks send a ripple). -->
+  <script src="field.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
