@@ -334,3 +334,13 @@ body::before {
   pointer-events: none;
 }
 .scrolled body::before { opacity: 1; }
+
+/* The record is always black vinyl with a cream label, whatever the theme. In dark mode a thin
+   light rim keeps it visible against the dark background. */
+.vinyl .disc { fill: #111; }
+.vinyl .groove, .vinyl .shine { stroke: #f1eee7; }
+.vinyl .label { fill: #f1eee7; }
+.vinyl .label-ring { stroke: #111; }
+.vinyl .hole { fill: #111; }
+:root[data-theme="dark"] .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; } }
