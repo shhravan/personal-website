@@ -17,7 +17,7 @@ Goal: super simple, with good taste. Personality comes from specific details (th
 - **Background:** warm cream (inspired by somehowliving.tech). Exact value chosen during the first build slice.
 - **Text:** near-black ink, with a softer gray for dates and captions.
 - **Accent:** a deep green (inspired by ronaldleung.co). Used sparingly: hover color, and the banner on the work page.
-- **Links:** blue and underlined, shifting to a darker blue over 0.2 seconds on hover (inspired by chinmay.blog). Green is saved for the work banner.
+- **Links:** everywhere, in the full text color (a step brighter than the soft grey text) and underlined; the underline fades on hover. Green is saved for the work banner.
 - **Dark mode:** a small wall light switch drawn from scratch, fixed in the top-left corner of every page. Lever up with "on" is light mode (the on/off label is in a pixel font, Silkscreen, like a stamped hardware label); click it and the lever flips down with "off" and the page goes dark. The site starts in dark mode for everyone (Shravan's choice) until the visitor flips the switch, then remembers the choice. Clicking it plays a short synthesized switch click (Web Audio, no file). It is a real button, so it works with a keyboard (Tab, then Space or Enter) and screen readers (announced as a switch).
 
 ## Home page
@@ -52,7 +52,6 @@ Separate page with a long-form personal story, written in Shravan's voice, set a
 Built. Row layout inspired by hrishabhayush.com, page organisation by ronaldleung.co, in this site's fonts and colors. Normal capitalization on this page (Shravan's choice; the rest of the site stays lowercase).
 - **Banner:** deep green box with flickering TV-static grain (CSS, 1.5 s loop), "Work" and a one-line subtitle.
 - **Panels:** About, Work Experience, Education and Honors each sit in a soft rounded box.
-- **Links in text** (like Cornell in About) use the text color, a little bolder, underlined.
 - **Rows:** rounded logo (links to the organisation's site where there is one), name in bold, small grey lines underneath, dates on the right; click a row for details.
 - **Projects:** heading, then simple stacked cards (title + one line). For now one "Coming Soon" card.
 - Logos in `images/logos/`, from Shravan; Cornell's seal (SVG) from Wikimedia Commons.
@@ -74,7 +73,7 @@ All on one page, no camera details:
 - Later: the "fall in" transition from the home link into this page, inspired by somehowliving.tech.
 
 ## Letter field (every page)
-A faint field of small letters (EB Garamond, in the text color) covers the whole window behind every page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A subtle shore along the bottom edge: lacy foam in a faint light blue (only the waves are tinted; low opacity) sits at the bottom of the page (not the window, so on long pages it appears as you scroll to the end) and surges up quickly (~1.3 s) and drains back slowly (~3.5 s), with each stretch of shore and each wave a little different, like a beach seen from above, nearly invisible behind the writing. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
+A faint field of small letters (EB Garamond, in the text color) covers the whole window behind every page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A subtle shore along the bottom edge: a faint, realistic shoreline from above: creamy white foam at the edge, water going from pale shallow turquoise to deeper blue further out (low opacity) sits at the bottom of the page (not the window, so on long pages it appears as you scroll to the end) and surges up quickly (~1.3 s) and drains back slowly (~3.5 s), with each stretch of shore and each wave a little different, like a beach seen from above, nearly invisible behind the writing. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
 
 ## Motion
 Deliberate, limited motion: hero photo rotation, the letter field and shore (every page), the light switch lever, the spinning record and tonearm, link hovers, and later the blog hover image, work banner grain and film roll. All of it stops for reduced-motion users.

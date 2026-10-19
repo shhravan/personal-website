@@ -67,13 +67,15 @@ main {
 h1 { font-weight: 700; font-size: 1.3rem; margin: 0 0 0.2rem; color: var(--ink); }   /* bold */
 p  { margin: 0 0 0.6rem; }
 
-/* Links: blue and underlined, shifting to a darker blue over 0.2s when you point at them. */
+/* Links: in the full text color (a step brighter than the softer grey text around them) and
+   underlined, like "Cornell" in the work page's About panel. Pointing at one fades the underline. */
 a {
-  color: var(--link);
+  color: var(--ink);
   text-decoration: underline;
+  text-underline-offset: 0.12em;
   transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
-a:hover { color: var(--link-hover); }
+a:hover { text-decoration-color: color-mix(in srgb, var(--ink) 35%, transparent); }
 
 /* ---- hero image ---- */
 .hero {
@@ -353,9 +355,6 @@ body::before {
 .work section { margin-bottom: 2.4rem; }
 .work h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 0.8rem; }
 .about-work { color: var(--soft); }
-/* Links in the text read like Cornell in the About panel: text color, a little bolder, underlined. */
-.about-work a, .role-title a, .role-note a { color: var(--ink); font-weight: 500; text-decoration-color: color-mix(in srgb, var(--ink) 40%, transparent); }
-.about-work a:hover, .role-title a:hover, .role-note a:hover { color: var(--link-hover); }
 .roles { list-style: none; margin: 0; padding: 0; }
 .roles li { margin: 0 0 0.35rem; }
 .role summary {
