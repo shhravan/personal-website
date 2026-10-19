@@ -245,17 +245,39 @@ nav li { margin: 0.05rem 0; }
   z-index: 10;
   padding: 0.3rem;
   line-height: 0;
-  border-radius: 50%;
+  background: none;
+  border: 0;
+  cursor: pointer;
 }
-.vinyl svg { width: 2.4rem; height: 2.4rem; display: block; animation: spin 4s linear infinite; }
-.vinyl:hover svg { animation-duration: 1.6s; }   /* speeds up when you point at it */
+.vinyl:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; border-radius: 0.3rem; }
+.vinyl svg { width: 2.84rem; height: 2.4rem; display: block; overflow: visible; }
+.vinyl .record { transform-origin: 20px 22px; animation: spin 1.8s linear infinite; animation-play-state: paused; }
+.vinyl[aria-pressed="true"] .record { animation-play-state: running; }   /* spins while playing */
 .vinyl .disc { fill: var(--ink); }
-.vinyl .groove { fill: none; stroke: var(--bg); stroke-width: 0.5; opacity: 0.35; }
-.vinyl .shine { fill: none; stroke: var(--bg); stroke-width: 1.2; stroke-linecap: round; opacity: 0.5; }
-.vinyl .label { fill: var(--link); }
-.vinyl .hole { fill: var(--bg); }
+.vinyl .groove { fill: none; stroke: var(--bg); stroke-width: 0.18; opacity: 0.45; }
+.vinyl .shine { fill: none; stroke: var(--bg); stroke-width: 1.6; stroke-linecap: round; opacity: 0.55; }
+.vinyl .label { fill: var(--bg); }
+.vinyl .label-ring { fill: none; stroke: var(--ink); stroke-width: 0.4; }
+.vinyl .hole { fill: var(--ink); }
+.vinyl .arm { transform-origin: 46px 5px; transform: rotate(-28deg); transition: transform 0.6s ease; }
+.vinyl[aria-pressed="true"] .arm { transform: rotate(0deg); }               /* needle on the record */
+.vinyl .pivot { fill: var(--bg); stroke: var(--ink); stroke-width: 1; }
+.vinyl .arm-line { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.vinyl .head { fill: var(--ink); }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .vinyl svg { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .vinyl .record { animation: none; } .vinyl .arm { transition: none; } }
+.yt-hidden, #yt-player { position: fixed; width: 1px; height: 1px; left: -10px; bottom: 0; opacity: 0; pointer-events: none; }
+
+/* ---- home page centered in the window, both ways ---- */
+body:has(main.home) {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 48rem) {
+  body:has(main.home) main.home { margin: 0 auto !important; padding: 4.5rem 0 3.5rem; }
+}
 
 /* ---- top bar keeps its size when the browser is zoomed ----
    On wider screens the switch, logo and record are sized in vw (a share of the window width).
@@ -267,5 +289,5 @@ nav li { margin: 0.05rem 0; }
   .switch-text { font-size: 0.69vw; }
   .logo { top: 1.17vw; height: 2.67vw; }
   .vinyl { top: 0.61vw; right: 0.78vw; padding: 0.33vw; }
-  .vinyl svg { width: 2.67vw; height: 2.67vw; }
+  .vinyl svg { width: 3.16vw; height: 2.67vw; }
 }
