@@ -353,7 +353,9 @@ body::before {
 .work section { margin-bottom: 2.4rem; }
 .work h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 0.8rem; }
 .about-work { color: var(--soft); }
-.about-work a { color: var(--ink); text-decoration-color: color-mix(in srgb, var(--ink) 40%, transparent); }
+/* Links in the text read like Cornell in the About panel: text color, a little bolder, underlined. */
+.about-work a, .role-title a, .role-note a { color: var(--ink); font-weight: 500; text-decoration-color: color-mix(in srgb, var(--ink) 40%, transparent); }
+.about-work a:hover, .role-title a:hover, .role-note a:hover { color: var(--link-hover); }
 .roles { list-style: none; margin: 0; padding: 0; }
 .roles li { margin: 0 0 0.35rem; }
 .role summary {
@@ -419,4 +421,3 @@ body::before {
   .role summary { align-items: flex-start; }
   .dates { font-size: 0.75rem; padding-top: 0.15rem; }
 }
-.role-title a, .role-note a { color: inherit; }   /* links inside rows: same color, just underlined */
