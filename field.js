@@ -1,4 +1,4 @@
-// The faint field of letters behind the home page.
+// The faint field of letters behind every page.
 //
 // What you see: a grid of small letters covering the whole window, very faint. A few letters
 // twinkle (scramble for a moment). Near the cursor the letters dissolve in a grainy circle.
@@ -302,6 +302,7 @@
     gl.uniform4f(U.uQuiet, (r.left - 12) / CELL_W, (r.top - 12) / CELL_H, (r.right + 12) / CELL_W, (r.bottom + 12) / CELL_H);
   }
   window.addEventListener("scroll", function () { updateQuiet(); draw(); }, { passive: true });
+  document.addEventListener("page:load", function () { updateQuiet(); draw(); });   // new page, new column
 
   // ---- cursor and clicks ----
   var mouse = { x: -999, y: -999 }, target = { x: -999, y: -999 }, hover = 0, hoverTarget = 0;

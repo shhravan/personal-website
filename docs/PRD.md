@@ -26,8 +26,8 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 5. **Photography page**: a "film roll" strip of film photos, plus portfolio sections on the same page. Photos are added by dropping files into a folder (see Open questions for Instagram).
 6. **Rabbit hole page**: minimal lists (music picks, favorites, facts).
 7. **Dark mode:** a wall light switch in the top-left corner of every page (lever up and "on" for light, down and "off" for dark) that remembers the visitor's choice.
-8. **Record player:** a turntable in the top-right corner plays Shravan's song in-page.
-9. **Letter field:** a faint animated field of letters behind the home page, with a hover circle and click ripples.
+8. **Record player:** a turntable in the top-right corner plays Shravan's song in-page, and keeps playing as you move between pages.
+9. **Letter field:** a faint animated field of letters behind every page, with a hover circle and click ripples.
 10. **Green accent banner** with flickering grain (inspired by ronaldleung.co) on the work page as a design element.
 
 ## Non-goals for v1

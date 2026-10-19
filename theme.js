@@ -167,6 +167,47 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
+    // ---- moving between pages without stopping the music ----
+    // A normal link click loads a whole new page, which throws away the hidden YouTube player.
+    // Instead, for links to our own pages, we fetch the new page in the background, swap in its
+    // name mark and <main> content, and update the address bar (history.pushState). The top bar,
+    // the letter field and the player are never reloaded, so the song keeps going.
+    // If anything goes wrong, we fall back to a normal page load.
+    var shown = location.pathname;
+    function go(href, push) {
+      fetch(href).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        return r.text();
+      }).then(function (html) {
+        var doc = new DOMParser().parseFromString(html, "text/html");
+        var main = doc.querySelector("main"), logo = doc.querySelector(".logo");
+        if (!main) throw new Error("no main");
+        // Change the address first, so the new page's relative links and images resolve from it.
+        if (push) history.pushState(null, "", href);
+        shown = location.pathname;
+        document.title = doc.title;
+        document.querySelector("main").replaceWith(document.adoptNode(main));
+        var oldLogo = document.querySelector(".logo");
+        if (logo && oldLogo) oldLogo.replaceWith(document.adoptNode(logo));
+        window.scrollTo(0, 0);
+        onScroll();
+        document.dispatchEvent(new Event("page:load"));   // script.js and field.js listen for this
+      }).catch(function () { location.href = href; });
+    }
+    document.addEventListener("click", function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest("a");
+      if (!a || a.target || a.hasAttribute("download") || a.protocol.indexOf("http") !== 0) return;
+      if (a.origin !== location.origin || !/(\/|\.html)$/.test(a.pathname)) return;   // only our own pages
+      if (a.pathname === location.pathname && a.hash) return;                         // same-page #jump
+      e.preventDefault();
+      if (a.pathname !== location.pathname) go(a.href, true);
+    });
+    // Back and forward buttons.
+    window.addEventListener("popstate", function () {
+      if (location.pathname !== shown) go(location.href, false);
+    });
+
     // If the device setting changes and you haven't chosen yourself, follow it.
     media.addEventListener("change", render);
   });

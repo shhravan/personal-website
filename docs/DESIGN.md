@@ -33,6 +33,11 @@ Content column, centered vertically and horizontally in the window (`zoom: 0.8` 
 3. **Links** (about, work, blog, photography, rabbit hole) on the left; profile icons stacked on the right (LinkedIn, X, YouTube Music, GitHub), right edge aligned with the photo. Icons from Simple Icons (CC0).
 4. **Last line**, centered: "for if you have taste, *opticsbyshrvn*" (Instagram).
 
+## Every page shares the home page's look
+About, work, blog, photography and rabbit hole (and any page added later) use the same top bar, letter field and shore, centered column, typography and the "for if you have taste" sign-off. Only the shuffling photo is home-only. The name mark links home.
+
+The music never stops when you change pages: links between our own pages swap the content in place (the top bar and hidden player stay), instead of loading a fresh page.
+
 Phones: smaller top bar, 1.75rem side margins, slightly smaller text, extra spacing between blocks. The name, location and email lines were removed by choice.
 
 ## About
@@ -60,11 +65,11 @@ All on one page, no camera details:
 - Minimal lists, in the spirit of Rohan Kumar's "favorite facts": favorite bands, playlists (links or embeds), facts, random things Shravan likes.
 - Later: the "fall in" transition from the home link into this page, inspired by somehowliving.tech.
 
-## Letter field (home page)
-A faint field of small letters (EB Garamond, in the text color) covers the whole window behind the home page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A subtle shore along the bottom edge: lacy monochrome foam (text color, low opacity) surges up quickly (~1.3 s) and drains back slowly (~3.5 s), with each stretch of shore and each wave a little different, like a beach seen from above, nearly invisible behind the writing. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
+## Letter field (every page)
+A faint field of small letters (EB Garamond, in the text color) covers the whole window behind every page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A subtle shore along the bottom edge: lacy monochrome foam (text color, low opacity) surges up quickly (~1.3 s) and drains back slowly (~3.5 s), with each stretch of shore and each wave a little different, like a beach seen from above, nearly invisible behind the writing. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
 
 ## Motion
-Deliberate, limited motion: hero photo rotation, the letter field and shore (home), the light switch lever, the spinning record and tonearm, link hovers, and later the blog hover image, work banner grain and film roll. All of it stops for reduced-motion users.
+Deliberate, limited motion: hero photo rotation, the letter field and shore (every page), the light switch lever, the spinning record and tonearm, link hovers, and later the blog hover image, work banner grain and film roll. All of it stops for reduced-motion users.
 
 ## Not doing
 - Horizontal scroll storytelling
