@@ -118,3 +118,8 @@ What each slice taught, in plain English.
 - **Making it move:** before reading the map, each cell's position is nudged by a few slow sine waves that depend on time. The picture underneath sways, so the water appears to roll, while the letters themselves stay on the grid.
 - **Two scripts:** the atlas now holds Latin and Devanagari letters. The Devanagari font request asks only for those letters (`&text=`), and each placeholder "word" picks one script at random.
 - **Contrast matters:** the first version was barely recognizable; widening the gap between strong and faint letters (`0.05 + 3.2 * ink^1.7`) made the wave readable.
+
+### Making the painting explicit
+- Thin colored letters alone looked gray at small sizes. Giving each cell inside the painting a **tile** of the painting's color, with the letter drawn on top in a contrasting shade (darker in light mode, lighter in dark), turned it into a clear mosaic of the Great Wave.
+- The fragment shader now mixes two layers per cell: `letter` on top, `tile` showing around it, both pre-multiplied by opacity.
+- The painting's box is computed from the content column's position (`getBoundingClientRect`), so it always sits in the left margin and disappears when there is no room.
