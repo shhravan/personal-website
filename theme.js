@@ -71,33 +71,72 @@
     });
 
     // ---- the record player, top right ----
-    // A spinning vinyl. Clicking it opens a random pick from the list below on YouTube Music,
-    // in a new tab. (YouTube Music has no public API for a personal site, so the picks are a
-    // hand-made list: add song or playlist links to it.)
-    var PICKS = [
-      "https://music.youtube.com/@itshravanlad"
+    // Click the record: the needle swings onto it and a random song plays right here on the page
+    // (through YouTube's embeddable player, kept hidden). Click again: the needle lifts, music stops.
+    // SONGS holds YouTube video IDs: the part after "v=" in a music.youtube.com/watch?v=... link.
+    // Until songs are added, clicking opens the YouTube Music channel instead.
+    var SONGS = [
+      // "dQw4w9WgXcQ",
     ];
-    var vinyl = document.createElement("a");
-    vinyl.className = "vinyl";
-    vinyl.target = "_blank";
-    vinyl.rel = "noopener";
-    vinyl.setAttribute("aria-label", "play something i like (opens YouTube Music)");
-    vinyl.title = "play something i like";
-    vinyl.href = PICKS[0];
-    vinyl.innerHTML =
-      '<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">' +
-        '<circle class="disc" cx="20" cy="20" r="19"/>' +
-        '<circle class="groove" cx="20" cy="20" r="15.5"/>' +
-        '<circle class="groove" cx="20" cy="20" r="12.5"/>' +
-        '<path class="shine" d="M8 12 A14 14 0 0 1 16 6.5"/>' +
-        '<circle class="label" cx="20" cy="20" r="7"/>' +
-        '<circle class="hole" cx="20" cy="20" r="1.3"/>' +
+    var CHANNEL = "https://music.youtube.com/@itshravanlad";
+
+    // Engraved-style record drawn from scratch: many thin grooves, a light band, a label, a hole.
+    var grooves = "";
+    for (var r = 18; r > 8.5; r -= 0.8) grooves += '<circle class="groove" cx="20" cy="20" r="' + r.toFixed(1) + '"/>';
+    var player = document.createElement("button");
+    player.className = "vinyl";
+    player.type = "button";
+    player.setAttribute("aria-label", SONGS.length ? "play a song i like" : "open my YouTube Music");
+    player.setAttribute("aria-pressed", "false");
+    player.innerHTML =
+      '<svg viewBox="0 0 52 44" aria-hidden="true" focusable="false">' +
+        '<g class="record">' +
+          '<circle class="disc" cx="20" cy="22" r="19.5" transform="translate(0 0)"/>' +
+          '<g transform="translate(0 2)">' + grooves + '</g>' +
+          '<path class="shine" d="M8 13 A15 15 0 0 1 17 7.2"/>' +
+          '<path class="shine" d="M32 31 A15 15 0 0 1 23 36.8"/>' +
+          '<circle class="label" cx="20" cy="22" r="6.5"/>' +
+          '<circle class="label-ring" cx="20" cy="22" r="4.5"/>' +
+          '<circle class="hole" cx="20" cy="22" r="1.1"/>' +
+        '</g>' +
+        '<g class="arm">' +                                   // tonearm, pivots at the top right
+          '<circle class="pivot" cx="46" cy="5" r="3"/>' +
+          '<path class="arm-line" d="M46 5 L44 26 L36 33"/>' +
+          '<rect class="head" x="32.5" y="31" width="5" height="4" rx="0.8" transform="rotate(-40 35 33)"/>' +
+        '</g>' +
       '</svg>';
-    // Pick at the moment of the click, so each press can be different.
-    vinyl.addEventListener("click", function () {
-      vinyl.href = PICKS[Math.floor(Math.random() * PICKS.length)];
+    document.body.insertBefore(player, document.body.firstChild);
+
+    var yt = null, ytReady = false, wantPlay = false;
+    function pick() { return SONGS[Math.floor(Math.random() * SONGS.length)]; }
+    function loadYouTube() {
+      var holder = document.createElement("div");
+      holder.id = "yt-player";
+      holder.className = "yt-hidden";
+      document.body.appendChild(holder);
+      window.onYouTubeIframeAPIReady = function () {
+        yt = new YT.Player("yt-player", {
+          height: "1", width: "1", videoId: pick(),
+          playerVars: { autoplay: 1, playsinline: 1 },
+          events: {
+            onReady: function () { ytReady = true; if (wantPlay) yt.playVideo(); },
+            onStateChange: function (e) { if (e.data === 0) yt.loadVideoById(pick()); }   // song ended: next random one
+          }
+        });
+      };
+      var s = document.createElement("script");
+      s.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(s);
+    }
+    player.addEventListener("click", function () {
+      if (!SONGS.length) { window.open(CHANNEL, "_blank", "noopener"); return; }
+      var playing = player.getAttribute("aria-pressed") === "true";
+      player.setAttribute("aria-pressed", playing ? "false" : "true");   // CSS swings the needle
+      if (playing) { wantPlay = false; if (ytReady) yt.pauseVideo(); return; }
+      wantPlay = true;
+      if (!yt) loadYouTube();
+      else if (ytReady) yt.loadVideoById(pick());
     });
-    document.body.insertBefore(vinyl, document.body.firstChild);
 
     // If the device setting changes and you haven't chosen yourself, follow it.
     media.addEventListener("change", render);
