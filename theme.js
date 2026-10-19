@@ -76,7 +76,7 @@
     // SONGS holds YouTube video IDs: the part after "v=" in a music.youtube.com/watch?v=... link.
     // Until songs are added, clicking opens the YouTube Music channel instead.
     var SONGS = [
-      // "dQw4w9WgXcQ",
+      "ZoSD4l32m2I",
     ];
     var CHANNEL = "https://music.youtube.com/@itshravanlad";
 
@@ -117,10 +117,10 @@
       window.onYouTubeIframeAPIReady = function () {
         yt = new YT.Player("yt-player", {
           height: "1", width: "1", videoId: pick(),
-          playerVars: { autoplay: 1, playsinline: 1 },
+          playerVars: { autoplay: 1, playsinline: 1, start: 28 },
           events: {
             onReady: function () { ytReady = true; if (wantPlay) yt.playVideo(); },
-            onStateChange: function (e) { if (e.data === 0) yt.loadVideoById(pick()); }   // song ended: next random one
+            onStateChange: function (e) { if (e.data === 0) yt.loadVideoById({ videoId: pick(), startSeconds: 28 }); }   // song ended: next random one
           }
         });
       };
@@ -135,7 +135,7 @@
       if (playing) { wantPlay = false; if (ytReady) yt.pauseVideo(); return; }
       wantPlay = true;
       if (!yt) loadYouTube();
-      else if (ytReady) yt.loadVideoById(pick());
+      else if (ytReady) yt.playVideo();
     });
 
     // If the device setting changes and you haven't chosen yourself, follow it.
