@@ -86,94 +86,108 @@ function applyPhoto(img, name) {
   img.src = photoUrl(name);
 }
 
-const img = document.getElementById("hero-img");
+// The site swaps pages in place (theme.js) so the music keeps playing, which means this file
+// runs once but pages come and go. initPage() sets up whatever page is showing, and stopHero
+// shuts down the last page's photo timer and click listener first.
+let stopHero = null;
 
-if (img && PHOTOS.length > 1) {
-  // Respect people who ask their device to reduce motion: no automatic rotating.
-  // (Clicking still changes the photo, because that is the visitor's own choice.)
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function initPage() {
+  if (stopHero) { stopHero(); stopHero = null; }
+  const img = document.getElementById("hero-img");
 
-  // ---- random, with no repeats until every photo has shown ----
-  // Shuffle the whole list like a deck of cards and deal it out. Only when the deck runs out
-  // is it reshuffled, so every photo appears once before any photo appears twice. The new
-  // deck is checked so its first photo is never the one that just showed.
-  function shuffle(list) {
-    for (let i = list.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [list[i], list[j]] = [list[j], list[i]];   // swap two items
+  if (img && PHOTOS.length > 1) {
+    // Respect people who ask their device to reduce motion: no automatic rotating.
+    // (Clicking still changes the photo, because that is the visitor's own choice.)
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // ---- random, with no repeats until every photo has shown ----
+    // Shuffle the whole list like a deck of cards and deal it out. Only when the deck runs out
+    // is it reshuffled, so every photo appears once before any photo appears twice. The new
+    // deck is checked so its first photo is never the one that just showed.
+    function shuffle(list) {
+      for (let i = list.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [list[i], list[j]] = [list[j], list[i]];   // swap two items
+      }
+      return list;
     }
-    return list;
-  }
 
-  let deck = shuffle(PHOTOS.slice());
-  let current = deck.shift();       // the photo showing now
-  applyPhoto(img, current);
+    let deck = shuffle(PHOTOS.slice());
+    let current = deck.shift();       // the photo showing now
+    applyPhoto(img, current);
 
-  function nextName() {
-    if (deck.length === 0) {
-      deck = shuffle(PHOTOS.slice());
-      if (deck[0] === current) deck.push(deck.shift());   // no repeat across the reshuffle
+    function nextName() {
+      if (deck.length === 0) {
+        deck = shuffle(PHOTOS.slice());
+        if (deck[0] === current) deck.push(deck.shift());   // no repeat across the reshuffle
+      }
+      return deck.shift();
     }
-    return deck.shift();
-  }
 
-  // Quietly download the next two photos so each swap is instant.
-  function preloadAhead() {
-    if (deck.length < 2) return;   // they are fetched as soon as the new deck exists
-    deck.slice(0, 2).forEach((name) => { new Image().src = photoUrl(name); });
-  }
-  preloadAhead();
+    // Quietly download the next two photos so each swap is instant.
+    function preloadAhead() {
+      if (deck.length < 2) return;   // they are fetched as soon as the new deck exists
+      deck.slice(0, 2).forEach((name) => { new Image().src = photoUrl(name); });
+    }
+    preloadAhead();
 
-  // Show the next photo. We load it first, so the swap is instant and never blank.
-  function showNext() {
-    const next = nextName();
-    const loader = new Image();
-    loader.onload = () => {
-      applyPhoto(img, next);   // instant swap, no fade
-      current = next;
-      preloadAhead();
-    };
-    loader.onerror = () => {};  // if one photo fails to load, just skip it
-    loader.src = photoUrl(next);
-  }
+    // Show the next photo. We load it first, so the swap is instant and never blank.
+    function showNext() {
+      const next = nextName();
+      const loader = new Image();
+      loader.onload = () => {
+        applyPhoto(img, next);   // instant swap, no fade
+        current = next;
+        preloadAhead();
+      };
+      loader.onerror = () => {};  // if one photo fails to load, just skip it
+      loader.src = photoUrl(next);
+    }
 
-  // The automatic timer: each wait is a fresh random length between MIN and MAX.
-  let timer = null;
-  function startTimer() {
-    if (reduceMotion) return;
-    clearTimeout(timer);
-    const wait = (MIN_SECONDS + Math.random() * (MAX_SECONDS - MIN_SECONDS)) * 1000;
-    timer = setTimeout(() => { showNext(); startTimer(); }, wait);
-  }
-  startTimer();
-
-  // Jump to the next photo now, and start a new countdown.
-  function skip() {
-    showNext();
+    // The automatic timer: each wait is a fresh random length between MIN and MAX.
+    let timer = null;
+    function startTimer() {
+      if (reduceMotion) return;
+      clearTimeout(timer);
+      const wait = (MIN_SECONDS + Math.random() * (MAX_SECONDS - MIN_SECONDS)) * 1000;
+      timer = setTimeout(() => { showNext(); startTimer(); }, wait);
+    }
     startTimer();
-  }
 
-  // Clicking or tapping anywhere on the home page changes the photo (field.js also sends a
-  // ripple from the same click). Links, buttons and selecting text are left alone.
-  document.addEventListener("click", (e) => {
-    if (e.target.closest("a, button")) return;
-    if (String(window.getSelection())) return;
-    skip();
-  });
+    // Jump to the next photo now, and start a new countdown.
+    function skip() {
+      showNext();
+      startTimer();
+    }
 
-  // Keyboard: Enter or Space while the photo is focused.
-  const hero = img.parentElement;
-  hero.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();   // stop Space from scrolling the page
+    // Clicking or tapping anywhere on the home page changes the photo (field.js also sends a
+    // ripple from the same click). Links, buttons and selecting text are left alone.
+    function onClick(e) {
+      if (e.target.closest("a, button")) return;
+      if (String(window.getSelection())) return;
       skip();
     }
+    document.addEventListener("click", onClick);
+
+    // Keyboard: Enter or Space while the photo is focused.
+    const hero = img.parentElement;
+    hero.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();   // stop Space from scrolling the page
+        skip();
+      }
+    });
+
+    stopHero = () => { clearTimeout(timer); document.removeEventListener("click", onClick); };
+  }
+
+  // Turn each email into a real clickable mailto: link.
+  // The address is stored in two pieces in the HTML (data-user and data-domain) so simple
+  // bots reading the page text don't find a complete address.
+  document.querySelectorAll("a.email").forEach((a) => {
+    a.href = "mailto:" + a.dataset.user + "@" + a.dataset.domain;
   });
 }
 
-// Turn each email into a real clickable mailto: link.
-// The address is stored in two pieces in the HTML (data-user and data-domain) so simple
-// bots reading the page text don't find a complete address.
-document.querySelectorAll("a.email").forEach((a) => {
-  a.href = "mailto:" + a.dataset.user + "@" + a.dataset.domain;
-});
+initPage();
+document.addEventListener("page:load", initPage);   // sent by theme.js after each page swap

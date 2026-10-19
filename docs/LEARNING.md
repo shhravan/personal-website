@@ -152,3 +152,9 @@ What each slice taught, in plain English.
 
 ### Switch click sound
 - The light switch plays a short click made with the Web Audio API: a 25 ms noise burst through a high-pass filter (the snap) plus a falling low tone (the thump). No audio file, so nothing extra to download and nothing for the security policy to allow.
+
+## Shared layout + music that survives page changes
+- A normal link click throws the whole page away, including the hidden YouTube player, so the song stops. The fix: for links to our own pages, JavaScript fetches the next page in the background (`fetch`), pulls out its `<main>`, swaps it in, and changes the address bar with `history.pushState` so the URL, back button and bookmarks still work. The top bar and player are never reloaded.
+- Because scripts no longer re-run on every page, page code listens for a custom `page:load` event and sets itself up again (and cleans up the old page's timers first).
+- Every section page now reuses the home page's skeleton, so new pages get the look for free.
+

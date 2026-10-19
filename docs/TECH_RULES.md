@@ -22,9 +22,9 @@ index.html          home page
 about/index.html    each page is a folder with an index.html (clean URLs: /about/)
 work/  blog/  photography/  rabbit-hole/
 styles.css          one shared stylesheet
-script.js           home page scripts (hero rotation, email links)
-field.js            the letter field behind the home page (WebGL)
-theme.js            light/dark mode and the light switch drawing, loaded in the <head> of every page
+script.js           page scripts (hero rotation, email links); loaded on every page, sets up again on each page swap
+field.js            the letter field behind every page (WebGL)
+theme.js            light/dark mode, light switch, record player, and in-place page swaps so music keeps playing; in the <head> of every page
 images/             hero/, film/, blog/, ...
 images/logo.png     name mark (mask)
 docs/               PRD, DESIGN, TECH_RULES, todo, LEARNING, SECURITY_*
@@ -40,6 +40,7 @@ docs/               PRD, DESIGN, TECH_RULES, todo, LEARNING, SECURITY_*
 6b. Every page carries the Content-Security-Policy meta tag; a new outside service must be added to it on every page (see docs/SECURITY_RUNBOOK.md).
 6c. When CSS or JS changes, bump the `?v=` number on its links in every page so browsers fetch the new file.
 6d. Keep the docs current: any PR that changes behavior or design updates PRD/DESIGN/TECH_RULES/todo and adds a LEARNING.md note.
+6e. Every page copies the home page head and body skeleton: `<a class="logo">`, `<main class="col ...">`, the `.foot` line, and field.js + script.js at the end. Page swaps (theme.js) replace only `.logo` and `<main>`, so anything a page needs must live inside `<main>`; page code sets itself up again on the `page:load` event.
 7. Comments in code explain *why*, in plain English, since Shravan is learning.
 8. Check each page in a browser before opening a PR (screenshot from the cloud container, plus the live GitHub Pages link once deployed).
 

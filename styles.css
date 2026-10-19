@@ -191,7 +191,7 @@ nav li { margin: 0.05rem 0; }
 @media (min-width: 48rem) {
   /* zoom: 0.8 shows the home page at 80% size (as if the browser were zoomed out), so it fits
      on one screen. Widths and spacing are divided by 0.8 so the layout keeps its proportions. */
-  main.home {
+  main.col {
     zoom: 0.8;
     width: clamp(25rem, 41.667vw, 40rem);
     max-width: none;
@@ -201,7 +201,7 @@ nav li { margin: 0.05rem 0; }
 }
 /* On large screens the space above grows with the window height (about 18%). */
 @media (min-width: 64rem) {
-  main.home { margin-top: calc(100vh / 7); }
+  main.col { margin-top: calc(100vh / 7); }
 }
 
 /* On phones the photo gets a taller shape. */
@@ -209,8 +209,12 @@ nav li { margin: 0.05rem 0; }
   .home .hero { aspect-ratio: 4 / 3; }
 }
 
-/* Stub pages ("coming soon") */
-.back { display: inline-block; margin-bottom: 2rem; }
+/* ---- section pages (about, work, ...) ----
+   Same column, top bar, letter field and sign-off as home, just without the photo. */
+.page h1 { font-size: 1.6rem; font-weight: 500; margin: 0 0 1rem; }
+.page .back { display: inline-block; margin-bottom: 1.5rem; }
+.page .lede { color: var(--soft); }
+a.logo { display: block; }   /* the name mark is a link home */
 
 /* ---- the letter field behind the home page (drawn by field.js) ----
    Fixed to the window, behind all content, and it never catches clicks itself. */
@@ -269,14 +273,14 @@ nav li { margin: 0.05rem 0; }
 .yt-hidden, #yt-player { position: fixed; width: 1px; height: 1px; left: -10px; bottom: 0; opacity: 0; pointer-events: none; }
 
 /* ---- home page centered in the window, both ways ---- */
-body:has(main.home) {
+body:has(main.col) {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 @media (min-width: 48rem) {
-  body:has(main.home) main.home { margin: 0 auto !important; padding: 4.5rem 0 3.5rem; }
+  body:has(main.col) main.col { margin: 0 auto !important; padding: 4.5rem 0 3.5rem; }
 }
 
 /* ---- top bar keeps its size when the browser is zoomed ----
@@ -298,7 +302,7 @@ body:has(main.home) {
   .logo { height: 1.9rem; top: 1.15rem; }
   .switch svg { width: 1.4rem; height: 2rem; }
   .vinyl svg { width: 2.37rem; height: 2rem; }
-  main.home { padding: 5.75rem 1.75rem 4rem; }
+  main.col { padding: 5.75rem 1.75rem 4rem; }
   .home .hero { aspect-ratio: 4 / 3; margin-bottom: 2rem; }
   .intro p { margin-bottom: 0.7rem; }
   .links { margin-top: 2rem; }
