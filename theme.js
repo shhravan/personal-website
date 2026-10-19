@@ -70,6 +70,35 @@
       render();
     });
 
+    // ---- the record player, top right ----
+    // A spinning vinyl. Clicking it opens a random pick from the list below on YouTube Music,
+    // in a new tab. (YouTube Music has no public API for a personal site, so the picks are a
+    // hand-made list: add song or playlist links to it.)
+    var PICKS = [
+      "https://music.youtube.com/@itshravanlad"
+    ];
+    var vinyl = document.createElement("a");
+    vinyl.className = "vinyl";
+    vinyl.target = "_blank";
+    vinyl.rel = "noopener";
+    vinyl.setAttribute("aria-label", "play something i like (opens YouTube Music)");
+    vinyl.title = "play something i like";
+    vinyl.href = PICKS[0];
+    vinyl.innerHTML =
+      '<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">' +
+        '<circle class="disc" cx="20" cy="20" r="19"/>' +
+        '<circle class="groove" cx="20" cy="20" r="15.5"/>' +
+        '<circle class="groove" cx="20" cy="20" r="12.5"/>' +
+        '<path class="shine" d="M8 12 A14 14 0 0 1 16 6.5"/>' +
+        '<circle class="label" cx="20" cy="20" r="7"/>' +
+        '<circle class="hole" cx="20" cy="20" r="1.3"/>' +
+      '</svg>';
+    // Pick at the moment of the click, so each press can be different.
+    vinyl.addEventListener("click", function () {
+      vinyl.href = PICKS[Math.floor(Math.random() * PICKS.length)];
+    });
+    document.body.insertBefore(vinyl, document.body.firstChild);
+
     // If the device setting changes and you haven't chosen yourself, follow it.
     media.addEventListener("change", render);
   });

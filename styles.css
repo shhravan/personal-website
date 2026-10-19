@@ -201,7 +201,7 @@ nav li { margin: 0.05rem 0; }
 }
 /* On large screens the space above grows with the window height (about 18%). */
 @media (min-width: 64rem) {
-  main.home { margin-top: calc(100vh / 6); }
+  main.home { margin-top: calc(100vh / 7); }
 }
 
 /* On phones the photo gets a taller shape. */
@@ -235,4 +235,37 @@ nav li { margin: 0.05rem 0; }
   background: var(--ink);
   -webkit-mask: url("images/logo.png") center / contain no-repeat;
   mask: url("images/logo.png") center / contain no-repeat;
+}
+
+/* ---- the record player (added by theme.js): top right, mirrors the light switch ---- */
+.vinyl {
+  position: fixed;
+  top: 0.55rem;
+  right: 0.7rem;
+  z-index: 10;
+  padding: 0.3rem;
+  line-height: 0;
+  border-radius: 50%;
+}
+.vinyl svg { width: 2.4rem; height: 2.4rem; display: block; animation: spin 4s linear infinite; }
+.vinyl:hover svg { animation-duration: 1.6s; }   /* speeds up when you point at it */
+.vinyl .disc { fill: var(--ink); }
+.vinyl .groove { fill: none; stroke: var(--bg); stroke-width: 0.5; opacity: 0.35; }
+.vinyl .shine { fill: none; stroke: var(--bg); stroke-width: 1.2; stroke-linecap: round; opacity: 0.5; }
+.vinyl .label { fill: var(--link); }
+.vinyl .hole { fill: var(--bg); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .vinyl svg { animation: none; } }
+
+/* ---- top bar keeps its size when the browser is zoomed ----
+   On wider screens the switch, logo and record are sized in vw (a share of the window width).
+   Zooming the browser changes how many CSS pixels fit in the window, so vw-sized things stay
+   the same size on screen. (Numbers are the rem sizes as they look on a 1440px-wide window.) */
+@media (min-width: 48rem) {
+  .switch { top: 0.61vw; left: 0.78vw; padding: 0.33vw; gap: 0.5vw; border-radius: 0.33vw; }
+  .switch svg { width: 1.89vw; height: 2.67vw; }
+  .switch-text { font-size: 0.69vw; }
+  .logo { top: 1.17vw; height: 2.67vw; }
+  .vinyl { top: 0.61vw; right: 0.78vw; padding: 0.33vw; }
+  .vinyl svg { width: 2.67vw; height: 2.67vw; }
 }
