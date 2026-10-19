@@ -63,7 +63,31 @@
     }
     render();
 
+    // A short mechanical "click" made in the browser with the Web Audio API (no sound file):
+    // a tiny burst of noise for the snap plus a quick low thump for the body of the switch.
+    var audio = null;
+    function clickSound(on) {
+      try {
+        audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+        var now = audio.currentTime, out = audio.createGain();
+        out.gain.value = 0.35;
+        out.connect(audio.destination);
+        var len = Math.floor(audio.sampleRate * 0.025), buf = audio.createBuffer(1, len, audio.sampleRate), d = buf.getChannelData(0);
+        for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 4);
+        var snap = audio.createBufferSource(), hp = audio.createBiquadFilter();
+        snap.buffer = buf; hp.type = "highpass"; hp.frequency.value = on ? 2400 : 1800;
+        snap.connect(hp); hp.connect(out); snap.start(now);
+        var thump = audio.createOscillator(), tg = audio.createGain();
+        thump.frequency.setValueAtTime(on ? 190 : 150, now);
+        thump.frequency.exponentialRampToValueAtTime(60, now + 0.06);
+        tg.gain.setValueAtTime(0.6, now);
+        tg.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+        thump.connect(tg); tg.connect(out); thump.start(now); thump.stop(now + 0.08);
+      } catch (e) {}   // no sound support: the switch still works silently
+    }
+
     btn.addEventListener("click", function () {
+      clickSound(isDark());   // turning the lights on sounds a touch brighter
       var next = isDark() ? "light" : "dark";
       root.setAttribute("data-theme", next);
       save(next);
