@@ -57,7 +57,7 @@ All on one page, no camera details:
 - Later: the "fall in" transition from the home link into this page, inspired by somehowliving.tech.
 
 ## Letter field (home page)
-A faint field of small letters (EB Garamond, in the text color) covers the whole window behind the home page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A tiled sea rolls along the bottom of the window: cells under a moving sine-wave surface become blue tiles shaded by depth, with white foam at the crests and contrasting letters on top. It is fainter behind the content column. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
+A faint field of small letters (EB Garamond, in the text color) covers the whole window behind the home page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A very subtle monochrome sea rolls along the bottom: faint tiles in the text color (dark on cream, light in dark mode), a thin flowing foam line at the crest, nearly invisible behind the writing so all text stays readable. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
 
 ## Motion
 Almost none in v1. Allowed: the hero image rotation, link hover states, the blog hover image, the green banner grain, and the film roll on the photography page. Everything else is later.
