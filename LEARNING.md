@@ -112,3 +112,9 @@ What each slice taught, in plain English.
 
 ### Darker field, quiet zone behind the writing
 - Stronger letters (opacity 0.14 light, 0.16 dark) made the field visible, but it fought the text. The shader now measures each cell's distance from the content column (`uQuiet`) and fades letters to about a third there, with a soft edge (`smoothstep`) so there is no visible box.
+
+### The Great Wave in letters
+- **Brightness map:** the painting was shrunk to 480px, turned grayscale and inverted (`images/field/wave.png`), so white means "dark ink here". Each cell reads its spot in that map and sets its letter's strength from it; that is how the wave appears out of the text.
+- **Making it move:** before reading the map, each cell's position is nudged by a few slow sine waves that depend on time. The picture underneath sways, so the water appears to roll, while the letters themselves stay on the grid.
+- **Two scripts:** the atlas now holds Latin and Devanagari letters. The Devanagari font request asks only for those letters (`&text=`), and each placeholder "word" picks one script at random.
+- **Contrast matters:** the first version was barely recognizable; widening the gap between strong and faint letters (`0.05 + 3.2 * ink^1.7`) made the wave readable.

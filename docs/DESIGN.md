@@ -56,7 +56,7 @@ All on one page, no camera details:
 - Later: the "fall in" transition from the home link into this page, inspired by somehowliving.tech.
 
 ## Letter field (home page)
-A faint field of small letters (EB Garamond, in the text color) covers the whole window behind the home page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). The letters are random placeholder text until Shravan supplies words. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
+A faint field of small letters (EB Garamond, in the text color) covers the whole window behind the home page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). The field forms Hokusai's Great Wave (letters strong where the painting is dark, faint in foam and sky, from `images/field/wave.png`), gently rolled by slow sine motion so the water moves. Letters are a random mix of English and Devanagari placeholder words until Shravan supplies real ones. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
 
 ## Motion
 Almost none in v1. Allowed: the hero image rotation, link hover states, the blog hover image, the green banner grain, and the film roll on the photography page. Everything else is later.
