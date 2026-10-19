@@ -136,3 +136,6 @@ What each slice taught, in plain English.
 
 ### Realistic swash
 - The cycle is lopsided: a fast surge (ease-out over 27% of a 4.8 s period) and a slow backwash. A noise-based time offset (`lag`) per column makes parts of the shore arrive at different moments, and `strength` gives each wave its own height.
+
+### Logo that follows the theme
+- The logo image is used as a CSS **mask**: only its shape matters, and the fill is `background: var(--ink)`, so it is dark on cream and light in dark mode with no second file.
