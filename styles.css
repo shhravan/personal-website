@@ -438,6 +438,5 @@ body::before {
   .role summary { align-items: flex-start; }
   .dates { font-size: 0.75rem; padding-top: 0.15rem; }
 }
-.title-link { color: inherit; text-decoration: none; }   /* names that link to the organisation: no underline, underline on hover */
-.title-link:hover { text-decoration: underline; }
+.title-link { color: inherit; }   /* names that link to the organisation: same look, underlined like every link */
 .foot em { display: inline-block; }
