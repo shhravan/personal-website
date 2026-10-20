@@ -92,7 +92,7 @@ function applyPhoto(img, name) {
 let stopHero = null;
 let fontTimer = null;
 
-// "opticsbyshrvn" in the last line changes font every 1.5 s, to make people curious enough to
+// "opticsbyshrvn" in the last line changes font every 2 s, to make people curious enough to
 // click it. The fonts are loaded in each page's <head>, only for these letters.
 // Each entry: [family, style, weight]. The full list, with notes, is in docs/DESIGN.md.
 const OPTICS_FONTS = [
@@ -109,11 +109,21 @@ function initPage() {
   clearInterval(fontTimer);
   const optics = document.querySelector(".foot em");
   if (optics && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    let f = 0;
+    // Same idea as the photos: shuffle the fonts like a deck and deal them out, so every font
+    // shows once before any repeats, and a new deck never starts with the font just shown.
+    let fontDeck = [], lastFont = -1;
     fontTimer = setInterval(() => {
-      f = (f + 1 + Math.floor(Math.random() * (OPTICS_FONTS.length - 1))) % OPTICS_FONTS.length;   // never the same twice in a row
-      [optics.style.fontFamily, optics.style.fontStyle, optics.style.fontWeight] = OPTICS_FONTS[f];
-    }, 1500);
+      if (fontDeck.length === 0) {
+        fontDeck = OPTICS_FONTS.map((_, i) => i);
+        for (let i = fontDeck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [fontDeck[i], fontDeck[j]] = [fontDeck[j], fontDeck[i]];
+        }
+        if (fontDeck[0] === lastFont) fontDeck.push(fontDeck.shift());
+      }
+      lastFont = fontDeck.shift();
+      [optics.style.fontFamily, optics.style.fontStyle, optics.style.fontWeight] = OPTICS_FONTS[lastFont];
+    }, 2000);
   }
   const img = document.getElementById("hero-img");
 
