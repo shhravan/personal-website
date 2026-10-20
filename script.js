@@ -99,7 +99,7 @@ const OPTICS_FONTS = [
   ["'Instrument Serif', serif", "italic", 400], ["'Gloock', serif", "normal", 400],
   ["'Bodoni Moda', serif", "italic", 400], ["'Italiana', serif", "normal", 400],
   ["'Young Serif', serif", "normal", 400], ["'Fraunces', serif", "italic", 300],
-  ["'Syne', sans-serif", "normal", 800], ["'Unbounded', sans-serif", "normal", 300],
+  ["'Unbounded', sans-serif", "normal", 300],
   ["'Shrikhand', serif", "normal", 400], ["'Jacquard 12', serif", "normal", 400],
   ["'Doto', monospace", "normal", 700], ["'Pixelify Sans', sans-serif", "normal", 400],
 ];
