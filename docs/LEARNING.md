@@ -167,6 +167,5 @@ What each slice taught, in plain English.
 
 ## Water you can touch, a font that won't sit still
 - Hovering over the water drops "splash" ripples: JavaScript keeps a short list of where and when the cursor touched the water and hands it to the shader, which draws expanding rings. Sideways motion adds to a "flow" offset that slides the water's patterns, then slowly settles.
-- The light-mode wave line is drawn per pixel: only the top sliver of the water's first row, plus short sides wherever the next column's water is lower, so it reads as one thin outline.
 - Google Fonts' `text=` option downloads only the letters you list, so twelve display fonts for "opticsbyshrvn" cost very little. script.js swaps the font every 0.8 s.
 
