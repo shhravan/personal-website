@@ -13,6 +13,29 @@ Goal: super simple, with good taste. Personality comes from specific details (th
 - Lowercase headings and links. Body text about 18px with generous line height.
 - Hierarchy through size and weight only.
 
+## Font library (for future use)
+All from Google Fonts (free). EB Garamond stays the site's only text font; these are for small, playful moments. The first set is what "opticsbyshrvn" cycles through.
+
+**In use: the "opticsbyshrvn" set** (chosen with Shravan for variety: each switch should look clearly different)
+| Font | Style | Feel |
+|---|---|---|
+| Instrument Serif | italic | elegant, editorial |
+| Gloock | regular | chunky, characterful serif |
+| Bodoni Moda | italic | classic high-contrast fashion serif |
+| Italiana | regular | thin, airy, art deco |
+| Young Serif | regular | bold, friendly old-style |
+| Fraunces | italic, light (opsz 144) | soft, curly, "wonky" |
+| Syne | extra-bold 800 | very wide, graphic |
+| Unbounded | light 300 | wide, rounded, futuristic |
+| Major Mono Display | regular | thin monospace, all caps |
+| Jacquard 12 | regular | pixel blackletter |
+| Monoton | regular | neon-sign stripes |
+| Pixelify Sans | regular | pixel, echoes the switch's Silkscreen label |
+
+**Also used:** EB Garamond (all text), Noto Serif Devanagari (Devanagari letters), Silkscreen (the switch's on/off label).
+
+**Looked at and set aside** (fine fonts, but very common or too alike): Playfair Display, DM Serif Display, Cormorant Garamond, Space Mono, Bricolage Grotesque.
+
 ## Color
 - **Background:** creamy (`#f3ecdc`, inspired by somehowliving.tech).
 - **Text:** near-black ink, with a softer gray for dates and captions.
@@ -31,7 +54,7 @@ Content column, centered vertically and horizontally in the window (`zoom: 0.8` 
 1. **Rounded hero photo** (1.9:1, 4:3 on phones). Swaps every 1.2 s, shuffled so none repeats until all have shown, never twice in a row, instant swap. Each photo framed by hand (`FOCUS` in `script.js`). Click anywhere on the page (not links/buttons, not while selecting text) to skip to the next.
 2. **Intro**, Shravan's words: "student at cornell, intellectually curious about things as they come." / "i take cool photos, have a genre-bending music taste, play few instruments. this is the one place to get to know me."
 3. **Links** (about, work, blog, photography, rabbit hole) on the left; profile icons stacked on the right (LinkedIn, X, YouTube Music, GitHub), right edge aligned with the photo. Icons from Simple Icons (CC0).
-4. **Last line**, centered and a little larger: "for if you have taste, *opticsbyshrvn*" (Instagram). The word "opticsbyshrvn" switches to a different display font every 0.8 s (12 Google Fonts, loaded only for those letters) to invite a click; it stays still for reduced-motion users.
+4. **Last line**, centered and a little larger: "for if you have taste, *opticsbyshrvn*" (Instagram). The word "opticsbyshrvn" switches to a different display font every 0.8 s (the font set in "Font library" below, loaded only for those letters) to invite a click; it stays still for reduced-motion users.
 
 ## Every page shares the home page's look
 About, work, blog, photography and rabbit hole (and any page added later) use the same top bar, letter field and shore, centered column, typography and the "for if you have taste" sign-off. Only the shuffling photo is home-only. The name mark links home.
