@@ -385,7 +385,6 @@
   var flow = { x: 0, y: 0 }, flowVel = 0;
   function toCells(e) { return { x: e.clientX / CELL_W, y: e.clientY / CELL_H }; }
   window.addEventListener("pointermove", function (e) {
-    var prevX = target.x;
     target = toCells(e);
     if (target.y > shoreRow - rows * 0.2) {   // near the bottom, where the water is
       var moved = Math.abs(target.x - lastSplash.x) + Math.abs(target.y - lastSplash.y);
@@ -394,7 +393,6 @@
         if (splashes.length > MAX_SPLASH) splashes.shift();
         lastSplash = { x: target.x, y: target.y, t: now };
       }
-      if (prevX > -900) flowVel += (target.x - prevX) * 0.6;   // drag left or right to steer the current
     }
     if (hoverTarget === 0) { mouse.x = target.x; mouse.y = target.y; }   // appear at the cursor, not glide in
     hoverTarget = 1;
