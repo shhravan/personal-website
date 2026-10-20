@@ -54,7 +54,7 @@ Content column, centered vertically and horizontally in the window (`zoom: 0.8` 
 1. **Rounded hero photo** (1.9:1, 4:3 on phones). Swaps every 2 s, shuffled so none repeats until all have shown, never twice in a row, instant swap. Each photo framed by hand (`FOCUS` in `script.js`). Click anywhere on the page (not links/buttons, not while selecting text) to skip to the next.
 2. **Intro**, Shravan's words: "student at cornell, intellectually curious about things as they come." / "i take cool photos, have a genre-bending music taste, play few instruments. this is the one place to get to know me."
 3. **Links** (about, work, blog, photography, rabbit hole) on the left; profile icons stacked on the right (LinkedIn, X, YouTube Music, GitHub), right edge aligned with the photo. Icons from Simple Icons (CC0).
-4. **Last line**, centered and a little larger: just "*opticsbyshrvn*" (Instagram). The word "opticsbyshrvn" switches to a different display font every 3 s (the font set in "Font library" below, loaded only for those letters) to invite a click; it stays still for reduced-motion users.
+4. **Last line**, centered and a little larger: just "*opticsbyshrvn*" (Instagram, underlined). Pointing at it fades in a small note underneath: "my photography ↗". The word "opticsbyshrvn" switches to a different display font every 3 s (the font set in "Font library" below, loaded only for those letters) to invite a click; it stays still for reduced-motion users.
 
 ## Every page shares the home page's look
 About, work, blog, photography and rabbit hole (and any page added later) use the same top bar, letter field and shore, centered column, typography and the "for if you have taste" sign-off. Only the shuffling photo is home-only. The name mark links home.
