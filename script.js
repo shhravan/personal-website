@@ -91,6 +91,7 @@ function applyPhoto(img, name) {
 // shuts down the last page's photo timer and click listener first.
 let stopHero = null;
 let fontTimer = null;
+let nextFont = () => {};   // changes "opticsbyshrvn" to the next font (set up in initPage)
 
 // "opticsbyshrvn" in the last line changes font every 2 s, to make people curious enough to
 // click it. The fonts are loaded in each page's <head>, only for these letters.
@@ -107,12 +108,13 @@ const OPTICS_FONTS = [
 function initPage() {
   if (stopHero) { stopHero(); stopHero = null; }
   clearInterval(fontTimer);
+  nextFont = () => {};
   const optics = document.querySelector(".foot em");
   if (optics && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     // Same idea as the photos: shuffle the fonts like a deck and deal them out, so every font
     // shows once before any repeats, and a new deck never starts with the font just shown.
     let fontDeck = [], lastFont = -1;
-    fontTimer = setInterval(() => {
+    nextFont = () => {
       if (fontDeck.length === 0) {
         fontDeck = OPTICS_FONTS.map((_, i) => i);
         for (let i = fontDeck.length - 1; i > 0; i--) {
@@ -123,7 +125,10 @@ function initPage() {
       }
       lastFont = fontDeck.shift();
       [optics.style.fontFamily, optics.style.fontStyle, optics.style.fontWeight] = OPTICS_FONTS[lastFont];
-    }, 2000);
+    };
+    // On the home page the photo swaps call nextFont(), so photo and font change together.
+    // Pages without the photo run their own 2-second timer.
+    if (!document.getElementById("hero-img")) fontTimer = setInterval(nextFont, 2000);
   }
   const img = document.getElementById("hero-img");
 
@@ -169,6 +174,7 @@ function initPage() {
       const loader = new Image();
       loader.onload = () => {
         applyPhoto(img, next);   // instant swap, no fade
+      nextFont();              // the font under the page changes at the same moment
         current = next;
         preloadAhead();
       };
