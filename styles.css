@@ -449,9 +449,13 @@ body::before {
   pointer-events: none;
 }
 .foot a:hover + .reveal, .foot a:focus-visible + .reveal { opacity: 1; transform: none; }
-/* a small arrow up at the top right of the word, shown together with the note */
+/* A thin drawn arrow (an SVG, so it looks the same on every device; the ↗ character turns into
+   an emoji on some phones). Sits at the top right of the word, in the soft grey. */
 .foot .arrow {
-  display: inline-block; font-size: 0.7em; vertical-align: super; margin-left: 0.1em;
-  text-decoration: none; opacity: 0; transition: opacity 0.25s ease;
+  width: 0.78em; height: 0.78em; margin-left: 0.35em; vertical-align: 0.3em;
+  fill: none; stroke: var(--soft); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
+  opacity: 0; transition: opacity 0.25s ease;
 }
 .foot a:hover .arrow, .foot a:focus-visible .arrow { opacity: 1; }
+/* Phones and tablets have no hover, so there the arrow and note simply stay visible. */
+@media (hover: none) { .foot .arrow, .foot .reveal { opacity: 1; transform: none; } }
