@@ -449,3 +449,9 @@ body::before {
   pointer-events: none;
 }
 .foot a:hover + .reveal, .foot a:focus-visible + .reveal { opacity: 1; transform: none; }
+/* a small arrow up at the top right of the word, shown together with the note */
+.foot .arrow {
+  display: inline-block; font-size: 0.7em; vertical-align: super; margin-left: 0.1em;
+  text-decoration: none; opacity: 0; transition: opacity 0.25s ease;
+}
+.foot a:hover .arrow, .foot a:focus-visible .arrow { opacity: 1; }
