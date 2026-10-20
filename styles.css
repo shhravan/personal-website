@@ -412,12 +412,8 @@ body::before {
 .banner p { position: relative; z-index: 2; margin: 0; color: var(--soft); }
 
 /* panels: each section sits in a soft rounded box, like ronaldleung.co */
-/* Each panel starts with a whisper of the banner's water blue at the top and fades into its
-   normal color by the middle, so the sections feel related to the banner above. */
 .panel {
-  background: linear-gradient(to bottom,
-    color-mix(in srgb, #5f8f99 16%, color-mix(in srgb, var(--ink) 4%, var(--bg))) 0%,
-    color-mix(in srgb, var(--ink) 4%, var(--bg)) 60%);
+  background: color-mix(in srgb, var(--ink) 4%, var(--bg));
   border: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
   border-radius: 0.6rem; padding: 1.1rem 1.3rem 0.9rem;
   margin-bottom: 1.2rem !important;
