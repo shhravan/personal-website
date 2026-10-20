@@ -67,8 +67,8 @@ const FOCUS = {
 };
 
 // How long each photo stays (seconds). Set both the same for a steady pace.
-const MIN_SECONDS = 1.2;
-const MAX_SECONDS = 1.2;
+const MIN_SECONDS = 2;
+const MAX_SECONDS = 2;
 
 // Pick the smaller file when the frame is small enough (phones), the larger one otherwise.
 function photoUrl(name) {
@@ -92,7 +92,7 @@ function applyPhoto(img, name) {
 let stopHero = null;
 let fontTimer = null;
 
-// "opticsbyshrvn" in the last line changes font every 0.8 s, to make people curious enough to
+// "opticsbyshrvn" in the last line changes font every 3 s, to make people curious enough to
 // click it. The fonts are loaded in each page's <head>, only for these letters.
 // Each entry: [family, style, weight]. The full list, with notes, is in docs/DESIGN.md.
 const OPTICS_FONTS = [
@@ -100,8 +100,8 @@ const OPTICS_FONTS = [
   ["'Bodoni Moda', serif", "italic", 400], ["'Italiana', serif", "normal", 400],
   ["'Young Serif', serif", "normal", 400], ["'Fraunces', serif", "italic", 300],
   ["'Syne', sans-serif", "normal", 800], ["'Unbounded', sans-serif", "normal", 300],
-  ["'Major Mono Display', monospace", "normal", 400], ["'Jacquard 12', serif", "normal", 400],
-  ["'Monoton', sans-serif", "normal", 400], ["'Pixelify Sans', sans-serif", "normal", 400],
+  ["'Shrikhand', serif", "normal", 400], ["'Jacquard 12', serif", "normal", 400],
+  ["'Doto', monospace", "normal", 700], ["'Pixelify Sans', sans-serif", "normal", 400],
 ];
 
 function initPage() {
@@ -113,7 +113,7 @@ function initPage() {
     fontTimer = setInterval(() => {
       f = (f + 1 + Math.floor(Math.random() * (OPTICS_FONTS.length - 1))) % OPTICS_FONTS.length;   // never the same twice in a row
       [optics.style.fontFamily, optics.style.fontStyle, optics.style.fontWeight] = OPTICS_FONTS[f];
-    }, 800);
+    }, 3000);
   }
   const img = document.getElementById("hero-img");
 
