@@ -92,7 +92,7 @@ function applyPhoto(img, name) {
 let stopHero = null;
 let fontTimer = null;
 
-// "opticsbyshrvn" in the last line changes font every 3 s, to make people curious enough to
+// "opticsbyshrvn" in the last line changes font every 1.5 s, to make people curious enough to
 // click it. The fonts are loaded in each page's <head>, only for these letters.
 // Each entry: [family, style, weight]. The full list, with notes, is in docs/DESIGN.md.
 const OPTICS_FONTS = [
@@ -113,7 +113,7 @@ function initPage() {
     fontTimer = setInterval(() => {
       f = (f + 1 + Math.floor(Math.random() * (OPTICS_FONTS.length - 1))) % OPTICS_FONTS.length;   // never the same twice in a row
       [optics.style.fontFamily, optics.style.fontStyle, optics.style.fontWeight] = OPTICS_FONTS[f];
-    }, 3000);
+    }, 1500);
   }
   const img = document.getElementById("hero-img");
 
