@@ -256,7 +256,7 @@
         '<svg class="deck-arm" viewBox="0 0 120 300" aria-hidden="true"><defs>' +
           '<linearGradient id="deck-metal" x1="0" x2="1"><stop offset="0" stop-color="#6f6c66"/><stop offset=".45" stop-color="#f4f2ec"/><stop offset=".6" stop-color="#d9d6cf"/><stop offset="1" stop-color="#5f5c57"/></linearGradient>' +
           '<radialGradient id="deck-plinth" cx=".4" cy=".35"><stop offset="0" stop-color="#3a3731"/><stop offset="1" stop-color="#14130f"/></radialGradient>' +
-          '<filter id="deck-drop" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="6" dy="9" stdDeviation="3.5" flood-color="#000" flood-opacity=".55"/></filter></defs>' +
+          '<filter id="deck-drop" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="4" dy="6" stdDeviation="3" flood-color="#000" flood-opacity=".3"/></filter></defs>' +
           '<circle cx="78" cy="30" r="24" fill="url(#deck-plinth)" stroke="#45423b"/><circle cx="78" cy="30" r="15" fill="#1d1b17" stroke="#5a5750"/>' +
           '<g class="deck-swing" filter="url(#deck-drop)">' +
             '<rect x="69" y="-22" width="18" height="24" rx="4" fill="url(#deck-metal)"/><rect x="69" y="-12" width="18" height="2" fill="rgba(0,0,0,.25)"/>' +
