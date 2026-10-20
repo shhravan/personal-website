@@ -438,5 +438,14 @@ body::before {
   .role summary { align-items: flex-start; }
   .dates { font-size: 0.75rem; padding-top: 0.15rem; }
 }
-.title-link { color: inherit; }   /* names that link to the organisation: same look, underlined */
-.foot em { display: inline-block; min-width: 7.5em; text-align: left; }   /* keeps the line from jumping as the font changes */
+.title-link { color: inherit; text-decoration: none; }   /* names that link to the organisation: no underline, underline on hover */
+.title-link:hover { text-decoration: underline; }
+/* The last line is just "opticsbyshrvn"; pointing at it reveals what it is. */
+.foot { position: relative; }
+.foot .reveal {
+  position: absolute; left: 0; right: 0; top: 100%; margin-top: 0.3rem;
+  font-size: 0.8rem; color: var(--soft); letter-spacing: 0.04em;
+  opacity: 0; transform: translateY(-0.2rem); transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+.foot a:hover + .reveal, .foot a:focus-visible + .reveal { opacity: 1; transform: none; }
