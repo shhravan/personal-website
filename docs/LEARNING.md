@@ -165,3 +165,7 @@ What each slice taught, in plain English.
 - The water used to be glued to the bottom of the window. Now field.js works out where the bottom of the *page* is on screen (`scrollHeight - scrollY`) and draws the shore there, so long pages only show it at the end.
 - The banner grain is an SVG noise image (feTurbulence) moved around in jumps with `steps()`, which reads as flicker instead of smooth motion.
 
+## Water you can touch, a font that won't sit still
+- Hovering over the water drops "splash" ripples: JavaScript keeps a short list of where and when the cursor touched the water and hands it to the shader, which draws expanding rings. Sideways motion adds to a "flow" offset that slides the water's patterns, then slowly settles.
+- Google Fonts' `text=` option downloads only the letters you list, so twelve display fonts for "opticsbyshrvn" cost very little. script.js swaps the font every 0.8 s.
+

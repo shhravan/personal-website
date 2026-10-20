@@ -142,7 +142,7 @@ nav li { margin: 0.05rem 0; }
 .social-link:hover { color: var(--link-hover); }
 
 /* centered line at the bottom of the page */
-.foot { text-align: center; color: var(--soft); font-size: 0.9rem; margin: 2.5rem 0 0; }   /* 40px above: sets the sign-off apart from the links */
+.foot { text-align: center; color: var(--soft); font-size: 1.08rem; margin: 2.5rem 0 0; }   /* 40px above: sets the sign-off apart from the links */
 
 /* ---- the light switch (added by theme.js) ----
    A wall switch fixed in the top-left corner of every page. Lever up and "on" is light mode;
@@ -418,7 +418,9 @@ body::before {
   border-radius: 0.6rem; padding: 1.1rem 1.3rem 0.9rem;
   margin-bottom: 1.2rem !important;
 }
-.panel .about-work { margin: 0 0 0.2rem; }
+.panel .about-work { margin: 0 0 0.7rem; }
+.panel .about-work:last-child { margin-bottom: 0.2rem; }
+.about-work strong { color: var(--ink); font-weight: 700; }
 
 /* projects: heading, then stacked cards in the same soft style */
 .projects h2 { padding-left: 1.3rem; }
@@ -436,3 +438,5 @@ body::before {
   .role summary { align-items: flex-start; }
   .dates { font-size: 0.75rem; padding-top: 0.15rem; }
 }
+.title-link { color: inherit; }   /* names that link to the organisation: same look, underlined */
+.foot em { display: inline-block; min-width: 7.5em; text-align: left; }   /* keeps the line from jumping as the font changes */

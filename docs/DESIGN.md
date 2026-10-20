@@ -13,6 +13,29 @@ Goal: super simple, with good taste. Personality comes from specific details (th
 - Lowercase headings and links. Body text about 18px with generous line height.
 - Hierarchy through size and weight only.
 
+## Font library (for future use)
+All from Google Fonts (free). EB Garamond stays the site's only text font; these are for small, playful moments. The first set is what "opticsbyshrvn" cycles through.
+
+**In use: the "opticsbyshrvn" set** (chosen with Shravan for variety: each switch should look clearly different)
+| Font | Style | Feel |
+|---|---|---|
+| Instrument Serif | italic | elegant, editorial |
+| Gloock | regular | chunky, characterful serif |
+| Bodoni Moda | italic | classic high-contrast fashion serif |
+| Italiana | regular | thin, airy, art deco |
+| Young Serif | regular | bold, friendly old-style |
+| Fraunces | italic, light (opsz 144) | soft, curly, "wonky" |
+| Syne | extra-bold 800 | very wide, graphic |
+| Unbounded | light 300 | wide, rounded, futuristic |
+| Major Mono Display | regular | thin monospace, all caps |
+| Jacquard 12 | regular | pixel blackletter |
+| Monoton | regular | neon-sign stripes |
+| Pixelify Sans | regular | pixel, echoes the switch's Silkscreen label |
+
+**Also used:** EB Garamond (all text), Noto Serif Devanagari (Devanagari letters), Silkscreen (the switch's on/off label).
+
+**Looked at and set aside** (fine fonts, but very common or too alike): Playfair Display, DM Serif Display, Cormorant Garamond, Space Mono, Bricolage Grotesque.
+
 ## Color
 - **Background:** creamy (`#f3ecdc`, inspired by somehowliving.tech).
 - **Text:** near-black ink, with a softer gray for dates and captions.
@@ -28,10 +51,10 @@ Top bar (every page), fixed while scrolling, sized in `vw` on wide screens so br
 - the bar is transparent at the top; a soft frosted strip fades in only after scrolling, so content passes under it cleanly
 
 Content column, centered vertically and horizontally in the window (`zoom: 0.8` on wide screens so it fits one screen):
-1. **Rounded hero photo** (1.9:1, 4:3 on phones). Swaps every 0.4–1 s (random length), shuffled so none repeats until all have shown, never twice in a row, instant swap. Each photo framed by hand (`FOCUS` in `script.js`). Click anywhere on the page (not links/buttons, not while selecting text) to skip to the next.
+1. **Rounded hero photo** (1.9:1, 4:3 on phones). Swaps every 1.2 s, shuffled so none repeats until all have shown, never twice in a row, instant swap. Each photo framed by hand (`FOCUS` in `script.js`). Click anywhere on the page (not links/buttons, not while selecting text) to skip to the next.
 2. **Intro**, Shravan's words: "student at cornell, intellectually curious about things as they come." / "i take cool photos, have a genre-bending music taste, play few instruments. this is the one place to get to know me."
 3. **Links** (about, work, blog, photography, rabbit hole) on the left; profile icons stacked on the right (LinkedIn, X, YouTube Music, GitHub), right edge aligned with the photo. Icons from Simple Icons (CC0).
-4. **Last line**, centered: "for if you have taste, *opticsbyshrvn*" (Instagram).
+4. **Last line**, centered and a little larger: "for if you have taste, *opticsbyshrvn*" (Instagram). The word "opticsbyshrvn" switches to a different display font every 0.8 s (the font set in "Font library" below, loaded only for those letters) to invite a click; it stays still for reduced-motion users.
 
 ## Every page shares the home page's look
 About, work, blog, photography and rabbit hole (and any page added later) use the same top bar, letter field and shore, centered column, typography and the "for if you have taste" sign-off. Only the shuffling photo is home-only. The name mark links home.
@@ -73,7 +96,7 @@ All on one page, no camera details:
 - Later: the "fall in" transition from the home link into this page, inspired by somehowliving.tech.
 
 ## Letter field (every page)
-A faint field of small letters (EB Garamond, in the text color) covers the whole window behind every page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A subtle shore along the bottom edge: a faint, realistic shoreline from above: creamy white foam at the edge, pool-blue water (lighter near the edge, deeper further out) with a faint drifting net of light lines like the floor of a pool (caustics, drawn per pixel), low opacity sits at the bottom of the page (not the window, so on long pages it appears as you scroll to the end) and surges up quickly (~1.3 s) and drains back slowly (~3.5 s), with each stretch of shore and each wave a little different, like a beach seen from above, nearly invisible behind the writing. Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
+A faint field of small letters (EB Garamond, in the text color) covers the whole window behind every page, drawn with WebGL by `field.js`. A few letters twinkle. Near the cursor the letters dissolve in a grainy circle; a click sends a ripple outward that brightens and scrambles letters on its wave (the same click changes the photo). A subtle shore along the bottom edge: a faint, realistic shoreline from above: creamy white foam at the edge, pool-blue water (lighter near the edge, deeper further out) with a faint drifting net of light lines like the floor of a pool (caustics, drawn per pixel), low opacity sits at the bottom of the page (not the window, so on long pages it appears as you scroll to the end) and surges up quickly (~1.3 s) and drains back slowly (~3.5 s), with each stretch of shore and each wave a little different, like a beach seen from above, nearly invisible behind the writing. Moving the cursor over the water drops small ripples that spread across it, and dragging sideways pushes the current that way before it settles (the hover circle doesn't erase the water). Not shown for reduced-motion or without WebGL. Inspired by contentarchitecture.dev, written from scratch.
 
 ## Motion
 Deliberate, limited motion: hero photo rotation, the letter field and shore (every page), the light switch lever, the spinning record and tonearm, link hovers, and later the blog hover image, work banner grain and film roll. All of it stops for reduced-motion users.

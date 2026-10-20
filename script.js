@@ -66,9 +66,9 @@ const FOCUS = {
   "view-from-ad-white-house-hill-1930-rmc20": [55, 35, 1],
 };
 
-// Each photo stays a random time between these two (seconds), so there is no rhythm to predict.
-const MIN_SECONDS = 0.4;
-const MAX_SECONDS = 1.0;
+// How long each photo stays (seconds). Set both the same for a steady pace.
+const MIN_SECONDS = 1.2;
+const MAX_SECONDS = 1.2;
 
 // Pick the smaller file when the frame is small enough (phones), the larger one otherwise.
 function photoUrl(name) {
@@ -90,9 +90,31 @@ function applyPhoto(img, name) {
 // runs once but pages come and go. initPage() sets up whatever page is showing, and stopHero
 // shuts down the last page's photo timer and click listener first.
 let stopHero = null;
+let fontTimer = null;
+
+// "opticsbyshrvn" in the last line changes font every 0.8 s, to make people curious enough to
+// click it. The fonts are loaded in each page's <head>, only for these letters.
+// Each entry: [family, style, weight]. The full list, with notes, is in docs/DESIGN.md.
+const OPTICS_FONTS = [
+  ["'Instrument Serif', serif", "italic", 400], ["'Gloock', serif", "normal", 400],
+  ["'Bodoni Moda', serif", "italic", 400], ["'Italiana', serif", "normal", 400],
+  ["'Young Serif', serif", "normal", 400], ["'Fraunces', serif", "italic", 300],
+  ["'Syne', sans-serif", "normal", 800], ["'Unbounded', sans-serif", "normal", 300],
+  ["'Major Mono Display', monospace", "normal", 400], ["'Jacquard 12', serif", "normal", 400],
+  ["'Monoton', sans-serif", "normal", 400], ["'Pixelify Sans', sans-serif", "normal", 400],
+];
 
 function initPage() {
   if (stopHero) { stopHero(); stopHero = null; }
+  clearInterval(fontTimer);
+  const optics = document.querySelector(".foot em");
+  if (optics && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    let f = 0;
+    fontTimer = setInterval(() => {
+      f = (f + 1 + Math.floor(Math.random() * (OPTICS_FONTS.length - 1))) % OPTICS_FONTS.length;   // never the same twice in a row
+      [optics.style.fontFamily, optics.style.fontStyle, optics.style.fontWeight] = OPTICS_FONTS[f];
+    }, 800);
+  }
   const img = document.getElementById("hero-img");
 
   if (img && PHOTOS.length > 1) {
