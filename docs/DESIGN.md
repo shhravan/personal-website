@@ -28,7 +28,7 @@ Top bar (every page), fixed while scrolling, sized in `vw` on wide screens so br
 - the bar is transparent at the top; a soft frosted strip fades in only after scrolling, so content passes under it cleanly
 
 Content column, centered vertically and horizontally in the window (`zoom: 0.8` on wide screens so it fits one screen):
-1. **Rounded hero photo** (1.9:1, 4:3 on phones). Swaps every 0.4–1 s (random length), shuffled so none repeats until all have shown, never twice in a row, instant swap. Each photo framed by hand (`FOCUS` in `script.js`). Click anywhere on the page (not links/buttons, not while selecting text) to skip to the next.
+1. **Rounded hero photo** (1.9:1, 4:3 on phones). Swaps every 1.2 s, shuffled so none repeats until all have shown, never twice in a row, instant swap. Each photo framed by hand (`FOCUS` in `script.js`). Click anywhere on the page (not links/buttons, not while selecting text) to skip to the next.
 2. **Intro**, Shravan's words: "student at cornell, intellectually curious about things as they come." / "i take cool photos, have a genre-bending music taste, play few instruments. this is the one place to get to know me."
 3. **Links** (about, work, blog, photography, rabbit hole) on the left; profile icons stacked on the right (LinkedIn, X, YouTube Music, GitHub), right edge aligned with the photo. Icons from Simple Icons (CC0).
 4. **Last line**, centered: "for if you have taste, *opticsbyshrvn*" (Instagram).

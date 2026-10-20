@@ -66,9 +66,9 @@ const FOCUS = {
   "view-from-ad-white-house-hill-1930-rmc20": [55, 35, 1],
 };
 
-// Each photo stays a random time between these two (seconds), so there is no rhythm to predict.
-const MIN_SECONDS = 0.4;
-const MAX_SECONDS = 1.0;
+// How long each photo stays (seconds). Set both the same for a steady pace.
+const MIN_SECONDS = 1.2;
+const MAX_SECONDS = 1.2;
 
 // Pick the smaller file when the frame is small enough (phones), the larger one otherwise.
 function photoUrl(name) {

@@ -418,7 +418,9 @@ body::before {
   border-radius: 0.6rem; padding: 1.1rem 1.3rem 0.9rem;
   margin-bottom: 1.2rem !important;
 }
-.panel .about-work { margin: 0 0 0.2rem; }
+.panel .about-work { margin: 0 0 0.7rem; }
+.panel .about-work:last-child { margin-bottom: 0.2rem; }
+.about-work strong { color: var(--ink); font-weight: 700; }
 
 /* projects: heading, then stacked cards in the same soft style */
 .projects h2 { padding-left: 1.3rem; }
