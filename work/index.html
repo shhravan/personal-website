@@ -13,7 +13,9 @@
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <!-- EB Garamond has no Devanagari letters, so this loads a matching font containing only the letters of भारत and the Devanagari letters in the background field. -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400&text=%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4%E0%A4%85%E0%A4%86%E0%A4%87%E0%A4%89%E0%A4%8F%E0%A4%93%E0%A4%95%E0%A4%96%E0%A4%97%E0%A4%98%E0%A4%9A%E0%A4%9B%E0%A4%9C%E0%A4%9D%E0%A4%9F%E0%A4%A0%E0%A4%A1%E0%A4%A2%E0%A4%A4%E0%A4%A5%E0%A4%A6%E0%A4%A7%E0%A4%A8%E0%A4%AA%E0%A4%AB%E0%A4%AC%E0%A4%AD%E0%A4%AE%E0%A4%AF%E0%A4%B0%E0%A4%B2%E0%A4%B5%E0%A4%B6%E0%A4%B8%E0%A4%B9&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=24">
+  <!-- A handful of display fonts, only for the letters of "opticsbyshrvn" (its font keeps changing, see script.js). -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Bodoni+Moda&family=DM+Serif+Display&family=Fraunces&family=Instrument+Serif:ital@1&family=Space+Mono&family=Syne&family=Unbounded&family=Italiana&family=Cormorant+Garamond:ital@1&family=Major+Mono+Display&family=Bricolage+Grotesque&text=opticsbyshrvn&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=25">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%232d5a46%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2722%27 text-anchor=%27middle%27 fill=%27%23f8f6f0%27 font-family=%27Georgia,serif%27%3Es%3C/text%3E%3C/svg%3E">
   <!-- Runs right away (before the page paints) so the right light/dark theme is used with no flash. -->
   <script src="../theme.js?v=11"></script>
@@ -42,7 +44,7 @@
     <!-- One row per role: logo, organisation and role, dates on the right.
          Click a row to open its details (a <details> element, no JavaScript needed). -->
     <section class="panel">
-      <h2>Work Experience</h2>
+      <h2>Experience</h2>
       <ul class="roles">
       <li>
         <details class="role">
@@ -110,7 +112,7 @@
       <li>
         <div class="role-row">
             <img class="logo-mark" src="../images/logos/essar.png" alt="" width="40" height="40">
-            <span class="role-text"><b>Essar International School</b><span class="role-title"><em>High School Diploma, Business/Commerce</em></span><span class="role-title">1st from Surat to attend Cornell, 2nd from Surat to attend an Ivy League (UG)</span><span class="role-title">1st from Essar to attend an Ivy/Global T50 (UG)</span></span>
+            <span class="role-text"><b><a class="title-link" href="https://www.amnsinternationalschool.in/" target="_blank" rel="noopener">Essar International School</a></b><span class="role-title"><em>High School Diploma, Business/Commerce</em></span><span class="role-title">1st from Surat to attend Cornell, 2nd from Surat to attend an Ivy League (UG)</span><span class="role-title">1st from Essar to attend an Ivy/Global T50 (UG)</span></span>
             <span class="dates">2016 – 2023</span>
         </div>
       </li>
@@ -134,8 +136,8 @@
         <li>
           <div class="role-row">
             <a class="logo-link" href="https://eship.cornell.edu/jiang-fellows-rolls-out-new-cohort/" target="_blank" rel="noopener" aria-label="about the Jiang Fellows"><img class="logo-mark" src="../images/logos/cornell.svg" alt="" width="40" height="40"></a>
-            <span class="role-text"><b>Jiang Fellow</b><span class="role-title">Cornell Engineering, 1/25 Fellow</span></span>
-            <span class="dates">2026</span>
+            <span class="role-text"><b><a class="title-link" href="https://eship.cornell.edu/jiang-fellows-rolls-out-new-cohort/" target="_blank" rel="noopener">Jiang Fellow</a></b><span class="role-title">Cornell Engineering, 1/25 Fellow</span></span>
+            <span class="dates">2025 – 2026</span>
           </div>
         </li>
       </ul>
@@ -152,7 +154,7 @@
 
     <p class="foot">for if you have taste, <a href="https://www.instagram.com/opticsbyshrvn/"><em>opticsbyshrvn</em></a></p>
   </main>
-  <script src="../field.js?v=12"></script>
-  <script src="../script.js?v=7"></script>
+  <script src="../field.js?v=13"></script>
+  <script src="../script.js?v=8"></script>
 </body>
 </html>

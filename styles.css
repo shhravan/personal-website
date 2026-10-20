@@ -142,7 +142,7 @@ nav li { margin: 0.05rem 0; }
 .social-link:hover { color: var(--link-hover); }
 
 /* centered line at the bottom of the page */
-.foot { text-align: center; color: var(--soft); font-size: 0.9rem; margin: 2.5rem 0 0; }   /* 40px above: sets the sign-off apart from the links */
+.foot { text-align: center; color: var(--soft); font-size: 1.08rem; margin: 2.5rem 0 0; }   /* 40px above: sets the sign-off apart from the links */
 
 /* ---- the light switch (added by theme.js) ----
    A wall switch fixed in the top-left corner of every page. Lever up and "on" is light mode;
@@ -438,3 +438,5 @@ body::before {
   .role summary { align-items: flex-start; }
   .dates { font-size: 0.75rem; padding-top: 0.15rem; }
 }
+.title-link { color: inherit; }   /* names that link to the organisation: same look, underlined */
+.foot em { display: inline-block; min-width: 7.5em; text-align: left; }   /* keeps the line from jumping as the font changes */

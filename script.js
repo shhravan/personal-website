@@ -90,9 +90,27 @@ function applyPhoto(img, name) {
 // runs once but pages come and go. initPage() sets up whatever page is showing, and stopHero
 // shuts down the last page's photo timer and click listener first.
 let stopHero = null;
+let fontTimer = null;
+
+// "opticsbyshrvn" in the last line changes font every 0.8 s, to make people curious enough to
+// click it. The fonts are loaded in each page's <head>, only for these letters.
+const OPTICS_FONTS = [
+  "'Playfair Display', serif", "'Bodoni Moda', serif", "'DM Serif Display', serif", "'Fraunces', serif",
+  "'Instrument Serif', serif", "'Space Mono', monospace", "'Syne', sans-serif", "'Unbounded', sans-serif",
+  "'Italiana', serif", "'Cormorant Garamond', serif", "'Major Mono Display', monospace", "'Bricolage Grotesque', sans-serif",
+];
 
 function initPage() {
   if (stopHero) { stopHero(); stopHero = null; }
+  clearInterval(fontTimer);
+  const optics = document.querySelector(".foot em");
+  if (optics && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    let f = 0;
+    fontTimer = setInterval(() => {
+      f = (f + 1 + Math.floor(Math.random() * (OPTICS_FONTS.length - 1))) % OPTICS_FONTS.length;   // never the same twice in a row
+      optics.style.fontFamily = OPTICS_FONTS[f];
+    }, 800);
+  }
   const img = document.getElementById("hero-img");
 
   if (img && PHOTOS.length > 1) {

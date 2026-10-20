@@ -25,6 +25,8 @@
   var RIPPLE_WIDTH = 110;    // thickness of the ripple's wave
   var RIPPLE_SECONDS = 1.8;  // how long a ripple lasts
   var MAX_RIPPLES = 8;       // ripples that can overlap at once
+  var MAX_SPLASH = 12;       // ripples stirred up by moving the cursor over the water
+  var SPLASH_SECONDS = 2.4;  // how long each of those lasts
 
   // Placeholder text: random lowercase "words". Shravan will supply real words later.
   // GLYPHS are all the characters the field can show (index 0 is a space).
@@ -60,6 +62,10 @@
     "uniform float uRippleStart[" + MAX_RIPPLES + "];",
     "uniform vec2 uRippleCenter[" + MAX_RIPPLES + "];",
     "uniform float uRippleCount;",
+    "uniform float uSplashStart[" + MAX_SPLASH + "];   // water ripples from the cursor",
+    "uniform vec2 uSplashCenter[" + MAX_SPLASH + "];",
+    "uniform float uSplashCount;",
+    "uniform vec2 uFlow;              // how far the cursor has pushed the water sideways",
     "uniform float uRippleMax;        // how far a ripple travels, in cells",
     "uniform float uRippleWidth;      // wave thickness, in cells",
     "uniform float uBase;             // normal letter strength (very faint)",
@@ -74,6 +80,10 @@
     "out vec4 vTile;                  // a colored tile behind the letter (inside the painting only)",
     "out vec2 vPos;                   // where this corner is, in cells (for per-pixel water light)",
     "out float vWater;                // how much pool light to show here (0 outside the water)",
+    "out float vEdgeTop;              // 1 in the top row of the water (light mode only)",
+    "out vec2 vCorner;                // position inside the cell, 0 to 1",
+    "out float vEdgeL;",
+    "out float vEdgeR;",
     "",
     "float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }",
     "float hash1(float x) { return fract(sin(x * 12.9898) * 43758.5453); }",
@@ -83,6 +93,18 @@
     "float vnoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);",
     "  return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y); }",
     "",
+    "// How far up the water reaches in column x (in cells) right now.",
+    "float reachAt(float x) {",
+    "  float period = 4.8;",
+    "  float lag = 1.6 * vnoise(vec2(x * 0.025, 3.0)) + 0.6 * vnoise(vec2(x * 0.08, 7.0));",
+    "  float tt = uTime / period + lag;",
+    "  float p = fract(tt);",
+    "  float cycle = p < 0.27 ? 1.0 - pow(1.0 - p / 0.27, 3.0)        // surge: quick, slowing at the top",
+    "                         : 1.0 - smoothstep(0.0, 1.0, (p - 0.27) / 0.73);   // backwash: slow drain",
+    "  float strength = 0.55 + 0.6 * vnoise(vec2(x * 0.03, floor(tt) * 1.7));   // each wave differs",
+    "  return uGrid.y * (0.045 + 0.12 * cycle * strength)",
+    "      + 2.5 * vnoise(vec2(x * 0.12, uTime * 0.4)) + 1.5 * vnoise(vec2(x * 0.5, uTime * 0.9));",
+    "}",
     "void main() {",
     "  int cols = int(uGrid.x);",
     "  vec2 cell = vec2(float(gl_InstanceID % cols), float(gl_InstanceID / cols));",
@@ -132,19 +154,29 @@
     "  // Real swash is lopsided: the foam surges up fast (~1.3 s), then drains back slowly (~3.5 s).",
     "  // Different stretches of the shore are a bit ahead or behind each other, and each wave",
     "  // reaches a different height, so the edge is uneven and never repeats exactly.",
-    "  float period = 4.8;",
-    "  float lag = 1.6 * vnoise(vec2(cell.x * 0.025, 3.0)) + 0.6 * vnoise(vec2(cell.x * 0.08, 7.0));",
-    "  float tt = uTime / period + lag;",
-    "  float p = fract(tt);",
-    "  float cycle = p < 0.27 ? 1.0 - pow(1.0 - p / 0.27, 3.0)        // surge: quick, slowing at the top",
-    "                         : 1.0 - smoothstep(0.0, 1.0, (p - 0.27) / 0.73);   // backwash: slow drain",
-    "  float strength = 0.55 + 0.6 * vnoise(vec2(cell.x * 0.03, floor(tt) * 1.7));   // each wave differs",
-    "  float reach = uGrid.y * (0.045 + 0.12 * cycle * strength)",
-    "    + 2.5 * vnoise(vec2(cell.x * 0.12, uTime * 0.4)) + 1.5 * vnoise(vec2(cell.x * 0.5, uTime * 0.9));",
+    "  float reach = reachAt(cell.x);",
+    "  // Water top in the columns either side, so the light-mode wave line can draw its short sides.",
+    "  float upL = reachAt(cell.x - 1.0) - up, upR = reachAt(cell.x + 1.0) - up;",
     "  float edgeDist = reach - up;                       // > 0 inside the water",
+    "  float inWater = step(0.0, edgeDist);",
     "  vWater = 0.0;",
+    "  vEdgeTop = 0.0; vEdgeL = 0.0; vEdgeR = 0.0;",
+    "  vCorner = aCorner;",
     "  if (edgeDist > -1.0) {",
-    "    float lace = 0.6 * vnoise(vec2(cell.x * 0.9, cell.y * 1.2 + uTime * 0.8)) + 0.4 * vnoise(vec2(cell.x * 2.1, cell.y * 2.5 - uTime));",
+    "    float lace = 0.6 * vnoise(vec2((cell.x + uFlow.x) * 0.9, cell.y * 1.2 + uTime * 0.8)) + 0.4 * vnoise(vec2((cell.x + uFlow.x) * 2.1, cell.y * 2.5 - uTime));",
+    "    // Rings spreading out from where the cursor touched the water.",
+    "    float splash = 0.0;",
+    "    for (int i = 0; i < " + MAX_SPLASH + "; i++) {",
+    "      if (float(i) >= uSplashCount) break;",
+    "      float st = (uTime - uSplashStart[i]) / " + SPLASH_SECONDS.toFixed(2) + ";",
+    "      if (st < 0.0 || st > 1.0) continue;",
+    "      float sd = dist(cell - uSplashCenter[i]);",
+    "      float sr = st * 26.0;",
+    "      float band = 1.0 - smoothstep(0.0, 1.4, abs(sd - sr));",
+    "      float band2 = 1.0 - smoothstep(0.0, 1.0, abs(sd - sr * 0.62));",
+    "      splash += (band + 0.6 * band2) * (1.0 - st) * (1.0 - st);",
+    "    }",
+    "    splash = min(splash, 1.0);",
     "    float rim = 1.0 - smoothstep(0.0, 1.6, abs(edgeDist));          // bright frothy edge",
     "    float wash = step(0.0, edgeDist) * smoothstep(0.5, 0.7, lace) * (1.0 - smoothstep(4.0, 14.0, edgeDist) * 0.6);  // lacy foam behind it",
     "    float behind = 1.0 - 0.85 * quiet;",
@@ -160,17 +192,23 @@
     "    float foamA = max(0.32 * rim * (0.6 + 0.4 * lace), 0.12 * wash);",
     "    // On cream the same blue needs more strength to look as blue as it does on dark.",
     "    float bodyA = inside * (uDark > 0.5 ? 0.20 + 0.18 * depth : 0.38 + 0.30 * depth);",
-    "    vWater = inside * smoothstep(0.0, 4.0, edgeDist) * behind * (1.0 - near) * (1.0 - off);",
-    "    vec3 sea = mix(mix(shallow, deep, depth), foamCol, clamp(foam * 1.6, 0.0, 1.0));",
-    "    tile = vec4(sea, max(foamA, bodyA) * behind * (1.0 - near) * (1.0 - off));",
+    "    // The cursor stirs the water instead of erasing it, so the hover circle is left out here.",
+    "    vWater = inside * smoothstep(0.0, 4.0, edgeDist) * behind;",
+    "    vec3 sea = mix(mix(shallow, deep, depth), foamCol, clamp(foam * 1.6 + splash * inside * 0.7, 0.0, 1.0));",
+    "    tile = vec4(sea, (max(foamA, bodyA) + splash * inside * 0.22) * behind);",
+    "    // Light mode: a thin dark line along the top of the foam (drawn per pixel below).",
+    "    float lm = (1.0 - uDark) * inside * behind;",
+    "    vEdgeTop = lm * step(edgeDist, 1.0);",
+    "    vEdgeL = lm * step(upL, 0.0);                     // the column to the left is dry here",
+    "    vEdgeR = lm * step(upR, 0.0);",
     "    tint = mix(uColor, mix(shallow, foamCol, 0.5), 0.5 * inside);",
     "    alpha = max(alpha, step(0.0, edgeDist) * 0.14 * behind);",
     "  }",
     "  vColor = tint;",
     "  vPos = cell + aCorner;",
     "  vTile = tile;",
-    "  alpha *= 1.0 - near;",
-    "  alpha = mix(alpha, 0.0, off);",
+    "  alpha *= 1.0 - near * (1.0 - inWater);",
+    "  alpha = mix(alpha, 0.0, off * (1.0 - inWater));",
     "  alpha = mix(alpha, uBright, lit);",
     "  vAlpha = alpha;",
     "",
@@ -195,9 +233,15 @@
     "in float vAlpha;",
     "in vec2 vPos;",
     "in float vWater;",
+    "in float vEdgeTop;",
+    "in vec2 vCorner;",
+    "in float vEdgeL;",
+    "in float vEdgeR;",
+    "uniform vec3 uColor;",
     "uniform float uTime;",
     "uniform float uAspect;",
     "uniform float uDark;",
+    "uniform vec2 uFlow;",
     "out vec4 color;",
     "// Caustics: the bright, wobbly net of light you see on the floor of a pool. A few rounds of",
     "// bending the coordinates with sines and cosines make thin bright lines that drift and morph.",
@@ -216,9 +260,15 @@
     "  float a = texture(uAtlas, vUv).a * vAlpha;          // the letter",
     "  float t = vTile.a * (1.0 - a);                       // the tile shows around the letter",
     "  color = vec4(vColor * a + vTile.rgb * t, a + t);     // colors pre-multiplied by opacity",
+    "  // The thin wave line: just the top couple of pixels of the water's first row.",
+    "  float edgeA = max(vEdgeTop * step(vCorner.y, 0.17), max(vEdgeL * step(vCorner.x, 0.29), vEdgeR * step(0.71, vCorner.x)));",
+    "  if (edgeA > 0.0) {",
+    "    float la = 0.55 * edgeA;",
+    "    color = vec4(color.rgb * (1.0 - la) + uColor * la, color.a + la * (1.0 - color.a));",
+    "  }",
     "  // Pool light, worked out for every pixel so the lines stay thin and sharp.",
     "  if (vWater > 0.0) {",
-    "    float g = caustic(vec2(vPos.x, vPos.y * uAspect) * 0.22, uTime * 0.35) * vWater * (uDark > 0.5 ? 0.45 : 0.85);",
+    "    float g = caustic((vec2(vPos.x, vPos.y * uAspect) + uFlow) * 0.22, uTime * 0.35) * vWater * (uDark > 0.5 ? 0.45 : 0.85);",
     "    color = vec4(color.rgb * (1.0 - g) + vec3(0.86, 0.95, 1.0) * g, color.a + g * (1.0 - color.a));",
     "  }",
     "}"
@@ -241,7 +291,7 @@
   gl.useProgram(prog);
   var U = {};
   ["uGrid", "uAtlasGrid", "uAspect", "uTime", "uText", "uTextLen", "uMouse", "uHover", "uRadius",
-   "uRippleStart", "uRippleCenter", "uRippleCount", "uRippleMax", "uRippleWidth", "uBase", "uBright",
+   "uRippleStart", "uRippleCenter", "uRippleCount", "uSplashStart", "uSplashCenter", "uSplashCount", "uFlow", "uRippleMax", "uRippleWidth", "uBase", "uBright",
    "uAtlas", "uColor", "uQuiet", "uShore", "uDark"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
   // One cell = two triangles. Every cell reuses this shape; the shader moves it into place.
@@ -345,7 +395,8 @@
     // The water sits at the bottom of the page, not the window: on a long page it stays out of
     // sight below and rolls into view as you scroll to the end.
     var bottom = Math.max(window.innerHeight, document.documentElement.scrollHeight - window.scrollY);
-    gl.uniform1f(U.uShore, bottom / CELL_H);
+    shoreRow = bottom / CELL_H;
+    gl.uniform1f(U.uShore, shoreRow);
   }
   window.addEventListener("scroll", function () { updateQuiet(); draw(); }, { passive: true });
   document.addEventListener("page:load", function () { updateQuiet(); draw(); });   // new page, new column
@@ -353,9 +404,22 @@
   // ---- cursor and clicks ----
   var mouse = { x: -999, y: -999 }, target = { x: -999, y: -999 }, hover = 0, hoverTarget = 0;
   var ripples = [];   // { start, x, y } in seconds and cells
+  // Moving the cursor over the water drops small ripples and pushes the current along with it.
+  var splashes = [], lastSplash = { x: -999, y: -999, t: -1 }, shoreRow = 0;
+  var flow = { x: 0, y: 0 }, flowVel = 0;
   function toCells(e) { return { x: e.clientX / CELL_W, y: e.clientY / CELL_H }; }
   window.addEventListener("pointermove", function (e) {
+    var prevX = target.x;
     target = toCells(e);
+    if (target.y > shoreRow - rows * 0.2) {   // near the bottom, where the water is
+      var moved = Math.abs(target.x - lastSplash.x) + Math.abs(target.y - lastSplash.y);
+      if (moved > 2.5 && now - lastSplash.t > 0.09) {
+        splashes.push({ start: now, x: target.x, y: target.y });
+        if (splashes.length > MAX_SPLASH) splashes.shift();
+        lastSplash = { x: target.x, y: target.y, t: now };
+      }
+      if (prevX > -900) flowVel += (target.x - prevX) * 0.6;   // drag left or right to steer the current
+    }
     if (hoverTarget === 0) { mouse.x = target.x; mouse.y = target.y; }   // appear at the cursor, not glide in
     hoverTarget = 1;
     wake();
@@ -374,6 +438,7 @@
   // ---- the animation loop ----
   var now = 0, last = performance.now(), frame = 0, lastDraw = 0;
   var starts = new Float32Array(MAX_RIPPLES), centers = new Float32Array(MAX_RIPPLES * 2);
+  var sStarts = new Float32Array(MAX_SPLASH), sCenters = new Float32Array(MAX_SPLASH * 2);
   function draw() {
     gl.uniform1f(U.uTime, now);
     gl.uniform2f(U.uMouse, mouse.x, mouse.y);
@@ -387,6 +452,16 @@
     gl.uniform1fv(U.uRippleStart, starts);
     gl.uniform2fv(U.uRippleCenter, centers);
     gl.uniform1f(U.uRippleCount, ripples.length);
+    for (var j = 0; j < MAX_SPLASH; j++) {
+      var sp = splashes[j];
+      sStarts[j] = sp ? sp.start : -10;
+      sCenters[2 * j] = sp ? sp.x : 0;
+      sCenters[2 * j + 1] = sp ? sp.y : 0;
+    }
+    gl.uniform1fv(U.uSplashStart, sStarts);
+    gl.uniform2fv(U.uSplashCenter, sCenters);
+    gl.uniform1f(U.uSplashCount, splashes.length);
+    gl.uniform2f(U.uFlow, flow.x, flow.y);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, cols * rows);
@@ -396,13 +471,17 @@
     last = t;
     now += dt;
     while (ripples.length && now - ripples[0].start > RIPPLE_SECONDS) ripples.shift();
+    while (splashes.length && now - splashes[0].start > SPLASH_SECONDS) splashes.shift();
+    // The push from the cursor carries the water along, then slowly settles.
+    flow.x -= flowVel * dt;
+    flowVel *= Math.exp(-1.2 * dt);
     // Ease the circle toward the cursor, and fade it in or out, so movement feels smooth.
     var follow = 1 - Math.exp(-14 * dt), fade = 1 - Math.exp(-6 * dt);
     mouse.x += (target.x - mouse.x) * follow;
     mouse.y += (target.y - mouse.y) * follow;
     hover += (hoverTarget - hover) * fade;
     // Busy (hovering or rippling): draw every frame. Idle: only the slow twinkle, ~20 times a second.
-    var busy = ripples.length > 0 || hover > 0.001 || hoverTarget > 0;
+    var busy = ripples.length > 0 || splashes.length > 0 || Math.abs(flowVel) > 0.01 || hover > 0.001 || hoverTarget > 0;
     if (busy || t - lastDraw > 50) { draw(); lastDraw = t; }
     frame = document.hidden ? 0 : requestAnimationFrame(tick);
   }
