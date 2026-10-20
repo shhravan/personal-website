@@ -169,3 +169,9 @@ What each slice taught, in plain English.
 - Hovering over the water drops "splash" ripples: JavaScript keeps a short list of where and when the cursor touched the water and hands it to the shader, which draws expanding rings.
 - Google Fonts' `text=` option downloads only the letters you list, so twelve display fonts for "opticsbyshrvn" cost very little. script.js swaps the font every 0.8 s.
 
+## The record deck
+- The dial is one SVG: each cover is an `<image>` cut to a ring-shaped slice with a `clipPath` (two arcs joined by straight lines, worked out with a little trigonometry in theme.js).
+- The site's security policy blocks inline `style="..."` attributes, so per-cover values (stagger delay, pop-out direction) are set from JavaScript with `style.setProperty`, which the policy allows.
+- The groove reflection is a `conic-gradient` whose start angle is a CSS variable registered with `@property`, so the browser can animate it; JavaScript points it toward the cursor.
+- Phones only allow sound to start during a tap, so the YouTube player now preloads on touch screens and the first tap plays.
+

@@ -3,6 +3,9 @@
 // How you switch: the little wall light switch in the top-left corner. Lights on = light mode.
 (function () {
   var KEY = "theme";
+  // Where the site's files live, worked out from this script's own address, so pictures load the
+  // same from the home page and from section pages.
+  var BASE = new URL(".", (document.currentScript && document.currentScript.src) || location.href).href;
   var root = document.documentElement;
   var media = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -133,19 +136,24 @@
     document.body.insertBefore(player, document.body.firstChild);
 
     var yt = null, ytReady = false, wantPlay = false;
+    var deckSong = -1;   // on desktop, which record from TRACKS is on the turntable (-1: none yet)
     function pick() { return SONGS[Math.floor(Math.random() * SONGS.length)]; }
-    function loadYouTube(preload) {
+    function loadYouTube(preload, firstId, firstStart) {
       var holder = document.createElement("div");
       holder.id = "yt-player";
       holder.className = "yt-hidden";
       document.body.appendChild(holder);
       window.onYouTubeIframeAPIReady = function () {
         yt = new YT.Player("yt-player", {
-          height: "1", width: "1", videoId: pick(),
-          playerVars: { autoplay: preload ? 0 : 1, playsinline: 1, start: 28 },
+          height: "1", width: "1", videoId: firstId || pick(),
+          playerVars: { autoplay: preload ? 0 : 1, playsinline: 1, start: firstId ? firstStart : 28 },
           events: {
             onReady: function () { ytReady = true; if (wantPlay) yt.playVideo(); },
-            onStateChange: function (e) { if (e.data === 0) yt.loadVideoById({ videoId: pick(), startSeconds: 28 }); }   // song ended: next random one
+            onStateChange: function (e) {
+              if (e.data !== 0) return;   // 0 means the song ended
+              if (deckSong >= 0) { playTrack((deckSong + 1) % TRACKS.length); return; }   // desktop: next record
+              yt.loadVideoById({ videoId: pick(), startSeconds: 28 });                    // phone: another random one
+            }
           }
         });
       };
@@ -168,6 +176,155 @@
       if (!yt) loadYouTube();
       else if (ytReady) yt.playVideo();
     });
+
+    // ---- the record deck (desktop only) ----
+    // On computers with a mouse, the small record is swapped for a big, realistic one in the top
+    // right. Hovering it fans out a dial of album covers; clicking a cover plays that song straight
+    // away (the dial closes and the needle drops). Clicking the record pauses or resumes.
+    // Phones and tablets keep the small record above, unchanged.
+    var TRACKS = [
+      { id: "ZoSD4l32m2I", start: 28, title: "Memory Box", artist: "Peter Cat Recording Co.", cover: "memory-box" },
+      { id: "FRpB2KRdi3w", start: 0, title: "Control Room", artist: "Peter Cat Recording Co.", cover: "control-room" },
+      { id: "TvpJWAx_NkY", start: 0, title: "Portrait of a Time", artist: "Peter Cat Recording Co.", cover: "portrait-of-a-time" },
+      { id: "cmpRLQZkTb8", start: 0, title: "Don't Look Back in Anger", artist: "Oasis", cover: "dont-look-back-in-anger" },
+      { id: "fJ9rUzIMcZQ", start: 0, title: "Bohemian Rhapsody", artist: "Queen", cover: "bohemian-rhapsody" },
+      { id: "8ifjLdWj4y0", start: 0, title: "Theme from New York, New York", artist: "Frank Sinatra", cover: "new-york-new-york" },
+      { id: "1-W6whvn8Bs", start: 0, title: "Selfless", artist: "The Strokes", cover: "selfless" },
+      { id: "LNq4xox99HY", start: 0, title: "Ode to the Mets", artist: "The Strokes", cover: "ode-to-the-mets" },
+      { id: "o4qsjmLxhow", start: 0, title: "The Adults Are Talking", artist: "The Strokes", cover: "the-adults-are-talking" },
+      { id: "dvgZkm1xWPE", start: 0, title: "Viva la Vida", artist: "Coldplay", cover: "viva-la-vida" },
+      { id: "A_MjCqQoLLA", start: 0, title: "Hey Jude", artist: "The Beatles", cover: "hey-jude" },
+      { id: "Cl6Rz1Uvi2M", start: 0, title: "Pull Me Out of This", artist: "Fred again..", cover: "pull-me-out-of-this" },
+    ];
+    var deckMode = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 64rem)").matches;
+    var deck = null, needleSwing = null, driftTimer = 0;
+
+    function playTrack(i) {
+      deckSong = i;
+      var t = TRACKS[i];
+      wantPlay = true;
+      if (!yt) loadYouTube(false, t.id, t.start);
+      else if (ytReady) yt.loadVideoById({ videoId: t.id, startSeconds: t.start });
+      if (deck) setPlaying(true);
+    }
+    // The needle swings onto the outer groove, then creeps inward as the song plays, like a real
+    // tonearm. Paused, it lifts back to its rest.
+    function moveNeedle(deg, secs, ease) {
+      needleSwing.style.transition = "transform " + secs + "s " + ease;
+      needleSwing.style.transform = "rotate(" + deg + "deg)";
+    }
+    function setPlaying(on) {
+      deck.classList.toggle("playing", on);
+      clearTimeout(driftTimer);
+      if (on) {
+        moveNeedle(-3, 1.1, "cubic-bezier(.3,.7,.2,1)");
+        driftTimer = setTimeout(function () { moveNeedle(10, 240, "linear"); }, 1150);
+      } else moveNeedle(-24, 1, "cubic-bezier(.3,.7,.2,1)");
+    }
+
+    if (deckMode) buildDeck();
+    function buildDeck() {
+      root.classList.add("deck-on");   // CSS hides the small record
+      var C = 330, R0 = 196, R1 = 304, A0 = 70, A1 = 202, N = TRACKS.length, GAP = 1.1;
+      function pt(r, d) { var a = d * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; }
+      function f(n) { return n.toFixed(1); }
+      var clips = "", segs = "", ticks = "";
+      TRACKS.forEach(function (t, i) {
+        var a = A0 + (A1 - A0) * i / N + GAP / 2, b = A0 + (A1 - A0) * (i + 1) / N - GAP / 2, m = (a + b) / 2;
+        var p0 = pt(R1, a), p1 = pt(R1, b), p2 = pt(R0, b), p3 = pt(R0, a), mid = pt((R0 + R1) / 2, m);
+        var d = "M" + f(p0[0]) + "," + f(p0[1]) + " A" + R1 + "," + R1 + " 0 0 1 " + f(p1[0]) + "," + f(p1[1]) +
+                " L" + f(p2[0]) + "," + f(p2[1]) + " A" + R0 + "," + R0 + " 0 0 0 " + f(p3[0]) + "," + f(p3[1]) + " Z";
+        var dx = 12 * Math.cos(m * Math.PI / 180), dy = 12 * Math.sin(m * Math.PI / 180);
+        clips += '<clipPath id="deck-c' + i + '"><path d="' + d + '"/></clipPath>';
+        segs += '<g class="seg" data-i="' + i + '" role="button" tabindex="0" aria-label="play ' + t.title + ' by ' + t.artist + '" ' +
+                'data-dx="' + f(dx) + '" data-dy="' + f(dy) + '">' +
+                '<image href="' + BASE + 'images/covers/' + t.cover + '.webp" x="' + f(mid[0] - 70) + '" y="' + f(mid[1] - 70) + '" width="140" height="140" preserveAspectRatio="xMidYMid slice" clip-path="url(#deck-c' + i + ')"/>' +
+                '<path class="rim" d="' + d + '"/></g>';
+      });
+      for (var k = 0; k <= 60; k++) {
+        var ang = A0 + (A1 - A0) * k / 60, q0 = pt(R1 + 8, ang), q1 = pt(R1 + (k % 5 ? 12 : 17), ang);
+        ticks += '<line x1="' + f(q0[0]) + '" y1="' + f(q0[1]) + '" x2="' + f(q1[0]) + '" y2="' + f(q1[1]) + '"/>';
+      }
+      deck = document.createElement("div");
+      deck.className = "deck";
+      deck.innerHTML =
+        '<div class="deck-glass"></div>' +
+        '<svg class="deck-dial" viewBox="0 0 660 660"><defs>' + clips + '</defs><g class="deck-rot"><g class="deck-ticks">' + ticks + '</g>' + segs + '</g></svg>' +
+        '<button class="deck-record" type="button" aria-label="record player: hover to choose a song, click to pause or play">' +
+          '<span class="deck-disc"><span class="deck-label"><i></i><span>SIDE A</span></span></span><span class="deck-sheen"></span></button>' +
+        // Tonearm drawn from scratch: base, counterweight, pivot, curved arm, head with cartridge.
+        '<svg class="deck-arm" viewBox="0 0 120 300" aria-hidden="true"><defs>' +
+          '<linearGradient id="deck-metal" x1="0" x2="1"><stop offset="0" stop-color="#6f6c66"/><stop offset=".45" stop-color="#f4f2ec"/><stop offset=".6" stop-color="#d9d6cf"/><stop offset="1" stop-color="#5f5c57"/></linearGradient>' +
+          '<radialGradient id="deck-plinth" cx=".4" cy=".35"><stop offset="0" stop-color="#3a3731"/><stop offset="1" stop-color="#14130f"/></radialGradient>' +
+          '<filter id="deck-drop" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="6" dy="9" stdDeviation="3.5" flood-color="#000" flood-opacity=".55"/></filter></defs>' +
+          '<circle cx="78" cy="30" r="24" fill="url(#deck-plinth)" stroke="#45423b"/><circle cx="78" cy="30" r="15" fill="#1d1b17" stroke="#5a5750"/>' +
+          '<g class="deck-swing" filter="url(#deck-drop)">' +
+            '<rect x="69" y="-22" width="18" height="24" rx="4" fill="url(#deck-metal)"/><rect x="69" y="-12" width="18" height="2" fill="rgba(0,0,0,.25)"/>' +
+            '<rect x="75.5" y="0" width="5" height="22" fill="url(#deck-metal)"/>' +
+            '<circle cx="78" cy="30" r="8.5" fill="url(#deck-metal)" stroke="#4c4a45" stroke-width=".8"/><circle cx="78" cy="30" r="2.6" fill="#3a3833"/>' +
+            '<path d="M78 34 C79 90 84 140 80 186 C78 204 68 218 56 230" fill="none" stroke="#3b3934" stroke-width="5.6" stroke-linecap="round"/>' +
+            '<path d="M78 34 C79 90 84 140 80 186 C78 204 68 218 56 230" fill="none" stroke="url(#deck-metal)" stroke-width="4" stroke-linecap="round"/>' +
+            '<g transform="rotate(-38 52 236)"><rect x="40" y="229" width="25" height="14" rx="2" fill="url(#deck-metal)" stroke="#4c4a45" stroke-width=".6"/>' +
+            '<rect x="44" y="241" width="15" height="7" rx="1" fill="#141311"/><rect x="62" y="232" width="10" height="2.4" rx="1.2" fill="url(#deck-metal)"/>' +
+            '<rect x="50.5" y="247.5" width="2" height="3" fill="#c9c6bf"/></g></g></svg>' +
+        '<div class="deck-readout" aria-live="polite"><div class="k"></div><div class="t"></div><div class="a"></div><div class="h">click to play</div></div>';
+      document.body.appendChild(deck);
+      needleSwing = deck.querySelector(".deck-swing");
+      var rec = deck.querySelector(".deck-record"), sheen = deck.querySelector(".deck-sheen"), readout = deck.querySelector(".deck-readout");
+      var rearm = true;
+
+      // Hover the record: the dial opens and stays open until a song or the record is clicked.
+      rec.addEventListener("mouseenter", function () { if (rearm) deck.classList.add("open"); });
+      rec.addEventListener("mouseleave", function () { rearm = true; });
+      rec.addEventListener("click", function () {
+        if (deck.classList.contains("open")) { deck.classList.remove("open", "hovering"); rearm = false; return; }
+        if (deckSong < 0) { deck.classList.add("open"); return; }   // nothing chosen yet: show the dial
+        var on = !deck.classList.contains("playing");
+        setPlaying(on);
+        wantPlay = on;
+        if (ytReady) { if (on) yt.playVideo(); else yt.pauseVideo(); }
+      });
+      function show(i) {
+        readout.querySelector(".k").textContent = "NOW SELECTING · " + String(i + 1).padStart(2, "0");
+        readout.querySelector(".t").textContent = TRACKS[i].title;
+        readout.querySelector(".a").textContent = "by " + TRACKS[i].artist;
+      }
+      deck.querySelectorAll(".seg").forEach(function (s) {
+        var i = +s.getAttribute("data-i");
+        // Per-cover values (stagger delay, pop-out direction) are set here rather than in the
+        // markup, because the site's security policy blocks inline style attributes.
+        s.style.setProperty("--i", i);
+        s.style.setProperty("--dx", s.getAttribute("data-dx") + "px");
+        s.style.setProperty("--dy", s.getAttribute("data-dy") + "px");
+        function choose() {
+          deck.querySelectorAll(".seg").forEach(function (x) { x.classList.remove("sel"); });
+          s.classList.add("sel");
+          s.classList.remove("hot");
+          deck.classList.remove("open", "hovering");   // everything tidies away...
+          rearm = false;
+          playTrack(i);                               // ...and the song plays
+        }
+        s.addEventListener("mouseenter", function () { deck.classList.add("hovering"); s.classList.add("hot"); show(i); });
+        s.addEventListener("mouseleave", function () { s.classList.remove("hot"); deck.classList.remove("hovering"); });
+        s.addEventListener("focus", function () { deck.classList.add("open", "hovering"); s.classList.add("hot"); show(i); });
+        s.addEventListener("blur", function () { s.classList.remove("hot"); deck.classList.remove("hovering"); });
+        s.addEventListener("click", choose);
+        s.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(); } });
+      });
+      // The light on the grooves comes from the cursor's direction, so the reflection shifts as
+      // you move, like real vinyl.
+      var raf = 0, lx = 0, ly = 0;
+      window.addEventListener("pointermove", function (e) {
+        lx = e.clientX; ly = e.clientY;
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          raf = 0;
+          var r = rec.getBoundingClientRect();
+          var a = Math.atan2(ly - (r.top + r.height / 2), lx - (r.left + r.width / 2)) * 180 / Math.PI;
+          sheen.style.setProperty("--la", (a + 180).toFixed(1) + "deg");
+        });
+      }, { passive: true });
+    }
 
     // The top bar's backdrop shows only once the page has scrolled (see .scrolled in styles.css).
     function onScroll() { root.classList.toggle("scrolled", window.scrollY > 4); }
