@@ -271,11 +271,17 @@
       document.body.appendChild(deck);
       needleSwing = deck.querySelector(".deck-swing");
       var rec = deck.querySelector(".deck-record"), sheen = deck.querySelector(".deck-sheen"), readout = deck.querySelector(".deck-readout");
-      var rearm = true;
+      var rearm = true, closeTimer = 0;
 
-      // Hover the record: the dial opens and stays open until a song or the record is clicked.
-      rec.addEventListener("mouseenter", function () { if (rearm) deck.classList.add("open"); });
-      rec.addEventListener("mouseleave", function () { rearm = true; });
+      // Hover the record: the dial opens. It stays open while the pointer is on the record or the
+      // dial, and closes a moment after the pointer leaves both.
+      function stayOpen() { clearTimeout(closeTimer); }
+      function closeSoon() { clearTimeout(closeTimer); closeTimer = setTimeout(function () { deck.classList.remove("open", "hovering"); }, 280); }
+      rec.addEventListener("mouseenter", function () { stayOpen(); if (rearm) deck.classList.add("open"); });
+      rec.addEventListener("mouseleave", function () { rearm = true; closeSoon(); });
+      var glass = deck.querySelector(".deck-glass");   // the frosted ring between and behind the covers
+      glass.addEventListener("mouseenter", stayOpen);
+      glass.addEventListener("mouseleave", closeSoon);
       rec.addEventListener("click", function () {
         if (deck.classList.contains("open")) { deck.classList.remove("open", "hovering"); rearm = false; return; }
         if (deckSong < 0) { deck.classList.add("open"); return; }   // nothing chosen yet: show the dial
@@ -304,19 +310,19 @@
           rearm = false;
           playTrack(i);                               // ...and the song plays
         }
-        s.addEventListener("mouseenter", function () { deck.classList.add("hovering"); s.classList.add("hot"); show(i); });
-        s.addEventListener("mouseleave", function () { s.classList.remove("hot"); deck.classList.remove("hovering"); });
+        s.addEventListener("mouseenter", function () { stayOpen(); deck.classList.add("hovering"); s.classList.add("hot"); show(i); });
+        s.addEventListener("mouseleave", function () { s.classList.remove("hot"); deck.classList.remove("hovering"); closeSoon(); });
         s.addEventListener("focus", function () { deck.classList.add("open", "hovering"); s.classList.add("hot"); show(i); });
         s.addEventListener("blur", function () { s.classList.remove("hot"); deck.classList.remove("hovering"); });
         s.addEventListener("click", choose);
         s.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(); } });
       });
-      // The light on the grooves comes from the cursor's direction, so the reflection shifts as
-      // you move, like real vinyl.
+      // While the record plays, the light on the grooves comes from the cursor's direction, so the
+      // reflection shifts as you move, like real vinyl. Stopped, it stays still.
       var raf = 0, lx = 0, ly = 0;
       window.addEventListener("pointermove", function (e) {
         lx = e.clientX; ly = e.clientY;
-        if (raf) return;
+        if (raf || !deck.classList.contains("playing")) return;
         raf = requestAnimationFrame(function () {
           raf = 0;
           var r = rec.getBoundingClientRect();
