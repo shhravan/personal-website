@@ -50,7 +50,7 @@ Separate page with a long-form personal story, written in Shravan's voice, set a
 
 ## Work
 Built. Row layout inspired by hrishabhayush.com, page organisation by ronaldleung.co, in this site's fonts and colors. Normal capitalization on this page (Shravan's choice; the rest of the site stays lowercase).
-- **Banner:** deep green box with flickering TV-static grain (CSS, 1.5 s loop), "Work" and a one-line subtitle.
+- **Banner:** a water box in place of green (layout from ronaldleung.co): deep blue with a pale aqua rim, slow drifting light ripples and a fine flickering sparkle, "Work" and a one-line subtitle.
 - **Panels:** About, Work Experience, Education and Honors each sit in a soft rounded box.
 - **Rows:** rounded logo (links to the organisation's site where there is one), name in bold, small grey lines underneath, dates on the right; click a row for details.
 - **Projects:** heading, then simple stacked cards (title + one line). For now one "Coming Soon" card.
