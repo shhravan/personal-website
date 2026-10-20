@@ -441,21 +441,23 @@ body::before {
 .title-link { color: inherit; text-decoration: none; }   /* names that link to the organisation: no underline, underline on hover */
 .title-link:hover { text-decoration: underline; }
 /* The last line is just "opticsbyshrvn"; pointing at it reveals what it is. */
-.foot { position: relative; }
-.foot .reveal {
-  position: absolute; left: 0; right: 0; top: 100%; margin-top: 0.3rem;
-  font-size: 0.8rem; color: var(--soft); letter-spacing: 0.04em;
-  opacity: 0; transform: translateY(-0.2rem); transition: opacity 0.25s ease, transform 0.25s ease;
-  pointer-events: none;
-}
-.foot a:hover + .reveal, .foot a:focus-visible + .reveal { opacity: 1; transform: none; }
-/* A thin drawn arrow (an SVG, so it looks the same on every device; the ↗ character turns into
-   an emoji on some phones). Sits at the top right of the word, in the soft grey. */
+/* The last line is just "opticsbyshrvn". The word stays centered on the page; the arrow hangs
+   off its right side and the note sits centered under the word, so neither pulls it off-center. */
+.foot .optics { position: relative; display: inline-block; }
+.foot .optics a { position: relative; }
 .foot .arrow {
-  width: 0.78em; height: 0.78em; margin-left: 0.35em; vertical-align: 0.3em;
+  position: absolute; left: 100%; top: 50%; margin-left: 0.4em;
+  width: 0.7em; height: 0.7em; transform: translateY(-45%);
   fill: none; stroke: var(--soft); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
   opacity: 0; transition: opacity 0.25s ease;
 }
-.foot a:hover .arrow, .foot a:focus-visible .arrow { opacity: 1; }
+.foot .reveal {
+  position: absolute; left: 50%; top: 100%; margin-top: 0.3rem; white-space: nowrap;
+  font-size: 0.8rem; color: var(--soft); letter-spacing: 0.04em;
+  opacity: 0; transform: translate(-50%, -0.2rem); transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+.foot .optics:hover .arrow, .foot .optics:focus-within .arrow { opacity: 1; }
+.foot .optics:hover .reveal, .foot .optics:focus-within .reveal { opacity: 1; transform: translate(-50%, 0); }
 /* Phones and tablets have no hover, so there the arrow and note simply stay visible. */
-@media (hover: none) { .foot .arrow, .foot .reveal { opacity: 1; transform: none; } }
+@media (hover: none) { .foot .arrow { opacity: 1; } .foot .reveal { opacity: 1; transform: translate(-50%, 0); } }

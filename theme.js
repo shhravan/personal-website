@@ -134,7 +134,7 @@
 
     var yt = null, ytReady = false, wantPlay = false;
     function pick() { return SONGS[Math.floor(Math.random() * SONGS.length)]; }
-    function loadYouTube() {
+    function loadYouTube(preload) {
       var holder = document.createElement("div");
       holder.id = "yt-player";
       holder.className = "yt-hidden";
@@ -142,7 +142,7 @@
       window.onYouTubeIframeAPIReady = function () {
         yt = new YT.Player("yt-player", {
           height: "1", width: "1", videoId: pick(),
-          playerVars: { autoplay: 1, playsinline: 1, start: 28 },
+          playerVars: { autoplay: preload ? 0 : 1, playsinline: 1, start: 28 },
           events: {
             onReady: function () { ytReady = true; if (wantPlay) yt.playVideo(); },
             onStateChange: function (e) { if (e.data === 0) yt.loadVideoById({ videoId: pick(), startSeconds: 28 }); }   // song ended: next random one
@@ -152,6 +152,12 @@
       var s = document.createElement("script");
       s.src = "https://www.youtube.com/iframe_api";
       document.head.appendChild(s);
+    }
+    // Phones only let sound start during the tap itself. If the player is still loading when the
+    // tap happens, the phone blocks it and you have to tap again. So on touch screens the player
+    // loads quietly in the background a moment after the page, and the first tap plays at once.
+    if (SONGS.length && window.matchMedia("(hover: none)").matches) {
+      window.addEventListener("load", function () { setTimeout(function () { if (!yt) loadYouTube(true); }, 1200); });
     }
     player.addEventListener("click", function () {
       if (!SONGS.length) { window.open(CHANNEL, "_blank", "noopener"); return; }
