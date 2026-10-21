@@ -593,22 +593,22 @@ body::before {
 :root[data-theme="dark"] .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); } }
 
-/* Play/pause: the turntable's own start/stop knob, sitting on the base's front-left corner
-   (theme.js places it there). Same materials as the base, with the switch-style side edge. */
+/* Play/pause: the start/stop key in the middle of the turntable's control strip (theme.js places
+   it). Recessed, in the base's own colours; dim until a song has played. */
 .deck-toggle {
-  position: fixed; z-index: 13; width: 19px; height: 19px; padding: 0; border: 0; border-radius: 50%;
-  background: radial-gradient(circle at 38% 32%, #5a5853, #2c2b28); color: #f1e9d6;
-  box-shadow: -2px 3px 0 #141311, 0 0 0 1px rgba(0, 0, 0, .5), -3px 6px 10px rgba(0, 0, 0, .35);
-  cursor: pointer; opacity: 0; transform: scale(.6); pointer-events: none;
-  transition: opacity .3s ease, transform .35s cubic-bezier(.2,.9,.25,1.2);
+  position: fixed; z-index: 13; width: 26px; height: 15px; padding: 0; border: 0; border-radius: 5px;
+  background: linear-gradient(#3e3c38, #262522); color: #f1e9d6;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #121110, 0 0 0 1px rgba(0,0,0,.55);
+  cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .1s ease;
 }
-:root[data-theme="dark"] .deck-toggle { background: radial-gradient(circle at 38% 32%, #fbf6ea, #d6cab0); color: #2a2620; box-shadow: -2px 3px 0 #a99c80, 0 0 0 1px rgba(90,75,50,.35), -3px 6px 10px rgba(0,0,0,.4); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-toggle { background: radial-gradient(circle at 38% 32%, #fbf6ea, #d6cab0); color: #2a2620; box-shadow: -2px 3px 0 #a99c80, 0 0 0 1px rgba(90,75,50,.35), -3px 6px 10px rgba(0,0,0,.4); } }
-.deck-played .deck-toggle { opacity: 1; transform: none; pointer-events: auto; }
-.deck-played.deck-open .deck-toggle { opacity: 0; pointer-events: none; }
-.deck-toggle:active { transform: translate(-1px, 2px); box-shadow: -1px 1px 0 #141311, 0 0 0 1px rgba(0,0,0,.5); }
+:root[data-theme="dark"] .deck-toggle { background: linear-gradient(#fbf6ea, #ddd2b9); color: #2a2620; box-shadow: inset 0 1px 0 #fff, 0 2px 0 #a99c80, 0 0 0 1px rgba(90,75,50,.35); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-toggle { background: linear-gradient(#fbf6ea, #ddd2b9); color: #2a2620; box-shadow: inset 0 1px 0 #fff, 0 2px 0 #a99c80, 0 0 0 1px rgba(90,75,50,.35); } }
+.deck-on .deck-toggle { opacity: .4; }
+.deck-played .deck-toggle { opacity: 1; pointer-events: auto; }
+.deck-open .deck-toggle { opacity: 0 !important; pointer-events: none; }
+.deck-toggle:active { transform: translateY(1px); }
 .deck-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.deck-toggle svg { width: 100%; height: 100%; display: block; fill: currentColor; padding: 2px; box-sizing: border-box; }
+.deck-toggle svg { width: 100%; height: 100%; display: block; fill: currentColor; padding: 2px 0; box-sizing: border-box; }
 .deck-toggle .i-pause { display: none; }
 .deck-toggle[aria-pressed="true"] .i-play { display: none; }
 .deck-toggle[aria-pressed="true"] .i-pause { display: inline; }
@@ -645,7 +645,7 @@ body::before {
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-plinth { --pl-a: #f3ecdc; --pl-b: #e4dac4; --pl-edge: #b8ab90; --pl-line: #9c8f75; --pl-hi: rgba(255,255,255,.35);
   --pl-screw-a: #fbf7ee; --pl-screw-b: #b5a98f; --pl-slot: rgba(90,75,50,.5); } }
 .deck-plinth {
-  position: absolute; left: 140px; top: 150px; width: 400px; height: 400px; border-radius: 46px;
+  position: absolute; left: 140px; top: 150px; width: 400px; height: 520px; border-radius: 46px;   /* taller: control strip under the record */
   background: linear-gradient(160deg, var(--pl-a), var(--pl-b));
   /* Seen slightly from the side, like the light switch: a solid darker edge on the left and bottom
      gives the box its depth, then a soft shadow on the page. */
@@ -671,3 +671,11 @@ body::before {
 .deck-plinth .s3 { left: 16px; bottom: 16px; } .deck-plinth .s4 { right: 16px; bottom: 16px; }
 .deck-plinth .led { position: absolute; right: 44px; bottom: 22px; width: 10px; height: 10px; border-radius: 50%; background: #6b2a22; box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); }
 .deck.playing .deck-plinth .led { background: #e2553f; box-shadow: 0 0 8px #e2553f; }
+
+/* Control strip along the front of the base: speed knob left, power light right, start/stop key centred (theme.js). */
+.deck-plinth .strip { position: absolute; left: 30px; right: 30px; bottom: 30px; height: 96px; border-radius: 24px;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,.22), inset 0 0 0 1px rgba(0,0,0,.12); }
+.deck-plinth .knob { position: absolute; left: 62px; bottom: 54px; width: 48px; height: 48px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--pl-screw-a), var(--pl-screw-b)); box-shadow: -4px 5px 0 var(--pl-edge), 0 0 0 1px rgba(0,0,0,.3); }
+.deck-plinth .knob::after { content: ""; position: absolute; left: 23px; top: 6px; width: 3px; height: 14px; border-radius: 2px; background: var(--pl-slot); }
+.deck-plinth .led { right: 74px !important; bottom: 72px !important; width: 14px !important; height: 14px !important; }
