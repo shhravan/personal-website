@@ -335,7 +335,16 @@
       // dial, and closes a moment after the pointer leaves both.
       function stayOpen() { clearTimeout(closeTimer); }
       function closeSoon() { clearTimeout(closeTimer); closeTimer = setTimeout(function () { deck.classList.remove("open", "hovering"); }, 280); }
-      rec.addEventListener("mouseenter", function () { stayOpen(); if (rearm) { deck.classList.add("open"); showNow(); } });
+      // Only the record itself opens the dial, after a short pause, so moving the pointer past it
+      // (for example down to the start/stop key) doesn't pop the dial open.
+      var openTimer = 0;
+      rec.addEventListener("mouseenter", function () {
+        stayOpen();
+        if (!rearm) return;
+        if (deck.classList.contains("open")) { showNow(); return; }
+        openTimer = setTimeout(function () { deck.classList.add("open"); showNow(); }, 220);
+      });
+      rec.addEventListener("mouseleave", function () { clearTimeout(openTimer); });
       rec.addEventListener("mouseleave", function () { rearm = true; closeSoon(); });
       var glass = deck.querySelector(".deck-glass");   // the frosted ring between and behind the covers
       glass.addEventListener("mouseenter", stayOpen);
