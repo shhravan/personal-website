@@ -194,3 +194,4 @@ What each slice taught, in plain English.
 - A Cloudflare Worker is a few lines of code Cloudflare runs on its own network. Ours fetches only Shravan's Substack addresses, only for requests carrying a secret key, so it isn't an open proxy. The key lives in Cloudflare and GitHub's encrypted secrets, never in the code or on the site.
 - The Worker is tested locally with Node and a fake `fetch`, including look-alike hosts, wrong keys, cloud-metadata addresses and path tricks.
 
+- Substack sometimes answers "429 Too Many Requests". The sync now waits (10s, 30s, 90s, or whatever Substack asks for in `Retry-After`) and tries again before giving up, so a busy moment doesn't turn the run red.
