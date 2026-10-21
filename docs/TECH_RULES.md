@@ -7,8 +7,9 @@ Keep it simple. The goal is a site Shravan can read and explain.
   - *HTML* = the content and structure of a page.
   - *CSS* = how it looks (including the animated green grain banner).
   - *JavaScript* = small behaviors (rotating hero image, blog hover image, film roll motion).
-- **One small Python build script** (added at the blog slice), run automatically by a GitHub Action on every push:
-  - turns Markdown blog posts (`posts/*.md`) into blog pages and the blog list
+- **One small Python sync script** (`scripts/substack_sync.py`, standard library only), run by a GitHub Action every 3 hours (and on demand):
+  - copies Shravan's free Substack posts (shrvvn.substack.com) into blog pages and the blog list
+  - Substack's unofficial JSON API first, the official RSS feed as fallback; HTML cleaned to an allowlist; images downloaded into `images/blog/`
   - turns the `images/film/` folder into the film roll's photo list
   - *Markdown* = plain-text writing with simple marks (`# heading`, `**bold**`).
   - *GitHub Action* = a small robot on GitHub that runs a script whenever you push.
@@ -35,12 +36,13 @@ docs/               PRD, DESIGN, TECH_RULES, todo, LEARNING, SECURITY_*
 2. Use **relative links** (`./about/`, not `/about/`) so the site works at `shhravan.github.io/personal-website/` and later at `shravanlad.com`.
 3. Mobile first: every page must look right on a phone.
 4. Images: compress before adding (about 200-400 KB max each). Always add `alt` text (a short description for screen readers). Hero photos: two WebP files per photo, NAME.webp (1200px wide) and NAME-700.webp (phones); the frame crops from the center to a 1.9:1 shape (4:3 on phones), so keep the subject near the middle, or set its framing in the `FOCUS` list in `script.js` (focal point and zoom).
-5. Blog posts are Markdown files in `posts/`. The build script makes the pages and the list (no database or CMS). Until the blog slice, pages are hand-written HTML.
+5. Blog posts are written on Substack. The sync script makes `blog/<slug>/index.html` and the list between the POSTS markers in `blog/index.html`; never edit those by hand. Each post page has a canonical link to Substack.
 6. No secrets in the repo, ever (no API keys or tokens). Future tokens go in GitHub Actions secrets.
 6b. Every page carries the Content-Security-Policy meta tag; a new outside service must be added to it on every page (see docs/SECURITY_RUNBOOK.md).
 6c. When CSS or JS changes, bump the `?v=` number on its links in every page so browsers fetch the new file.
 6d. Keep the docs current: any PR that changes behavior or design updates PRD/DESIGN/TECH_RULES/todo and adds a LEARNING.md note.
 6e. Every page copies the home page head and body skeleton: `<a class="logo">`, `<main class="col ...">`, the `.foot` line, and field.js + script.js at the end. Page swaps (theme.js) replace only `.logo` and `<main>`, so anything a page needs must live inside `<main>`; page code sets itself up again on the `page:load` event.
+6f. Tests live in `tests/` (standard library `unittest`, no network). Run `python3 -m unittest discover -s tests -v` before a PR; GitHub runs them on every push (`.github/workflows/tests.yml`) and the Substack sync refuses to publish if they fail.
 7. Comments in code explain *why*, in plain English, since Shravan is learning.
 8. Check each page in a browser before opening a PR (screenshot from the cloud container, plus the live GitHub Pages link once deployed).
 
