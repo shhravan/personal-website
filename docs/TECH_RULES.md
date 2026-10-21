@@ -42,6 +42,7 @@ docs/               PRD, DESIGN, TECH_RULES, todo, LEARNING, SECURITY_*
 6c. When CSS or JS changes, bump the `?v=` number on its links in every page so browsers fetch the new file.
 6d. Keep the docs current: any PR that changes behavior or design updates PRD/DESIGN/TECH_RULES/todo and adds a LEARNING.md note.
 6e. Every page copies the home page head and body skeleton: `<a class="logo">`, `<main class="col ...">`, the `.foot` line, and field.js + script.js at the end. Page swaps (theme.js) replace only `.logo` and `<main>`, so anything a page needs must live inside `<main>`; page code sets itself up again on the `page:load` event.
+6f. Tests live in `tests/` (standard library `unittest`, no network). Run `python3 -m unittest discover -s tests -v` before a PR; GitHub runs them on every push (`.github/workflows/tests.yml`) and the Substack sync refuses to publish if they fail.
 7. Comments in code explain *why*, in plain English, since Shravan is learning.
 8. Check each page in a browser before opening a PR (screenshot from the cloud container, plus the live GitHub Pages link once deployed).
 

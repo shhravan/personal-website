@@ -182,3 +182,9 @@ What each slice taught, in plain English.
 - A `canonical` link tells search engines which copy is the original, so the same post in two places isn't treated as duplicate content.
 - Hitting an API too fast gets "429 Too Many Requests"; a one-second pause between requests avoids it.
 
+## Stress-testing the blog pipeline
+- The tests replace the network with a fake Substack, so they can serve hostile or broken data on purpose: 31 kinds of script-injection HTML, slugs like `../../index`, images that are really HTML pages, XML "bombs", wrong JSON shapes, endless pagination, and an empty response that would otherwise wipe the blog.
+- Check output the way a browser reads it (parse the HTML), not with text search: an escaped `&quot; onmouseover=` inside a link is harmless text, which a regex wrongly flagged.
+- Mutation testing: break the safety code on purpose and make sure a test fails. One deliberate break survived because it changed nothing; re-adding the original `<source>` bug was caught.
+- A real run exposed a scaling problem (re-fetching every old post each time), fixed with a cache. Cached posts are cleaned again every run, so editing the cache can't sneak anything in.
+
