@@ -224,6 +224,7 @@ function initPage() {
   // bots reading the page text don't find a complete address.
   document.querySelectorAll("a.email").forEach((a) => {
     a.href = "mailto:" + a.dataset.user + "@" + a.dataset.domain;
+    a.textContent = a.dataset.user + "@" + a.dataset.domain;   // show the real address once joined
   });
 }
 

@@ -52,7 +52,7 @@ Top bar (every page), fixed while scrolling, sized in `vw` on wide screens so br
 Content column, centered vertically and horizontally in the window (`zoom: 0.8` on wide screens so it fits one screen):
 1. **Rounded hero photo** (1.9:1, 4:3 on phones). Swaps every 2 s, shuffled so none repeats until all have shown, never twice in a row, instant swap. Each photo framed by hand (`FOCUS` in `script.js`). Click anywhere on the page (not links/buttons, not while selecting text) to skip to the next.
 2. **Intro**, Shravan's words: "student at cornell, intellectually curious about things as they come." / "i take cool photos, have a genre-bending music taste, play few instruments. this is the one place to get to know me."
-3. **Links** (about, work, blog, photography, rabbit hole) on the left; profile icons stacked on the right (LinkedIn, X, YouTube Music, GitHub), right edge aligned with the photo. Icons from Simple Icons (CC0).
+3. **Links** (work, projects, blog, photography, random rabbit holes) on the left; profile icons stacked on the right (GitHub, LinkedIn, X, YouTube Music), right edge aligned with the photo. Icons from Simple Icons (CC0).
 4. **Last line**, centered and a little larger: just "*opticsbyshrvn*" (Instagram, underlined). Pointing at it fades in a thin drawn arrow (SVG, same on every device) at its top right and a note underneath: "for if you have taste". On phones and tablets (no hover) both stay visible. The word "opticsbyshrvn" switches to a different display font every 2 s, at the same moment as the photo changes (on other pages, on its own 2 s timer), shuffled so every font shows once before any repeats (the font set in "Font library" below, loaded only for those letters) to invite a click; it stays still for reduced-motion users.
 
 ## Every page shares the home page's look
@@ -62,7 +62,10 @@ The music never stops when you change pages: links between our own pages swap th
 
 Phones: smaller top bar, 1.75rem side margins, slightly smaller text, extra spacing between blocks. The name, location and email lines were removed by choice.
 
-## About
+## Projects
+Same water banner as the work page ("Projects", "Things I'm building."), then simple stacked cards. One "Coming Soon" card for now. (Replaced the old about page.)
+
+## About (dropped for now)
 Separate page with a long-form personal story, written in Shravan's voice, set as plain readable text (inspired by chinmay.blog).
 
 ## Blog
@@ -75,7 +78,7 @@ Built. Row layout inspired by hrishabhayush.com, page organisation by ronaldleun
 - **Banner:** muted slate teal mixed from the page color, thin rim, faint slowly drifting water ripples and a fine speckle of dots (light in dark mode, soft blue on cream; idea from ronaldleung.co), "Work" and a one-line subtitle in the normal text colors.
 - **Panels:** About, Work Experience, Education and Honors each sit in a soft rounded box.
 - **Rows:** rounded logo (links to the organisation's site where there is one), name in bold, small grey lines underneath, dates on the right; click a row for details.
-- **Projects:** heading, then simple stacked cards (title + one line). For now one "Coming Soon" card.
+- **Get in touch** at the bottom: the same water banner, "Just reach out on X or email me at …" (email joined by script.js). Projects moved to their own page.
 - Logos in `images/logos/`, from Shravan; Cornell's seal (SVG) from Wikimedia Commons.
 
 Still planned:

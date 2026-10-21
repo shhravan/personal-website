@@ -12,11 +12,11 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 | Page | What it is |
 |---|---|
 | **home** | top bar (light switch, name mark, record player), rotating hero photo, short intro, links, profile icons, Instagram line |
-| **about** | a separate page where Shravan tells their story (written in their own voice) |
+| **projects** | things Shravan is building, as cards (replaces the old about page) |
 | **work** | projects, experience, resume download (page layout inspired by hrishabhayush.com) |
 | **blog** | most important section. A list of posts (title + date); hovering a title shows a floating image |
 | **photography** | a portfolio page, all on one page: a film roll of Shravan's film photos that scrolls like a strip of film, then separate sections (like a portfolio). Instagram: instagram.com/opticsbyshrvn |
-| **rabbit hole** | music (playlists) plus "all things cool": favorite bands, favorite facts, random things Shravan likes. Reached with a special transition (see Later) |
+| **random rabbit holes** | music (playlists) plus "all things cool": favorite bands, favorite facts, random things Shravan likes. Reached with a special transition (see Later) |
 
 ## Core features (v1)
 1. **Rotating hero image** on the home page. Cycles through a folder of Shravan's photos and references every 2 seconds in a shuffled order (no repeats until all have shown), each photo framed for the wide shape. Clicking anywhere on the home page also changes the photo. This is the main personality moment.

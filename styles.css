@@ -677,3 +677,8 @@ body::before {
 .deck-toggle .i-pause { display: none; }
 .deck-toggle[aria-pressed="true"] .i-play { display: none; }
 .deck-toggle[aria-pressed="true"] .i-pause { display: inline; }
+
+/* "Get in touch" at the bottom of the work page: the same water banner as the top. */
+.banner.touch { margin-top: 0.4rem; }
+.banner.touch h2 { position: relative; z-index: 2; font-size: 1.4rem; font-weight: 500; margin: 0 0 0.25rem; color: inherit; }
+.banner.touch p a { color: var(--ink); }
