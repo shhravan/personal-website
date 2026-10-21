@@ -265,7 +265,7 @@
     if (deckMode) buildDeck();
     function buildDeck() {
       root.classList.add("deck-on");   // CSS hides the small record
-      var C = 330, R0 = 186, R1 = 318, A0 = 40, A1 = 226, N = TRACKS.length, GAP = 1;   // runs off the top and right edges, so the dial reaches the corner
+      var C = 330, R0 = 186, R1 = 318, A0 = 57, A1 = 211, N = TRACKS.length, GAP = 1;   // runs off the top and right edges, so the dial reaches the corner
       function pt(r, d) { var a = d * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; }
       function f(n) { return n.toFixed(1); }
       var clips = "", segs = "", ticks = "";
