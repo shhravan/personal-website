@@ -10,6 +10,7 @@ Keep it simple. The goal is a site Shravan can read and explain.
 - **One small Python sync script** (`scripts/substack_sync.py`, standard library only), run by a GitHub Action every 3 hours (and on demand):
   - copies Shravan's free Substack posts (shrvvn.substack.com) into blog pages and the blog list
   - Substack's unofficial JSON API first, the official RSS feed as fallback; HTML cleaned to an allowlist; images downloaded into `images/blog/`
+  - Substack's Cloudflare protection blocks GitHub's machines, so in the Action all requests go through a Cloudflare Worker relay (`worker/feed-relay.js`): fixed allowlist of Substack addresses, secret key in `X-Relay-Key` (GitHub secret `SUBSTACK_RELAY_KEY`, Worker secret `RELAY_KEY`), Worker address in the GitHub variable `SUBSTACK_RELAY_URL`
   - turns the `images/film/` folder into the film roll's photo list
   - *Markdown* = plain-text writing with simple marks (`# heading`, `**bold**`).
   - *GitHub Action* = a small robot on GitHub that runs a script whenever you push.

@@ -40,10 +40,22 @@ UA = {"User-Agent": "shravanlad-site-sync/1.0 (+https://github.com/shhravan/pers
 
 # ---------- 1. fetch ----------
 
+# Substack blocks GitHub's machines, so in the Action every request goes through our Cloudflare
+# Worker (worker/feed-relay.js). Locally, with these unset, the script talks to Substack directly.
+RELAY = os.environ.get("SUBSTACK_RELAY_URL", "").rstrip("/")
+RELAY_KEY = os.environ.get("SUBSTACK_RELAY_KEY", "")
+
+
 def get(url, as_json=False, limit=20 * 1024 * 1024):
     if not url.startswith("https://"):
         raise ValueError(f"refusing non-https url: {url!r}")
-    req = urllib.request.Request(url, headers=UA)
+    if RELAY:
+        if not RELAY.startswith("https://") or not RELAY_KEY:
+            raise ValueError("SUBSTACK_RELAY_URL must be https and SUBSTACK_RELAY_KEY must be set")
+        req = urllib.request.Request(f"{RELAY}/?url={urllib.parse.quote(url, safe='')}",
+                                     headers={**UA, "X-Relay-Key": RELAY_KEY})
+    else:
+        req = urllib.request.Request(url, headers=UA)
     with urllib.request.urlopen(req, timeout=30) as r:
         data = r.read(limit + 1)
     if len(data) > limit:

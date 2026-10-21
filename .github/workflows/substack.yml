@@ -26,6 +26,10 @@ jobs:
       - name: Tests must pass before anything is published
         run: python3 -m unittest discover -s tests
       - name: Fetch posts and build blog pages
+        env:
+          # Our Cloudflare Worker relay (worker/feed-relay.js); Substack blocks GitHub's machines.
+          SUBSTACK_RELAY_URL: ${{ vars.SUBSTACK_RELAY_URL }}
+          SUBSTACK_RELAY_KEY: ${{ secrets.SUBSTACK_RELAY_KEY }}
         run: python3 scripts/substack_sync.py
       - name: Commit if anything changed
         run: |
