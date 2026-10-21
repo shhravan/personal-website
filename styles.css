@@ -682,3 +682,22 @@ body::before {
 .banner.touch { margin-top: 0.4rem; }
 .banner.touch h2 { position: relative; z-index: 2; font-size: 1.4rem; font-weight: 500; margin: 0 0 0.25rem; color: inherit; }
 .banner.touch p a { color: var(--ink); }
+
+/* ---- blog: list and posts (pages written by scripts/substack_sync.py) ---- */
+.posts { list-style: none; margin: 1.6rem 0 0; padding: 0; }
+.posts li { margin: 0 0 1.1rem; }
+.posts li a { font-size: 1.15rem; }
+.posts .date { display: block; color: var(--soft); font-size: 0.85rem; margin-top: 0.1rem; }
+.posts .empty { color: var(--soft); }
+.post h1 { font-size: 1.9rem; font-weight: 500; line-height: 1.15; margin: 0 0 0.4rem; }
+.post-sub { font-size: 1.15rem; font-style: italic; color: var(--soft); margin: 0 0 0.6rem; }
+.post-meta { font-size: 0.85rem; color: var(--soft); margin: 0 0 2rem; }
+.post-meta a { color: var(--soft); }
+.post-body { font-size: 1.12rem; line-height: 1.7; }
+.post-body p { margin: 0 0 1.1rem; }
+.post-body h2, .post-body h3 { font-weight: 500; margin: 2rem 0 0.6rem; line-height: 1.2; }
+.post-body img { max-width: 100%; height: auto; border-radius: 0.4rem; display: block; margin: 1.4rem auto; }
+.post-body figcaption { text-align: center; font-size: 0.85rem; color: var(--soft); margin-top: -0.8rem; }
+.post-body blockquote { margin: 1.4rem 0; padding: 0 0 0 1rem; border-left: 2px solid color-mix(in srgb, var(--ink) 30%, transparent); color: var(--soft); font-style: italic; }
+.post-body pre { overflow-x: auto; font-size: 0.85rem; padding: 0.8rem 1rem; border-radius: 0.4rem; background: color-mix(in srgb, var(--ink) 6%, var(--bg)); }
+.post-body hr { border: 0; border-top: 1px solid color-mix(in srgb, var(--ink) 15%, transparent); margin: 2rem 0; }

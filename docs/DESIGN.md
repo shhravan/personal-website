@@ -69,6 +69,7 @@ Same water banner as the work page ("Projects", "Things I'm building."), then si
 Separate page with a long-form personal story, written in Shravan's voice, set as plain readable text (inspired by chinmay.blog).
 
 ## Blog
+Posts are written on Substack and copied here automatically (see TECH_RULES). Each post page: title, italic subtitle, date · reading time · "also on substack", then the text in Garamond.
 - A plain list: title, then date underneath.
 - Hovering a title shows a floating image near the cursor (inspired by rishigurjar.com/blog).
 - Each post is its own simple page with a "← back" link.

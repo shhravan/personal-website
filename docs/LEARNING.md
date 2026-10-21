@@ -175,3 +175,10 @@ What each slice taught, in plain English.
 - The groove reflection is a `conic-gradient` whose start angle is a CSS variable registered with `@property`, so the browser can animate it; JavaScript points it toward the cursor.
 - Phones only allow sound to start during a tap, so the YouTube player now preloads on touch screens and the first tap plays.
 
+## Blog from Substack: a small content pipeline
+- Substack has no official API or webhooks. It does have an official RSS feed (`/feed`) and the JSON endpoints its own site uses (`/api/v1/archive`, `/api/v1/posts/<slug>`). The script tries the JSON first and falls back to RSS: a habit worth keeping whenever you rely on something undocumented.
+- Fetch → transform → render. "Transform" means cleaning the HTML with an allowlist (only known-safe tags survive; scripts, embeds and Substack's buttons don't) and downloading images so the site doesn't depend on Substack's servers.
+- A GitHub Action is a computer GitHub lends you for a few minutes. `schedule` with a cron line runs it every 3 hours; `workflow_dispatch` adds a "Run workflow" button. It commits only if something changed.
+- A `canonical` link tells search engines which copy is the original, so the same post in two places isn't treated as duplicate content.
+- Hitting an API too fast gets "429 Too Many Requests"; a one-second pause between requests avoids it.
+

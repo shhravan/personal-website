@@ -1,0 +1,38 @@
+# Copies posts from Shravan's Substack onto the blog (scripts/substack_sync.py).
+# Substack can't notify us when a post goes up, so this checks every 3 hours. To pull a new post
+# straight away: GitHub → Actions → "Sync Substack" → Run workflow.
+name: Sync Substack
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # lets the job commit the new pages back to the repo
+
+concurrency:
+  group: substack-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch posts and build blog pages
+        run: python3 scripts/substack_sync.py
+      - name: Commit if anything changed
+        run: |
+          git add blog images/blog
+          if git diff --cached --quiet; then
+            echo "No new or changed posts."
+            exit 0
+          fi
+          git config user.name "substack-sync[bot]"
+          git config user.email "substack-sync@users.noreply.github.com"
+          git commit -m "Blog: sync posts from Substack"
+          git push
