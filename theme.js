@@ -338,14 +338,18 @@
       // Only the record itself opens the dial, after a short pause, so moving the pointer past it
       // (for example down to the start/stop key) doesn't pop the dial open.
       var openTimer = 0;
-      rec.addEventListener("mouseenter", function () {
+      function hoverIn() {
         stayOpen();
         if (!rearm) return;
         if (deck.classList.contains("open")) { showNow(); return; }
         openTimer = setTimeout(function () { deck.classList.add("open"); showNow(); }, 220);
+      }
+      // The whole turntable (record and base) opens the dial.
+      var base = deck.querySelector(".deck-plinth");
+      [rec, base].forEach(function (el) {
+        el.addEventListener("mouseenter", hoverIn);
+        el.addEventListener("mouseleave", function () { clearTimeout(openTimer); rearm = true; closeSoon(); });
       });
-      rec.addEventListener("mouseleave", function () { clearTimeout(openTimer); });
-      rec.addEventListener("mouseleave", function () { rearm = true; closeSoon(); });
       var glass = deck.querySelector(".deck-glass");   // the frosted ring between and behind the covers
       glass.addEventListener("mouseenter", stayOpen);
       glass.addEventListener("mouseleave", closeSoon);
@@ -361,8 +365,8 @@
         togglePlay();
       });
       // Clicking the record pauses and resumes (the dial opens only after a short hover).
-      // The small round play/pause button, just below the turntable on its right, shown once a song
-      // has played. The easy way to stop, since hovering the record opens the dial.
+      // The small round play/pause button, just left of the turntable, shown once a song is
+      // actually playing. The easy way to stop, since hovering the record opens the dial.
       toggleBtn = document.createElement("button");
       toggleBtn.className = "deck-toggle";
       toggleBtn.type = "button";
@@ -375,8 +379,8 @@
       function placeToggle() {
         if (deck.classList.contains("open")) return;
         var r = plinth.getBoundingClientRect();
-        toggleBtn.style.left = Math.round(r.right - 26) + "px";
-        toggleBtn.style.top = Math.round(r.bottom + 10) + "px";
+        toggleBtn.style.left = Math.round(r.left - 38) + "px";
+        toggleBtn.style.top = Math.round(r.top + r.height / 2 - 13) + "px";
       }
       setTimeout(placeToggle, 700);
       window.addEventListener("resize", function () { setTimeout(placeToggle, 700); });
