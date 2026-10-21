@@ -266,13 +266,16 @@
     function buildDeck() {
       root.classList.add("deck-on");   // CSS hides the small record
       var C = 330, R0 = 186, R1 = 318, N = TRACKS.length, GAP = 1;
-      // The dial runs from the right edge of the window to the top edge, with the end covers
-      // shown whole and their outer corners just touching the edges. The record's centre sits
+      // The dial runs from the right edge of the window to the top edge. The record's centre sits
       // 150px from the right and 130px from the top, and the deck is scaled by s (same formula
       // as --s in styles.css), so the edge angles depend on the window width.
       var sc = Math.min(1.05, Math.max(0.62, window.innerWidth / 1440 * 0.62 + 0.38));
-      var A0 = Math.acos(Math.min(1, 150 / (sc * R1))) * 180 / Math.PI + 0.5;
-      var A1 = 180 + Math.asin(Math.min(1, 130 / (sc * R1))) * 180 / Math.PI - 0.5;   // runs off the top and right edges, so the dial reaches the corner
+      var e0 = Math.acos(Math.min(1, 150 / (sc * R1))) * 180 / Math.PI;          // angle where the right edge cuts the dial
+      var e1 = 180 + Math.asin(Math.min(1, 130 / (sc * R1))) * 180 / Math.PI;   // angle where the top edge cuts it
+      // The two end covers run past the edges, so each shows most of itself with a slice cut off
+      // by the edge of the window, as if the dial carries on beyond the screen.
+      var slot = (e1 - e0) / (N - 0.8);
+      var A0 = e0 - slot * 0.4, A1 = e1 + slot * 0.4;   // runs off the top and right edges, so the dial reaches the corner
       function pt(r, d) { var a = d * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; }
       function f(n) { return n.toFixed(1); }
       var clips = "", segs = "", ticks = "";
@@ -302,6 +305,7 @@
       deck = document.createElement("div");
       deck.className = "deck";
       deck.innerHTML =
+        '<div class="deck-plinth" aria-hidden="true"><i></i><b class="sc s1"></b><b class="sc s2"></b><b class="sc s3"></b><b class="sc s4"></b><u class="knob"></u><u class="led"></u></div>' +   // turntable base, dark mode only (see styles.css)
         '<div class="deck-glass"></div>' +
         '<svg class="deck-dial" viewBox="0 0 660 660"><defs>' + clips + '</defs><g class="deck-rot"><g class="deck-ticks">' + ticks + '</g>' + segs + '</g></svg>' +
         '<button class="deck-record" type="button" aria-label="record player: hover to choose a song, click to pause or play">' +
@@ -331,8 +335,21 @@
       // dial, and closes a moment after the pointer leaves both.
       function stayOpen() { clearTimeout(closeTimer); }
       function closeSoon() { clearTimeout(closeTimer); closeTimer = setTimeout(function () { deck.classList.remove("open", "hovering"); }, 280); }
-      rec.addEventListener("mouseenter", function () { stayOpen(); if (rearm) { deck.classList.add("open"); showNow(); } });
-      rec.addEventListener("mouseleave", function () { rearm = true; closeSoon(); });
+      // Only the record itself opens the dial, after a short pause, so moving the pointer past it
+      // (for example down to the start/stop key) doesn't pop the dial open.
+      var openTimer = 0;
+      function hoverIn() {
+        stayOpen();
+        if (!rearm) return;
+        if (deck.classList.contains("open")) { showNow(); return; }
+        openTimer = setTimeout(function () { deck.classList.add("open"); showNow(); }, 220);
+      }
+      // The whole turntable (record and base) opens the dial.
+      var base = deck.querySelector(".deck-plinth");
+      [rec, base].forEach(function (el) {
+        el.addEventListener("mouseenter", hoverIn);
+        el.addEventListener("mouseleave", function () { clearTimeout(openTimer); rearm = true; closeSoon(); });
+      });
       var glass = deck.querySelector(".deck-glass");   // the frosted ring between and behind the covers
       glass.addEventListener("mouseenter", stayOpen);
       glass.addEventListener("mouseleave", closeSoon);
@@ -347,9 +364,9 @@
         if (deckSong < 0) { deck.classList.add("open"); return; }   // nothing chosen yet: show the dial
         togglePlay();
       });
-      // A small play/pause button beside the record, shown once a song has played. It is the easy
-      // way to stop, since hovering the record itself opens the dial. Styled like a turntable's
-      // start/stop key.
+      // Clicking the record pauses and resumes (the dial opens only after a short hover).
+      // The small round play/pause button, just left of the turntable, shown once a song is
+      // actually playing. The easy way to stop, since hovering the record opens the dial.
       toggleBtn = document.createElement("button");
       toggleBtn.className = "deck-toggle";
       toggleBtn.type = "button";
@@ -358,6 +375,16 @@
       toggleBtn.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">' +
         '<path class="i-play" d="M7.2 5.6 L14.6 10 L7.2 14.4 Z"/><g class="i-pause"><rect x="6.4" y="5.6" width="2.6" height="8.8" rx=".6"/><rect x="11" y="5.6" width="2.6" height="8.8" rx=".6"/></g></svg>';
       toggleBtn.addEventListener("click", togglePlay);
+      var plinth = deck.querySelector(".deck-plinth");
+      function placeToggle() {
+        if (deck.classList.contains("open")) return;
+        var r = plinth.getBoundingClientRect();
+        toggleBtn.style.left = Math.round(r.left - 38) + "px";
+        toggleBtn.style.top = Math.round(r.top + r.height / 2 - 13) + "px";
+      }
+      setTimeout(placeToggle, 700);
+      window.addEventListener("resize", function () { setTimeout(placeToggle, 700); });
+      deck.addEventListener("transitionend", placeToggle);
       document.body.appendChild(toggleBtn);
       // Mirror the dial's open state on <html>, so the play/pause key and the card can step aside.
       new MutationObserver(function () { root.classList.toggle("deck-open", deck.classList.contains("open")); })
