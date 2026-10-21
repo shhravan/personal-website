@@ -195,3 +195,4 @@ What each slice taught, in plain English.
 - The Worker is tested locally with Node and a fake `fetch`, including look-alike hosts, wrong keys, cloud-metadata addresses and path tricks.
 
 - Substack sometimes answers "429 Too Many Requests". The sync now waits (10s, 30s, 90s, or whatever Substack asks for in `Retry-After`) and tries again before giving up, so a busy moment doesn't turn the run red.
+- `tests/test_sync_reliability.py` replays every way the sync has failed (missing `images/blog`, Substack's 429s on both routes) plus the next likely one (someone merges to main mid-run, so the push gets rejected; the commit step now rebases first). It runs the workflow's real commit step in throwaway git repos, and was checked by putting each old bug back and watching the tests go red. The job also has a 20-minute timeout so retries can never hang it.

@@ -173,7 +173,10 @@ def fetch(base):
         return fetch_from_api(base, load_cache()), "api"
     except Exception as e:   # the API changed or is down: use the feed instead
         print(f"api failed ({e}); using rss", file=sys.stderr)
-        return fetch_from_rss(base), "rss"
+        try:
+            return fetch_from_rss(base), "rss"
+        except Exception as e2:   # both routes down (usually Substack rate-limiting): one clear line, not a traceback
+            raise SystemExit(f"Substack unreachable. api: {e}; rss: {e2}")
 
 
 # ---------- 2. transform ----------

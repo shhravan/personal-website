@@ -18,6 +18,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 20   # retries on "too many requests" wait at most a few minutes; never hang for hours
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -42,4 +43,6 @@ jobs:
           git config user.name "substack-sync[bot]"
           git config user.email "substack-sync@users.noreply.github.com"
           git commit -m "Blog: sync posts from Substack"
-          git push
+          # someone may have merged to main while we ran: replay our commit on top instead of failing
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
