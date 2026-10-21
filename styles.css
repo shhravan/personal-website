@@ -580,7 +580,7 @@ body::before {
   box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
   opacity: 0; transform: translateX(10px); transition: opacity .3s ease, transform .4s cubic-bezier(.2,.8,.2,1);
 }
-.deck.hovering .deck-readout { opacity: 1; transform: none; }
+.deck.hovering .deck-readout, .deck.open.has-now .deck-readout { opacity: 1; transform: none; }
 .deck-readout .k { font-family: "Silkscreen", monospace; font-size: 9px; letter-spacing: .28em; color: var(--soft); }
 .deck-readout .t { font-size: 30px; line-height: 1.1; margin-top: 6px; color: var(--ink); }
 .deck-readout .a { font-size: 18px; font-style: italic; color: var(--soft); margin-top: 2px; }
@@ -605,10 +605,31 @@ body::before {
   transition: opacity .3s ease, transform .35s cubic-bezier(.2,.9,.25,1.2), background .2s ease;
 }
 .deck-played .deck-toggle { opacity: 1; transform: none; pointer-events: auto; }
-.deck-played body:has(.deck.open) .deck-toggle { opacity: 0; pointer-events: none; }
+.deck-played.deck-open .deck-toggle { opacity: 0; pointer-events: none; }
 .deck-toggle:hover { background: color-mix(in srgb, var(--ink) 14%, var(--bg)); }
 .deck-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .deck-toggle svg { width: 100%; height: 100%; display: block; fill: currentColor; }
 .deck-toggle .i-pause { display: none; }
 .deck-toggle[aria-pressed="true"] .i-play { display: none; }
 .deck-toggle[aria-pressed="true"] .i-pause { display: inline; }
+
+/* The playing song stays marked in the dial: bright rim, and the other covers dim a little until you hover. */
+.deck .seg.sel .rim { stroke: var(--ink); stroke-opacity: 1; stroke-width: 2; }
+.deck.has-now:not(.hovering) .seg:not(.sel) image { filter: brightness(.62) saturate(.8); }
+
+/* "Now playing" card that slides in under the record when the song changes. */
+.deck-toast {
+  position: fixed; z-index: 12; top: 62px; right: 16px; max-width: 260px; text-align: right;
+  padding: 0.55rem 0.8rem 0.6rem; border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+  opacity: 0; transform: translateY(-6px); pointer-events: none;
+  transition: opacity .35s ease, transform .45s cubic-bezier(.2,.8,.2,1);
+}
+.deck-toast.show { opacity: 1; transform: none; }
+.deck-open .deck-toast { opacity: 0; }
+.deck-toast .k { font-family: "Silkscreen", monospace; font-size: 8px; letter-spacing: .26em; color: var(--soft); }
+.deck-toast .t { font-size: 1.05rem; line-height: 1.15; margin-top: 3px; color: var(--ink); }
+.deck-toast .a { font-size: 0.85rem; font-style: italic; color: var(--soft); }

@@ -202,7 +202,24 @@
       { id: "Cl6Rz1Uvi2M", start: 0, title: "Pull Me Out of This", artist: "Fred again..", cover: "pull-me-out-of-this", fx: .45, fy: .45 },
     ];
     var deckMode = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 64rem)").matches;
-    var deck = null, needleSwing = null, driftTimer = 0, toggleBtn = null;
+    var deck = null, needleSwing = null, driftTimer = 0, toggleBtn = null, toast = null, toastTimer = 0;
+    // The playing song's cover keeps a bright rim in the dial, so reopening it shows what's on.
+    function markNow(i) {
+      deck.classList.add("has-now");
+      deck.querySelectorAll(".seg").forEach(function (x) { x.classList.toggle("sel", +x.getAttribute("data-i") === i); });
+      if (!deck.classList.contains("hovering")) showNow();
+    }
+    // A small "now playing" card under the record each time the song changes, fading after a few seconds.
+    function announce(i) {
+      toast.querySelector(".t").textContent = TRACKS[i].title;
+      toast.querySelector(".a").textContent = "by " + TRACKS[i].artist;
+      toast.classList.remove("show");
+      void toast.offsetWidth;   // restart the fade-in
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toast.classList.remove("show"); }, 4000);
+    }
+    var showNow = function () {};
 
     // Shuffle like the photos: every song plays once (in random order) before any repeats.
     var bag = [];
@@ -216,6 +233,7 @@
     function playTrack(i) {
       bag = bag.filter(function (x) { return x !== i; });
       root.classList.add("deck-played");   // from now on the little play/pause button shows
+      if (deck) { markNow(i); announce(i); }
       deckSong = i;
       var t = TRACKS[i];
       wantPlay = true;
@@ -231,6 +249,7 @@
     }
     function setPlaying(on) {
       deck.classList.toggle("playing", on);
+      if (!deck.classList.contains("hovering")) showNow();
       if (toggleBtn) {
         toggleBtn.setAttribute("aria-pressed", on ? "true" : "false");
         toggleBtn.setAttribute("aria-label", on ? "pause" : "play");
@@ -297,7 +316,7 @@
       // dial, and closes a moment after the pointer leaves both.
       function stayOpen() { clearTimeout(closeTimer); }
       function closeSoon() { clearTimeout(closeTimer); closeTimer = setTimeout(function () { deck.classList.remove("open", "hovering"); }, 280); }
-      rec.addEventListener("mouseenter", function () { stayOpen(); if (rearm) deck.classList.add("open"); });
+      rec.addEventListener("mouseenter", function () { stayOpen(); if (rearm) { deck.classList.add("open"); showNow(); } });
       rec.addEventListener("mouseleave", function () { rearm = true; closeSoon(); });
       var glass = deck.querySelector(".deck-glass");   // the frosted ring between and behind the covers
       glass.addEventListener("mouseenter", stayOpen);
@@ -325,11 +344,25 @@
         '<path class="i-play" d="M7.2 5.6 L14.6 10 L7.2 14.4 Z"/><g class="i-pause"><rect x="6.4" y="5.6" width="2.6" height="8.8" rx=".6"/><rect x="11" y="5.6" width="2.6" height="8.8" rx=".6"/></g></svg>';
       toggleBtn.addEventListener("click", togglePlay);
       document.body.appendChild(toggleBtn);
-      function show(i) {
-        readout.querySelector(".k").textContent = "NOW SELECTING · " + String(i + 1).padStart(2, "0");
+      // Mirror the dial's open state on <html>, so the play/pause key and the card can step aside.
+      new MutationObserver(function () { root.classList.toggle("deck-open", deck.classList.contains("open")); })
+        .observe(deck, { attributes: true, attributeFilter: ["class"] });
+      toast = document.createElement("div");
+      toast.className = "deck-toast";
+      toast.setAttribute("role", "status");
+      toast.innerHTML = '<div class="k">NOW PLAYING</div><div class="t"></div><div class="a"></div>';
+      document.body.appendChild(toast);
+      function show(i, label) {
+        readout.querySelector(".k").textContent = (label || "NOW SELECTING") + " · " + String(i + 1).padStart(2, "0");
         readout.querySelector(".t").textContent = TRACKS[i].title;
         readout.querySelector(".a").textContent = "by " + TRACKS[i].artist;
       }
+      // With the dial open and nothing hovered, the card shows the song that's playing.
+      showNow = function () {
+        if (deckSong < 0) return;
+        show(deckSong, deck.classList.contains("playing") ? "NOW PLAYING" : "PAUSED");
+        readout.querySelector(".h").textContent = "pick another to switch";
+      };
       deck.querySelectorAll(".seg").forEach(function (s) {
         var i = +s.getAttribute("data-i");
         // Per-cover values (stagger delay, pop-out direction) are set here rather than in the
@@ -342,11 +375,11 @@
           s.classList.add("sel");
           s.classList.remove("hot");
           deck.classList.remove("open", "hovering");   // everything tidies away...
-          rearm = false;
+          rearm = true;   // the record shrinks away from the pointer, so hovering it again reopens the dial
           playTrack(i);                               // ...and the song plays
         }
-        s.addEventListener("mouseenter", function () { stayOpen(); deck.classList.add("hovering"); s.classList.add("hot"); show(i); });
-        s.addEventListener("mouseleave", function () { s.classList.remove("hot"); deck.classList.remove("hovering"); closeSoon(); });
+        s.addEventListener("mouseenter", function () { stayOpen(); deck.classList.add("hovering"); s.classList.add("hot"); show(i); readout.querySelector(".h").textContent = "click to play"; });
+        s.addEventListener("mouseleave", function () { s.classList.remove("hot"); deck.classList.remove("hovering"); showNow(); closeSoon(); });
         s.addEventListener("focus", function () { deck.classList.add("open", "hovering"); s.classList.add("hot"); show(i); });
         s.addEventListener("blur", function () { s.classList.remove("hot"); deck.classList.remove("hovering"); });
         s.addEventListener("click", choose);
