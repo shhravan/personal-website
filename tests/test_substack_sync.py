@@ -385,6 +385,50 @@ class GeneratedPageTests(SiteCase):
                         self.assertRegex(dict(attrs).get("src", ""), r"^" + re.escape(prefix) + r"[a-z]+\.js\?v=\d+$")   # only the site's own scripts
 
 
+# ---------------------------------------------------------------- relay (Cloudflare Worker) mode
+
+class RelayTests(unittest.TestCase):
+    def setUp(self):
+        self.saved = (sync.RELAY, sync.RELAY_KEY, sync.urllib.request.urlopen)
+        self.seen = []
+
+        class Resp(io.BytesIO):
+            def __enter__(s):
+                return s
+
+            def __exit__(s, *a):
+                return False
+
+        def fake_urlopen(req, timeout=None):
+            self.seen.append(req)
+            return Resp(b"[]")
+        sync.urllib.request.urlopen = fake_urlopen
+
+    def tearDown(self):
+        sync.RELAY, sync.RELAY_KEY, sync.urllib.request.urlopen = self.saved
+
+    def test_requests_go_through_the_relay_with_the_key(self):
+        sync.RELAY, sync.RELAY_KEY = "https://relay.example", "secret-key-123"
+        sync.get("https://shrvvn.substack.com/api/v1/archive?sort=new&offset=0&limit=25", as_json=True)
+        req = self.seen[0]
+        self.assertTrue(req.full_url.startswith("https://relay.example/?url=https%3A%2F%2Fshrvvn.substack.com%2Fapi"))
+        self.assertEqual(req.get_header("X-relay-key"), "secret-key-123")
+
+    def test_relay_must_be_https_and_keyed(self):
+        for relay, key in (("http://relay.example", "k"), ("https://relay.example", "")):
+            with self.subTest(relay=relay, key=bool(key)):
+                sync.RELAY, sync.RELAY_KEY = relay, key
+                with self.assertRaises(ValueError):
+                    sync.get("https://shrvvn.substack.com/feed")
+        self.assertEqual(self.seen, [])   # nothing was sent
+
+    def test_without_relay_it_talks_to_substack_directly(self):
+        sync.RELAY, sync.RELAY_KEY = "", ""
+        sync.get("https://shrvvn.substack.com/feed")
+        self.assertEqual(self.seen[0].full_url, "https://shrvvn.substack.com/feed")
+        self.assertIsNone(self.seen[0].get_header("X-relay-key"))
+
+
 # ---------------------------------------------------------------- idempotence
 
 class StabilityTests(SiteCase):

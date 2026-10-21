@@ -188,3 +188,9 @@ What each slice taught, in plain English.
 - Mutation testing: break the safety code on purpose and make sure a test fails. One deliberate break survived because it changed nothing; re-adding the original `<source>` bug was caught.
 - A real run exposed a scaling problem (re-fetching every old post each time), fixed with a cache. Cached posts are cleaned again every run, so editing the cache can't sneak anything in.
 
+## Servers, Cloudflare and a Worker relay
+- A server is an always-on computer that answers requests. GitHub Pages only hands out files; it runs none of our code.
+- Cloudflare sits in front of Substack as a delivery network and bouncer. It blocks GitHub's data-centre machines ("Just a moment..."), which we proved with a probe workflow that tried every endpoint and several relays.
+- A Cloudflare Worker is a few lines of code Cloudflare runs on its own network. Ours fetches only Shravan's Substack addresses, only for requests carrying a secret key, so it isn't an open proxy. The key lives in Cloudflare and GitHub's encrypted secrets, never in the code or on the site.
+- The Worker is tested locally with Node and a fake `fetch`, including look-alike hosts, wrong keys, cloud-metadata addresses and path tricks.
+

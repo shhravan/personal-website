@@ -24,4 +24,5 @@ After each merge: the Actions tab shows "pages build and deployment" succeeded; 
 ## Substack sync Action
 - `.github/workflows/substack.yml` has `contents: write` so it can commit blog pages. It runs only our own script, pins official actions (`actions/checkout@v4`, `actions/setup-python@v5`), and needs no secrets (the feed is public).
 - Post HTML is cleaned to an allowlist before it reaches the site, and images are served from our own domain, so the Content-Security-Policy didn't need to change.
+- Relay: `worker/feed-relay.js` on Cloudflare. Allowlisted hosts/paths only, https only, constant-time key check, GET only, 20 MB cap, refuses everything if `RELAY_KEY` is unset. To rotate the key: generate a new random value, update the Worker secret `RELAY_KEY` and the GitHub secret `SUBSTACK_RELAY_KEY`, run the sync once.
 
