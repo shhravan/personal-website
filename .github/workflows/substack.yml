@@ -33,7 +33,8 @@ jobs:
         run: python3 scripts/substack_sync.py
       - name: Commit if anything changed
         run: |
-          git add blog images/blog
+          git add blog
+          if [ -d images/blog ]; then git add images/blog; fi
           if git diff --cached --quiet; then
             echo "No new or changed posts."
             exit 0
