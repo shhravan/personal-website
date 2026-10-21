@@ -593,25 +593,6 @@ body::before {
 :root[data-theme="dark"] .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); } }
 
-/* Play/pause: the start/stop key in the middle of the turntable's control strip (theme.js places
-   it). Recessed, in the base's own colours; dim until a song has played. */
-.deck-toggle {
-  position: fixed; z-index: 13; width: 26px; height: 15px; padding: 0; border-radius: 5px;
-  /* Flush with the strip, not raised: just an engraved outline and the symbol. */
-  background: transparent; color: #e9e2d2; border: 1px solid rgba(255, 255, 255, .22);
-  cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s ease, background .2s ease;
-}
-:root[data-theme="dark"] .deck-toggle { color: #2a2620; border-color: rgba(42, 38, 32, .3); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-toggle { color: #2a2620; border-color: rgba(42, 38, 32, .3); } }
-.deck-toggle:hover { background: rgba(128, 120, 105, .18); }
-.deck-on .deck-toggle { opacity: .4; }
-.deck-played .deck-toggle { opacity: 1; pointer-events: auto; }
-.deck-open .deck-toggle { opacity: 0 !important; pointer-events: none; }
-.deck-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.deck-toggle svg { width: 100%; height: 100%; display: block; fill: currentColor; padding: 2px 0; box-sizing: border-box; }
-.deck-toggle .i-pause { display: none; }
-.deck-toggle[aria-pressed="true"] .i-play { display: none; }
-.deck-toggle[aria-pressed="true"] .i-pause { display: inline; }
 
 /* The playing song stays marked in the dial: bright rim, and the other covers dim a little until you hover. */
 .deck .seg.sel .rim { stroke: var(--ink); stroke-opacity: 1; stroke-width: 2; }
@@ -645,7 +626,7 @@ body::before {
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-plinth { --pl-a: #f3ecdc; --pl-b: #e4dac4; --pl-edge: #b8ab90; --pl-line: #9c8f75; --pl-hi: rgba(255,255,255,.35);
   --pl-screw-a: #fbf7ee; --pl-screw-b: #b5a98f; --pl-slot: rgba(90,75,50,.5); } }
 .deck-plinth {
-  position: absolute; left: 140px; top: 150px; width: 400px; height: 520px; border-radius: 46px;   /* taller: control strip under the record */
+  position: absolute; left: 140px; top: 150px; width: 400px; height: 400px; border-radius: 46px;
   background: linear-gradient(160deg, var(--pl-a), var(--pl-b));
   /* Seen slightly from the side, like the light switch: a solid darker edge on the left and bottom
      gives the box its depth, then a soft shadow on the page. */
@@ -669,13 +650,29 @@ body::before {
 .deck-plinth .sc::after { content: ""; position: absolute; left: 3px; right: 3px; top: 6px; height: 2px; background: var(--pl-slot); transform: rotate(35deg); }
 .deck-plinth .s1 { left: 16px; top: 16px; } .deck-plinth .s2 { right: 16px; top: 16px; }
 .deck-plinth .s3 { left: 16px; bottom: 16px; } .deck-plinth .s4 { right: 16px; bottom: 16px; }
-.deck-plinth .led { position: absolute; right: 44px; bottom: 22px; width: 10px; height: 10px; border-radius: 50%; background: #6b2a22; box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); }
+.deck-plinth .led { position: absolute; left: 84px; bottom: 48px; width: 10px; height: 10px; border-radius: 50%; background: #6b2a22; box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); }
 .deck.playing .deck-plinth .led { background: #e2553f; box-shadow: 0 0 8px #e2553f; }
 
-/* Control strip along the front of the base: speed knob left, power light right, start/stop key centred (theme.js). */
-.deck-plinth .strip { position: absolute; left: 30px; right: 30px; bottom: 30px; height: 96px; border-radius: 24px;
-  box-shadow: inset 0 3px 8px rgba(0,0,0,.22), inset 0 0 0 1px rgba(0,0,0,.12); }
-.deck-plinth .knob { position: absolute; left: 62px; bottom: 54px; width: 48px; height: 48px; border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, var(--pl-screw-a), var(--pl-screw-b)); box-shadow: -4px 5px 0 var(--pl-edge), 0 0 0 1px rgba(0,0,0,.3); }
-.deck-plinth .knob::after { content: ""; position: absolute; left: 23px; top: 6px; width: 3px; height: 14px; border-radius: 2px; background: var(--pl-slot); }
-.deck-plinth .led { right: 74px !important; bottom: 72px !important; width: 14px !important; height: 14px !important; }
+.deck-plinth .knob { position: absolute; left: 30px; bottom: 34px; width: 38px; height: 38px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--pl-screw-a), var(--pl-screw-b)); box-shadow: -3px 4px 0 var(--pl-edge), 0 0 0 1px rgba(0,0,0,.3); }
+.deck-plinth .knob::after { content: ""; position: absolute; left: 18px; top: 5px; width: 2px; height: 11px; border-radius: 1px; background: var(--pl-slot); }
+
+/* Play/pause: the small round button just below the turntable, on its right (theme.js places it).
+   Appears once a song has played; hides while the dial is open. */
+.deck-toggle {
+  position: fixed; z-index: 12; width: 26px; height: 26px; padding: 0;
+  border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  background: color-mix(in srgb, var(--ink) 7%, var(--bg));
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .25), 0 1px 0 color-mix(in srgb, var(--ink) 10%, transparent);
+  color: var(--ink); cursor: pointer;
+  opacity: 0; transform: scale(.6); pointer-events: none;
+  transition: opacity .3s ease, transform .35s cubic-bezier(.2,.9,.25,1.2), background .2s ease;
+}
+.deck-played .deck-toggle { opacity: 1; transform: none; pointer-events: auto; }
+.deck-played.deck-open .deck-toggle { opacity: 0; pointer-events: none; }
+.deck-toggle:hover { background: color-mix(in srgb, var(--ink) 14%, var(--bg)); }
+.deck-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.deck-toggle svg { width: 100%; height: 100%; display: block; fill: currentColor; }
+.deck-toggle .i-pause { display: none; }
+.deck-toggle[aria-pressed="true"] .i-play { display: none; }
+.deck-toggle[aria-pressed="true"] .i-pause { display: inline; }
