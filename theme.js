@@ -195,12 +195,12 @@
       { id: "Dro607rLuls", start: 0, title: "Control Room", artist: "Peter Cat Recording Co.", cover: "control-room", fx: .52, fy: .48 },
       { id: "8ifjLdWj4y0", start: 0, title: "Theme from New York, New York", artist: "Frank Sinatra", cover: "new-york-new-york", fx: .33, fy: .32 },
       { id: "LNq4xox99HY", start: 0, title: "Ode to the Mets", artist: "The Strokes", cover: "ode-to-the-mets", fx: .62, fy: .58 },
-      { id: "YuKfiH0Scao", start: 0, title: "Ain't No Sunshine", artist: "Bill Withers", cover: "aint-no-sunshine", fx: .25, fy: .5 },
-      { id: "dvgZkm1xWPE", start: 0, title: "Viva la Vida", artist: "Coldplay", cover: "viva-la-vida", fx: .45, fy: .42 },
+      { id: "YuKfiH0Scao", start: 0, title: "Ain't No Sunshine", artist: "Bill Withers", cover: "aint-no-sunshine", fx: .24, fy: .3 },
+      { id: "dvgZkm1xWPE", start: 0, title: "Viva la Vida", artist: "Coldplay", cover: "viva-la-vida", fx: .5, fy: .45 },
       { id: "CnEIT_RJsq4", start: 110, title: "Clown on the 22nd Floor + Happiness", artist: "Peter Cat Recording Co.", cover: "portrait-of-a-time", fx: .45, fy: .55 },
       { id: "mQER0A0ej0M", start: 0, title: "Hey Jude", artist: "The Beatles", cover: "hey-jude", fx: .7, fy: .42 },
       { id: "o4qsjmLxhow", start: 0, title: "The Adults Are Talking", artist: "The Strokes", cover: "the-adults-are-talking", fx: .82, fy: .4 },
-      { id: "l6_w3887Rwo", start: 0, title: "Tennessee Whiskey", artist: "Chris Stapleton", cover: "tennessee-whiskey", fx: .5, fy: .68 },
+      { id: "l6_w3887Rwo", start: 0, title: "Tennessee Whiskey", artist: "Chris Stapleton", cover: "tennessee-whiskey", fx: .5, fy: .5 },
       { id: "Cl6Rz1Uvi2M", start: 0, title: "Pull Me Out of This", artist: "Fred again..", cover: "pull-me-out-of-this", fx: .45, fy: .45 },
     ];
     var deckMode = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 64rem)").matches;
