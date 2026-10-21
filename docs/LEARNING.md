@@ -178,7 +178,7 @@ What each slice taught, in plain English.
 ## Blog from Substack: a small content pipeline
 - Substack has no official API or webhooks. It does have an official RSS feed (`/feed`) and the JSON endpoints its own site uses (`/api/v1/archive`, `/api/v1/posts/<slug>`). The script tries the JSON first and falls back to RSS: a habit worth keeping whenever you rely on something undocumented.
 - Fetch → transform → render. "Transform" means cleaning the HTML with an allowlist (only known-safe tags survive; scripts, embeds and Substack's buttons don't) and downloading images so the site doesn't depend on Substack's servers.
-- A GitHub Action is a computer GitHub lends you for a few minutes. `schedule` with a cron line runs it every 3 hours; `workflow_dispatch` adds a "Run workflow" button. It commits only if something changed.
+- A GitHub Action is a computer GitHub lends you for a few minutes. `schedule` with a cron line runs it on a schedule (once a month for now: `17 9 1 * *` = 09:17 UTC on the 1st); `workflow_dispatch` adds a "Run workflow" button. It commits only if something changed.
 - A `canonical` link tells search engines which copy is the original, so the same post in two places isn't treated as duplicate content.
 - Hitting an API too fast gets "429 Too Many Requests"; a one-second pause between requests avoids it.
 

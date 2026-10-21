@@ -1,11 +1,11 @@
 # Copies posts from Shravan's Substack onto the blog (scripts/substack_sync.py).
-# Substack can't notify us when a post goes up, so this checks every 3 hours. To pull a new post
+# Substack can't notify us when a post goes up, so this checks once a month (1st, 09:17 UTC). To pull a new post
 # straight away: GitHub → Actions → "Sync Substack" → Run workflow.
 name: Sync Substack
 
 on:
   schedule:
-    - cron: "17 */3 * * *"
+    - cron: "17 9 1 * *"
   workflow_dispatch:
 
 permissions:
