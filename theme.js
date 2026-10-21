@@ -305,7 +305,7 @@
       deck = document.createElement("div");
       deck.className = "deck";
       deck.innerHTML =
-        '<div class="deck-plinth" aria-hidden="true"><i></i></div>' +   // turntable base, dark mode only (see styles.css)
+        '<div class="deck-plinth" aria-hidden="true"><i></i><b class="sc s1"></b><b class="sc s2"></b><b class="sc s3"></b><b class="sc s4"></b><u class="knob"></u><u class="led"></u></div>' +   // turntable base, dark mode only (see styles.css)
         '<div class="deck-glass"></div>' +
         '<svg class="deck-dial" viewBox="0 0 660 660"><defs>' + clips + '</defs><g class="deck-rot"><g class="deck-ticks">' + ticks + '</g>' + segs + '</g></svg>' +
         '<button class="deck-record" type="button" aria-label="record player: hover to choose a song, click to pause or play">' +
