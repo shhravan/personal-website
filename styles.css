@@ -512,8 +512,12 @@ body::before {
   background: #efe6d2; box-shadow: 0 0 0 1px rgba(0, 0, 0, .4);
 }
 .deck-label i { position: absolute; inset: 9%; border-radius: 50%; border: 1px solid rgba(26, 24, 20, .14); }
+.deck-label b {
+  position: absolute; left: 0; right: 0; bottom: 30%; text-align: center; font-weight: 400;
+  font-family: "Silkscreen", monospace; font-size: 5.6px; letter-spacing: .12em; color: rgba(26, 24, 20, .78);
+}
 .deck-label span {
-  position: absolute; left: 0; right: 0; bottom: 20%; text-align: center;
+  position: absolute; left: 0; right: 0; bottom: 19%; text-align: center;
   font-family: "Silkscreen", monospace; font-size: 6.5px; letter-spacing: .18em; color: rgba(26, 24, 20, .55);
 }
 /* Light caught in the grooves. It doesn't spin with the record; its angle follows the cursor. */
@@ -588,3 +592,23 @@ body::before {
 /* In dark mode a thin light rim keeps the black record visible, like the old small one. */
 :root[data-theme="dark"] .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); } }
+
+/* Play/pause key beside the small record (desktop): a round, recessed button in the page's own
+   colours, like a turntable's start/stop. Appears once a song has played; hides while the dial is open. */
+.deck-toggle {
+  position: fixed; z-index: 12; top: 18px; right: 74px; width: 26px; height: 26px; padding: 0;
+  border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  background: color-mix(in srgb, var(--ink) 7%, var(--bg));
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .25), 0 1px 0 color-mix(in srgb, var(--ink) 10%, transparent);
+  color: var(--ink); cursor: pointer;
+  opacity: 0; transform: scale(.6); pointer-events: none;
+  transition: opacity .3s ease, transform .35s cubic-bezier(.2,.9,.25,1.2), background .2s ease;
+}
+.deck-played .deck-toggle { opacity: 1; transform: none; pointer-events: auto; }
+.deck-played body:has(.deck.open) .deck-toggle { opacity: 0; pointer-events: none; }
+.deck-toggle:hover { background: color-mix(in srgb, var(--ink) 14%, var(--bg)); }
+.deck-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.deck-toggle svg { width: 100%; height: 100%; display: block; fill: currentColor; }
+.deck-toggle .i-pause { display: none; }
+.deck-toggle[aria-pressed="true"] .i-play { display: none; }
+.deck-toggle[aria-pressed="true"] .i-pause { display: inline; }

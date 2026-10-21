@@ -151,7 +151,7 @@
             onReady: function () { ytReady = true; if (wantPlay) yt.playVideo(); },
             onStateChange: function (e) {
               if (e.data !== 0) return;   // 0 means the song ended
-              if (deckSong >= 0) { playTrack((deckSong + 1) % TRACKS.length); return; }   // desktop: next record
+              if (deckSong >= 0) { playTrack(nextShuffled()); return; }   // desktop: shuffle on through side A
               yt.loadVideoById({ videoId: pick(), startSeconds: 28 });                    // phone: another random one
             }
           }
@@ -182,24 +182,40 @@
     // right. Hovering it fans out a dial of album covers; clicking a cover plays that song straight
     // away (the dial closes and the needle drops). Clicking the record pauses or resumes.
     // Phones and tablets keep the small record above, unchanged.
+    // Side A: "all over the place". Spread out so the same artist never sits next to itself.
+    // fx, fy: the point of the cover to keep in view inside its small slice (0 to 1 across, down).
     var TRACKS = [
-      { id: "ZoSD4l32m2I", start: 28, title: "Memory Box", artist: "Peter Cat Recording Co.", cover: "memory-box" },
-      { id: "FRpB2KRdi3w", start: 0, title: "Control Room", artist: "Peter Cat Recording Co.", cover: "control-room" },
-      { id: "TvpJWAx_NkY", start: 0, title: "Portrait of a Time", artist: "Peter Cat Recording Co.", cover: "portrait-of-a-time" },
-      { id: "cmpRLQZkTb8", start: 0, title: "Don't Look Back in Anger", artist: "Oasis", cover: "dont-look-back-in-anger" },
-      { id: "fJ9rUzIMcZQ", start: 0, title: "Bohemian Rhapsody", artist: "Queen", cover: "bohemian-rhapsody" },
-      { id: "8ifjLdWj4y0", start: 0, title: "Theme from New York, New York", artist: "Frank Sinatra", cover: "new-york-new-york" },
-      { id: "1-W6whvn8Bs", start: 0, title: "Selfless", artist: "The Strokes", cover: "selfless" },
-      { id: "LNq4xox99HY", start: 0, title: "Ode to the Mets", artist: "The Strokes", cover: "ode-to-the-mets" },
-      { id: "o4qsjmLxhow", start: 0, title: "The Adults Are Talking", artist: "The Strokes", cover: "the-adults-are-talking" },
-      { id: "dvgZkm1xWPE", start: 0, title: "Viva la Vida", artist: "Coldplay", cover: "viva-la-vida" },
-      { id: "A_MjCqQoLLA", start: 0, title: "Hey Jude", artist: "The Beatles", cover: "hey-jude" },
-      { id: "Cl6Rz1Uvi2M", start: 0, title: "Pull Me Out of This", artist: "Fred again..", cover: "pull-me-out-of-this" },
+      { id: "ZoSD4l32m2I", start: 28, title: "Memory Box", artist: "Peter Cat Recording Co.", cover: "memory-box", fx: .22, fy: .45 },
+      { id: "oplra1FJxWI", start: 0, title: "Don't Look Back in Anger", artist: "Oasis", cover: "dont-look-back-in-anger", fx: .53, fy: .62 },
+      { id: "1-W6whvn8Bs", start: 0, title: "Selfless", artist: "The Strokes", cover: "selfless", fx: .3, fy: .3 },
+      { id: "GmK5_lnQUbE", start: 0, title: "Sweet Caroline", artist: "Neil Diamond", cover: "sweet-caroline", fx: .48, fy: .42 },
+      { id: "fJ9rUzIMcZQ", start: 0, title: "Bohemian Rhapsody", artist: "Queen", cover: "bohemian-rhapsody", fx: .5, fy: .38 },
+      { id: "Dro607rLuls", start: 0, title: "Control Room", artist: "Peter Cat Recording Co.", cover: "control-room", fx: .52, fy: .48 },
+      { id: "8ifjLdWj4y0", start: 0, title: "Theme from New York, New York", artist: "Frank Sinatra", cover: "new-york-new-york", fx: .33, fy: .32 },
+      { id: "LNq4xox99HY", start: 0, title: "Ode to the Mets", artist: "The Strokes", cover: "ode-to-the-mets", fx: .62, fy: .58 },
+      { id: "YuKfiH0Scao", start: 0, title: "Ain't No Sunshine", artist: "Bill Withers", cover: "aint-no-sunshine", fx: .25, fy: .5 },
+      { id: "dvgZkm1xWPE", start: 0, title: "Viva la Vida", artist: "Coldplay", cover: "viva-la-vida", fx: .45, fy: .42 },
+      { id: "CnEIT_RJsq4", start: 110, title: "Clown on the 22nd Floor + Happiness", artist: "Peter Cat Recording Co.", cover: "portrait-of-a-time", fx: .45, fy: .55 },
+      { id: "mQER0A0ej0M", start: 0, title: "Hey Jude", artist: "The Beatles", cover: "hey-jude", fx: .7, fy: .42 },
+      { id: "o4qsjmLxhow", start: 0, title: "The Adults Are Talking", artist: "The Strokes", cover: "the-adults-are-talking", fx: .82, fy: .4 },
+      { id: "l6_w3887Rwo", start: 0, title: "Tennessee Whiskey", artist: "Chris Stapleton", cover: "tennessee-whiskey", fx: .5, fy: .68 },
+      { id: "Cl6Rz1Uvi2M", start: 0, title: "Pull Me Out of This", artist: "Fred again..", cover: "pull-me-out-of-this", fx: .45, fy: .45 },
     ];
     var deckMode = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 64rem)").matches;
-    var deck = null, needleSwing = null, driftTimer = 0;
+    var deck = null, needleSwing = null, driftTimer = 0, toggleBtn = null;
 
+    // Shuffle like the photos: every song plays once (in random order) before any repeats.
+    var bag = [];
+    function nextShuffled() {
+      if (!bag.length) {
+        bag = TRACKS.map(function (_, i) { return i; }).filter(function (i) { return i !== deckSong; });
+        for (var k = bag.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)), x = bag[k]; bag[k] = bag[j]; bag[j] = x; }
+      }
+      return bag.pop();
+    }
     function playTrack(i) {
+      bag = bag.filter(function (x) { return x !== i; });
+      root.classList.add("deck-played");   // from now on the little play/pause button shows
       deckSong = i;
       var t = TRACKS[i];
       wantPlay = true;
@@ -215,6 +231,10 @@
     }
     function setPlaying(on) {
       deck.classList.toggle("playing", on);
+      if (toggleBtn) {
+        toggleBtn.setAttribute("aria-pressed", on ? "true" : "false");
+        toggleBtn.setAttribute("aria-label", on ? "pause" : "play");
+      }
       clearTimeout(driftTimer);
       if (on) {
         moveNeedle(-3, 1.1, "cubic-bezier(.3,.7,.2,1)");
@@ -225,7 +245,7 @@
     if (deckMode) buildDeck();
     function buildDeck() {
       root.classList.add("deck-on");   // CSS hides the small record
-      var C = 330, R0 = 196, R1 = 304, A0 = 70, A1 = 202, N = TRACKS.length, GAP = 1.1;
+      var C = 330, R0 = 190, R1 = 310, A0 = 66, A1 = 206, N = TRACKS.length, GAP = 1;
       function pt(r, d) { var a = d * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; }
       function f(n) { return n.toFixed(1); }
       var clips = "", segs = "", ticks = "";
@@ -238,7 +258,7 @@
         clips += '<clipPath id="deck-c' + i + '"><path d="' + d + '"/></clipPath>';
         segs += '<g class="seg" data-i="' + i + '" role="button" tabindex="0" aria-label="play ' + t.title + ' by ' + t.artist + '" ' +
                 'data-dx="' + f(dx) + '" data-dy="' + f(dy) + '">' +
-                '<image href="' + BASE + 'images/covers/' + t.cover + '.webp" x="' + f(mid[0] - 70) + '" y="' + f(mid[1] - 70) + '" width="140" height="140" preserveAspectRatio="xMidYMid slice" clip-path="url(#deck-c' + i + ')"/>' +
+                '<image href="' + BASE + 'images/covers/' + t.cover + '.webp" x="' + f(mid[0] - t.fx * 150) + '" y="' + f(mid[1] - t.fy * 150) + '" width="150" height="150" preserveAspectRatio="xMidYMid slice" clip-path="url(#deck-c' + i + ')"/>' +
                 '<path class="rim" d="' + d + '"/></g>';
       });
       for (var k = 0; k <= 60; k++) {
@@ -251,7 +271,7 @@
         '<div class="deck-glass"></div>' +
         '<svg class="deck-dial" viewBox="0 0 660 660"><defs>' + clips + '</defs><g class="deck-rot"><g class="deck-ticks">' + ticks + '</g>' + segs + '</g></svg>' +
         '<button class="deck-record" type="button" aria-label="record player: hover to choose a song, click to pause or play">' +
-          '<span class="deck-disc"><span class="deck-label"><i></i><span>SIDE A</span></span></span><span class="deck-sheen"></span></button>' +
+          '<span class="deck-disc"><span class="deck-label"><i></i><b>ALL OVER THE PLACE</b><span>SIDE A</span></span></span><span class="deck-sheen"></span></button>' +
         // Tonearm drawn from scratch: base, counterweight, pivot, curved arm, head with cartridge.
         '<svg class="deck-arm" viewBox="0 0 120 300" aria-hidden="true"><defs>' +
           '<linearGradient id="deck-metal" x1="0" x2="1"><stop offset="0" stop-color="#6f6c66"/><stop offset=".45" stop-color="#f4f2ec"/><stop offset=".6" stop-color="#d9d6cf"/><stop offset="1" stop-color="#5f5c57"/></linearGradient>' +
@@ -282,14 +302,29 @@
       var glass = deck.querySelector(".deck-glass");   // the frosted ring between and behind the covers
       glass.addEventListener("mouseenter", stayOpen);
       glass.addEventListener("mouseleave", closeSoon);
-      rec.addEventListener("click", function () {
-        if (deck.classList.contains("open")) { deck.classList.remove("open", "hovering"); rearm = false; return; }
-        if (deckSong < 0) { deck.classList.add("open"); return; }   // nothing chosen yet: show the dial
+      function togglePlay() {
         var on = !deck.classList.contains("playing");
         setPlaying(on);
         wantPlay = on;
         if (ytReady) { if (on) yt.playVideo(); else yt.pauseVideo(); }
+      }
+      rec.addEventListener("click", function () {
+        if (deck.classList.contains("open")) { deck.classList.remove("open", "hovering"); rearm = false; return; }
+        if (deckSong < 0) { deck.classList.add("open"); return; }   // nothing chosen yet: show the dial
+        togglePlay();
       });
+      // A small play/pause button beside the record, shown once a song has played. It is the easy
+      // way to stop, since hovering the record itself opens the dial. Styled like a turntable's
+      // start/stop key.
+      toggleBtn = document.createElement("button");
+      toggleBtn.className = "deck-toggle";
+      toggleBtn.type = "button";
+      toggleBtn.setAttribute("aria-pressed", "false");
+      toggleBtn.setAttribute("aria-label", "play");
+      toggleBtn.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">' +
+        '<path class="i-play" d="M7.2 5.6 L14.6 10 L7.2 14.4 Z"/><g class="i-pause"><rect x="6.4" y="5.6" width="2.6" height="8.8" rx=".6"/><rect x="11" y="5.6" width="2.6" height="8.8" rx=".6"/></g></svg>';
+      toggleBtn.addEventListener("click", togglePlay);
+      document.body.appendChild(toggleBtn);
       function show(i) {
         readout.querySelector(".k").textContent = "NOW SELECTING · " + String(i + 1).padStart(2, "0");
         readout.querySelector(".t").textContent = TRACKS[i].title;
