@@ -22,6 +22,7 @@ import shutil
 import sys
 import time
 import urllib.parse
+import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -46,6 +47,9 @@ RELAY = os.environ.get("SUBSTACK_RELAY_URL", "").rstrip("/")
 RELAY_KEY = os.environ.get("SUBSTACK_RELAY_KEY", "")
 
 
+RETRY_WAITS = (10, 30, 90)   # seconds to wait before each retry when Substack says "too many requests"
+
+
 def get(url, as_json=False, limit=20 * 1024 * 1024):
     if not url.startswith("https://"):
         raise ValueError(f"refusing non-https url: {url!r}")
@@ -56,8 +60,17 @@ def get(url, as_json=False, limit=20 * 1024 * 1024):
                                      headers={**UA, "X-Relay-Key": RELAY_KEY})
     else:
         req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=30) as r:
-        data = r.read(limit + 1)
+    for wait in RETRY_WAITS + (None,):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                data = r.read(limit + 1)
+            break
+        except urllib.error.HTTPError as e:
+            # 429 = "slow down", 503 = "busy": wait and try again; anything else fails at once
+            if e.code not in (429, 503) or wait is None:
+                raise
+            retry_after = e.headers.get("Retry-After", "") if e.headers else ""
+            time.sleep(min(int(retry_after), 120) if retry_after.isdigit() else wait)
     if len(data) > limit:
         raise ValueError(f"response too large: {url}")
     return json.loads(data) if as_json else data

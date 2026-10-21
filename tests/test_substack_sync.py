@@ -483,5 +483,44 @@ class StabilityTests(SiteCase):
         self.assertEqual(snapshot(self.tmp), before)
 
 
+class RetryTests(unittest.TestCase):
+    """Substack sometimes answers 429 ("too many requests"); get() waits and retries, but gives up eventually."""
+
+    def setUp(self):
+        self.saved = (sync.urllib.request.urlopen, sync.time.sleep, sync.RELAY)
+        self.waits = []
+        sync.time.sleep = self.waits.append
+        sync.RELAY = ""
+
+    def tearDown(self):
+        sync.urllib.request.urlopen, sync.time.sleep, sync.RELAY = self.saved
+
+    def fake(self, codes):
+        import email.message, urllib.error
+        def urlopen(req, timeout=None):
+            code = codes.pop(0)
+            if code == 200:
+                return io.BytesIO(b"ok")
+            raise urllib.error.HTTPError(req.full_url, code, "x", email.message.Message(), None)
+        sync.urllib.request.urlopen = urlopen
+
+    def test_retries_then_succeeds(self):
+        self.fake([429, 429, 200])
+        self.assertEqual(sync.get("https://shrvvn.substack.com/feed"), b"ok")
+        self.assertEqual(len(self.waits), 2)
+
+    def test_gives_up_after_retries(self):
+        self.fake([429] * 10)
+        with self.assertRaises(Exception):
+            sync.get("https://shrvvn.substack.com/feed")
+        self.assertEqual(len(self.waits), len(sync.RETRY_WAITS))
+
+    def test_other_errors_fail_at_once(self):
+        self.fake([404, 200])
+        with self.assertRaises(Exception):
+            sync.get("https://shrvvn.substack.com/feed")
+        self.assertEqual(self.waits, [])
+
+
 if __name__ == "__main__":
     unittest.main()
