@@ -305,7 +305,7 @@
       deck = document.createElement("div");
       deck.className = "deck";
       deck.innerHTML =
-        '<div class="deck-plinth" aria-hidden="true"><i></i><b class="sc s1"></b><b class="sc s2"></b><b class="sc s3"></b><b class="sc s4"></b><u class="knob"></u><u class="led"></u></div>' +   // turntable base, dark mode only (see styles.css)
+        '<div class="deck-plinth" aria-hidden="true"><i></i><b class="sc s1"></b><b class="sc s2"></b><b class="sc s3"></b><b class="sc s4"></b><u class="led"></u></div>' +   // turntable base, dark mode only (see styles.css)
         '<div class="deck-glass"></div>' +
         '<svg class="deck-dial" viewBox="0 0 660 660"><defs>' + clips + '</defs><g class="deck-rot"><g class="deck-ticks">' + ticks + '</g>' + segs + '</g></svg>' +
         '<button class="deck-record" type="button" aria-label="record player: hover to choose a song, click to pause or play">' +
@@ -362,6 +362,17 @@
       toggleBtn.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">' +
         '<path class="i-play" d="M7.2 5.6 L14.6 10 L7.2 14.4 Z"/><g class="i-pause"><rect x="6.4" y="5.6" width="2.6" height="8.8" rx=".6"/><rect x="11" y="5.6" width="2.6" height="8.8" rx=".6"/></g></svg>';
       toggleBtn.addEventListener("click", togglePlay);
+      // Sit the knob on the front-left corner of the turntable base, wherever the base is on screen.
+      var plinth = deck.querySelector(".deck-plinth");
+      function placeKnob() {
+        if (deck.classList.contains("open")) return;
+        var r = plinth.getBoundingClientRect();
+        toggleBtn.style.left = Math.round(r.left - 11) + "px";
+        toggleBtn.style.top = Math.round(r.bottom - 11) + "px";
+      }
+      setTimeout(placeKnob, 700);
+      window.addEventListener("resize", function () { setTimeout(placeKnob, 700); });
+      deck.addEventListener("transitionend", placeKnob);
       document.body.appendChild(toggleBtn);
       // Mirror the dial's open state on <html>, so the play/pause key and the card can step aside.
       new MutationObserver(function () { root.classList.toggle("deck-open", deck.classList.contains("open")); })

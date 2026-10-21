@@ -593,22 +593,22 @@ body::before {
 :root[data-theme="dark"] .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); } }
 
-/* Play/pause key beside the small record (desktop): a round, recessed button in the page's own
-   colours, like a turntable's start/stop. Appears once a song has played; hides while the dial is open. */
+/* Play/pause: the turntable's own start/stop knob, sitting on the base's front-left corner
+   (theme.js places it there). Same materials as the base, with the switch-style side edge. */
 .deck-toggle {
-  position: fixed; z-index: 12; top: 18px; right: 74px; width: 26px; height: 26px; padding: 0;
-  border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
-  background: color-mix(in srgb, var(--ink) 7%, var(--bg));
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .25), 0 1px 0 color-mix(in srgb, var(--ink) 10%, transparent);
-  color: var(--ink); cursor: pointer;
-  opacity: 0; transform: scale(.6); pointer-events: none;
-  transition: opacity .3s ease, transform .35s cubic-bezier(.2,.9,.25,1.2), background .2s ease;
+  position: fixed; z-index: 13; width: 19px; height: 19px; padding: 0; border: 0; border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #5a5853, #2c2b28); color: #f1e9d6;
+  box-shadow: -2px 3px 0 #141311, 0 0 0 1px rgba(0, 0, 0, .5), -3px 6px 10px rgba(0, 0, 0, .35);
+  cursor: pointer; opacity: 0; transform: scale(.6); pointer-events: none;
+  transition: opacity .3s ease, transform .35s cubic-bezier(.2,.9,.25,1.2);
 }
+:root[data-theme="dark"] .deck-toggle { background: radial-gradient(circle at 38% 32%, #fbf6ea, #d6cab0); color: #2a2620; box-shadow: -2px 3px 0 #a99c80, 0 0 0 1px rgba(90,75,50,.35), -3px 6px 10px rgba(0,0,0,.4); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-toggle { background: radial-gradient(circle at 38% 32%, #fbf6ea, #d6cab0); color: #2a2620; box-shadow: -2px 3px 0 #a99c80, 0 0 0 1px rgba(90,75,50,.35), -3px 6px 10px rgba(0,0,0,.4); } }
 .deck-played .deck-toggle { opacity: 1; transform: none; pointer-events: auto; }
 .deck-played.deck-open .deck-toggle { opacity: 0; pointer-events: none; }
-.deck-toggle:hover { background: color-mix(in srgb, var(--ink) 14%, var(--bg)); }
+.deck-toggle:active { transform: translate(-1px, 2px); box-shadow: -1px 1px 0 #141311, 0 0 0 1px rgba(0,0,0,.5); }
 .deck-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.deck-toggle svg { width: 100%; height: 100%; display: block; fill: currentColor; }
+.deck-toggle svg { width: 100%; height: 100%; display: block; fill: currentColor; padding: 2px; box-sizing: border-box; }
 .deck-toggle .i-pause { display: none; }
 .deck-toggle[aria-pressed="true"] .i-play { display: none; }
 .deck-toggle[aria-pressed="true"] .i-pause { display: inline; }
@@ -637,16 +637,20 @@ body::before {
 /* Dark mode only: the small record sits on a cream turntable base, so from across the room it reads
    unmistakably as a record player. A plain rounded plinth with a soft edge and a recessed platter
    ring, nothing more. It fades away when the dial opens, so the covers have the stage. */
-.deck-plinth { display: none; }
-:root[data-theme="dark"] .deck-plinth { display: block; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-plinth { display: block; } }
+/* Light mode gets a charcoal base instead, so the record stands out on the cream page the same way. */
+.deck-plinth { --pl-a: #45433f; --pl-b: #2e2d2a; --pl-edge: #1b1a18; --pl-line: #111; --pl-hi: rgba(255,255,255,.08);
+  --pl-screw-a: #8d8a84; --pl-screw-b: #4a4844; --pl-slot: rgba(0,0,0,.55); }
+:root[data-theme="dark"] .deck-plinth { --pl-a: #f3ecdc; --pl-b: #e4dac4; --pl-edge: #b8ab90; --pl-line: #9c8f75; --pl-hi: rgba(255,255,255,.35);
+  --pl-screw-a: #fbf7ee; --pl-screw-b: #b5a98f; --pl-slot: rgba(90,75,50,.5); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-plinth { --pl-a: #f3ecdc; --pl-b: #e4dac4; --pl-edge: #b8ab90; --pl-line: #9c8f75; --pl-hi: rgba(255,255,255,.35);
+  --pl-screw-a: #fbf7ee; --pl-screw-b: #b5a98f; --pl-slot: rgba(90,75,50,.5); } }
 .deck-plinth {
   position: absolute; left: 140px; top: 150px; width: 400px; height: 400px; border-radius: 46px;
-  background: linear-gradient(160deg, #f3ecdc, #e4dac4);
+  background: linear-gradient(160deg, var(--pl-a), var(--pl-b));
   /* Seen slightly from the side, like the light switch: a solid darker edge on the left and bottom
      gives the box its depth, then a soft shadow on the page. */
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35), inset 0 -10px 24px rgba(120, 100, 70, .18),
-    -10px 12px 0 #b8ab90, -10px 12px 0 1px #9c8f75, -14px 26px 40px rgba(0, 0, 0, .5);
+  box-shadow: inset 0 0 0 2px var(--pl-hi), inset 0 -10px 24px rgba(0, 0, 0, .15),
+    -10px 12px 0 var(--pl-edge), -10px 12px 0 1px var(--pl-line), -14px 26px 40px rgba(0, 0, 0, .5);
   transition: opacity .35s ease;
 }
 .deck-plinth i {   /* the platter well around the record */
@@ -661,12 +665,9 @@ body::before {
 
 /* Details: four corner screws, a speed knob and a little red power light, like the switch's screws. */
 .deck-plinth .sc { position: absolute; width: 14px; height: 14px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #fbf7ee, #b5a98f); box-shadow: inset 0 0 0 1px rgba(90, 75, 50, .35); }
-.deck-plinth .sc::after { content: ""; position: absolute; left: 3px; right: 3px; top: 6px; height: 2px; background: rgba(90, 75, 50, .5); transform: rotate(35deg); }
+  background: radial-gradient(circle at 35% 35%, var(--pl-screw-a), var(--pl-screw-b)); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .3); }
+.deck-plinth .sc::after { content: ""; position: absolute; left: 3px; right: 3px; top: 6px; height: 2px; background: var(--pl-slot); transform: rotate(35deg); }
 .deck-plinth .s1 { left: 16px; top: 16px; } .deck-plinth .s2 { right: 16px; top: 16px; }
 .deck-plinth .s3 { left: 16px; bottom: 16px; } .deck-plinth .s4 { right: 16px; bottom: 16px; }
-.deck-plinth .knob { position: absolute; left: 30px; bottom: 34px; width: 38px; height: 38px; border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #f7f1e4, #cfc3aa); box-shadow: -3px 4px 0 #a99c80, 0 0 0 1px rgba(90, 75, 50, .3); }
-.deck-plinth .knob::after { content: ""; position: absolute; left: 18px; top: 5px; width: 2px; height: 11px; background: #3b342a; border-radius: 1px; }
-.deck-plinth .led { position: absolute; left: 84px; bottom: 48px; width: 10px; height: 10px; border-radius: 50%; background: #6b2a22; box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); }
+.deck-plinth .led { position: absolute; right: 44px; bottom: 22px; width: 10px; height: 10px; border-radius: 50%; background: #6b2a22; box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); }
 .deck.playing .deck-plinth .led { background: #e2553f; box-shadow: 0 0 8px #e2553f; }
