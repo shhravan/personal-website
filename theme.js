@@ -265,7 +265,14 @@
     if (deckMode) buildDeck();
     function buildDeck() {
       root.classList.add("deck-on");   // CSS hides the small record
-      var C = 330, R0 = 186, R1 = 318, A0 = 57, A1 = 211, N = TRACKS.length, GAP = 1;   // runs off the top and right edges, so the dial reaches the corner
+      var C = 330, R0 = 186, R1 = 318, N = TRACKS.length, GAP = 1;
+      // The dial runs from the right edge of the window to the top edge, with the end covers
+      // shown whole and their outer corners just touching the edges. The record's centre sits
+      // 150px from the right and 130px from the top, and the deck is scaled by s (same formula
+      // as --s in styles.css), so the edge angles depend on the window width.
+      var sc = Math.min(1.05, Math.max(0.62, window.innerWidth / 1440 * 0.62 + 0.38));
+      var A0 = Math.acos(Math.min(1, 150 / (sc * R1))) * 180 / Math.PI + 0.5;
+      var A1 = 180 + Math.asin(Math.min(1, 130 / (sc * R1))) * 180 / Math.PI - 0.5;   // runs off the top and right edges, so the dial reaches the corner
       function pt(r, d) { var a = d * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; }
       function f(n) { return n.toFixed(1); }
       var clips = "", segs = "", ticks = "";
