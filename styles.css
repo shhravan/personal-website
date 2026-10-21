@@ -543,8 +543,8 @@ body::before {
 .deck-glass {
   position: absolute; inset: 12px; border-radius: 50%;
   background: color-mix(in srgb, var(--bg) 60%, transparent);
-  -webkit-mask: radial-gradient(circle, transparent 0 194px, #000 195px 316px, transparent 317px);
-  mask: radial-gradient(circle, transparent 0 194px, #000 195px 316px, transparent 317px);
+  -webkit-mask: radial-gradient(circle, transparent 0 168px, #000 169px 316px, transparent 317px);
+  mask: radial-gradient(circle, transparent 0 168px, #000 169px 316px, transparent 317px);
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   opacity: 0; transform: scale(.86) rotate(-8deg);
   transition: opacity .45s ease, transform .7s cubic-bezier(.2,.8,.2,1);
@@ -573,7 +573,7 @@ body::before {
 
 /* What you're pointing at, beside the dial, in the site's own type. */
 .deck-readout {
-  position: absolute; right: calc(100% - 22px); top: 290px; width: max-content; max-width: 340px; text-align: right;
+  position: absolute; right: calc(100% + 14px); top: 270px; width: max-content; max-width: 340px; text-align: right;
   padding: 0.75rem 1rem 0.8rem; border-radius: 0.7rem;
   background: color-mix(in srgb, var(--bg) 78%, transparent);
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);

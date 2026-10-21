@@ -150,6 +150,8 @@
           events: {
             onReady: function () { ytReady = true; if (wantPlay) yt.playVideo(); },
             onStateChange: function (e) {
+              // 1 means sound is actually playing: only then does the little play/pause key appear.
+              if (e.data === 1 && deckSong >= 0) root.classList.add("deck-played");
               if (e.data !== 0) return;   // 0 means the song ended
               if (deckSong >= 0) { playTrack(nextShuffled()); return; }   // desktop: shuffle on through side A
               yt.loadVideoById({ videoId: pick(), startSeconds: 28 });                    // phone: another random one
@@ -232,7 +234,6 @@
     }
     function playTrack(i) {
       bag = bag.filter(function (x) { return x !== i; });
-      root.classList.add("deck-played");   // from now on the little play/pause button shows
       if (deck) { markNow(i); announce(i); }
       deckSong = i;
       var t = TRACKS[i];
@@ -264,7 +265,7 @@
     if (deckMode) buildDeck();
     function buildDeck() {
       root.classList.add("deck-on");   // CSS hides the small record
-      var C = 330, R0 = 190, R1 = 310, A0 = 66, A1 = 206, N = TRACKS.length, GAP = 1;
+      var C = 330, R0 = 186, R1 = 318, A0 = 40, A1 = 226, N = TRACKS.length, GAP = 1;   // runs off the top and right edges, so the dial reaches the corner
       function pt(r, d) { var a = d * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; }
       function f(n) { return n.toFixed(1); }
       var clips = "", segs = "", ticks = "";
@@ -274,10 +275,17 @@
         var d = "M" + f(p0[0]) + "," + f(p0[1]) + " A" + R1 + "," + R1 + " 0 0 1 " + f(p1[0]) + "," + f(p1[1]) +
                 " L" + f(p2[0]) + "," + f(p2[1]) + " A" + R0 + "," + R0 + " 0 0 0 " + f(p3[0]) + "," + f(p3[1]) + " Z";
         var dx = 12 * Math.cos(m * Math.PI / 180), dy = 12 * Math.sin(m * Math.PI / 180);
+        // Place the cover so its focus point sits in the slice, but never so far that the slice
+        // runs past the picture's edge (no empty corners): clamp to the slice's bounding box.
+        var xs = [p0[0], p1[0], p2[0], p3[0], pt(R1, m)[0]], ys = [p0[1], p1[1], p2[1], p3[1], pt(R1, m)[1]];
+        var bx0 = Math.min.apply(0, xs), bx1 = Math.max.apply(0, xs), by0 = Math.min.apply(0, ys), by1 = Math.max.apply(0, ys);
+        var SIZE = Math.ceil(Math.max(170, bx1 - bx0 + 4, by1 - by0 + 4));
+        var img = [Math.min(bx0 - 2, Math.max(bx1 + 2 - SIZE, mid[0] - t.fx * SIZE)),
+                   Math.min(by0 - 2, Math.max(by1 + 2 - SIZE, mid[1] - t.fy * SIZE))];
         clips += '<clipPath id="deck-c' + i + '"><path d="' + d + '"/></clipPath>';
         segs += '<g class="seg" data-i="' + i + '" role="button" tabindex="0" aria-label="play ' + t.title + ' by ' + t.artist + '" ' +
                 'data-dx="' + f(dx) + '" data-dy="' + f(dy) + '">' +
-                '<image href="' + BASE + 'images/covers/' + t.cover + '.webp" x="' + f(mid[0] - t.fx * 150) + '" y="' + f(mid[1] - t.fy * 150) + '" width="150" height="150" preserveAspectRatio="xMidYMid slice" clip-path="url(#deck-c' + i + ')"/>' +
+                '<image href="' + BASE + 'images/covers/' + t.cover + '.webp" x="' + f(img[0]) + '" y="' + f(img[1]) + '" width="' + SIZE + '" height="' + SIZE + '" preserveAspectRatio="xMidYMid slice" clip-path="url(#deck-c' + i + ')"/>' +
                 '<path class="rim" d="' + d + '"/></g>';
       });
       for (var k = 0; k <= 60; k++) {
