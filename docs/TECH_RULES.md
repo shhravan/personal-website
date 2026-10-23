@@ -49,4 +49,4 @@ docs/               PRD, DESIGN, TECH_RULES, todo, LEARNING, SECURITY_*
 
 ## Later
 - Official Instagram API sync (needs a Creator account; run by the same GitHub Action).
-- Custom domain `shravanlad.com` via Namecheap DNS pointing at GitHub Pages.
+- Custom domain `shravanlad.com` via Spaceship DNS (4 A records to GitHub Pages, `www` CNAME to `shhravan.github.io`) and the `CNAME` file pointing at GitHub Pages.

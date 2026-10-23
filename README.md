@@ -1,6 +1,6 @@
 # personal-website
 
-Source code for my personal website, published at https://shhravan.github.io/personal-website/.
+Source code for my personal website, published at https://shravanlad.com/.
 
 ## Technology stack
 
