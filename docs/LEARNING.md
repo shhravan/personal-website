@@ -195,3 +195,4 @@ What each slice taught, in plain English.
 - The Worker is tested locally with Node and a fake `fetch`, including look-alike hosts, wrong keys, cloud-metadata addresses and path tricks.
 
 - Substack sometimes answers "429 Too Many Requests". The sync now waits (10s, 30s, 90s, or whatever Substack asks for in `Retry-After`) and tries again before giving up, so a busy moment doesn't turn the run red.
+- A custom domain needs two halves: DNS records at the registrar (Spaceship) saying "this name lives at GitHub", and a `CNAME` file in the repo telling GitHub Pages which name is ours. Relative links meant nothing else had to change.

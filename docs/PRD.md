@@ -40,14 +40,14 @@ A simple, link-based site in the style of rishigurjar.com and chinmay.blog. The 
 
 ## Later (after v1)
 - The black-hole "fall in" transition for the rabbit hole link (inspired by somehowliving.tech; needs original artwork and animation)
-- Custom domain `shravanlad.com` (bought on Namecheap, pointed at GitHub Pages)
+- Custom domain `shravanlad.com` (bought on Spaceship, pointed at GitHub Pages)
 
 ## Content status
 - **Have:** resume, 28 hero photos, intro text, logo, profile links, one song for the record player.
 - **Need:** bio and about story, project descriptions, more photos for the hero and gallery, blog posts, favorites lists. Placeholders go in first; Claude helps draft the real text.
 
 ## Address
-Start at `shhravan.github.io/personal-website`, then move to `shravanlad.com`.
+Started at `shhravan.github.io/personal-website`; now lives at `shravanlad.com` (the old address redirects).
 
 ## Success looks like
 - The site is live and Shravan can explain every file in it.

@@ -24,7 +24,7 @@ One slice per branch and PR. Plan first, then build, then check in the browser, 
 
 ## End
 - [ ] 11. Polish: spacing, mobile check, link previews, accessibility, speed
-- [ ] 12. Custom domain shravanlad.com
+- [x] 12. Custom domain shravanlad.com (CNAME file + Spaceship DNS)
 
 ## Later
 - Owner: GitHub MFA and branch protection on main
