@@ -186,7 +186,7 @@ A 26px round button just left of the turntable, with an inset shadow like a pres
 
 ### Hero Photo
 **Role:** the home page's personality moment.
-A 1.9:1 frame (4:3 on phones) with 0.4rem corners. It swaps instantly every 2s from a shuffled set of 28 images, never repeating until all have shown. Each image is framed by hand with a focal point and zoom. Clicking empty space skips ahead.
+A 1.9:1 frame (4:3 on phones) with 0.4rem corners. It swaps instantly every 2s from a shuffled set of 27 images, never repeating until all have shown. Each image is framed by hand with a focal point and zoom. Clicking empty space skips ahead.
 
 ### Section Links and Profile Icons
 **Role:** home navigation.
