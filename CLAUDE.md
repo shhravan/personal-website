@@ -13,7 +13,7 @@ Shravan Lad, who is learning web development through this project and wants to *
 
 ## The project
 
-A personal website: one place to get to know Shravan Lad, professionally and personally. Fully static (plain HTML, CSS and a little JavaScript, hosted on GitHub Pages). Live at `shhravan.github.io/personal-website`; later `shravanlad.com`.
+A personal website: one place to get to know Shravan Lad, professionally and personally. Fully static (plain HTML, CSS and a little JavaScript, hosted on GitHub Pages). Live at `shravanlad.com` (custom domain via the `CNAME` file; DNS at Spaceship).
 
 Source of truth docs (read before building):
 - `docs/PRD.md`: what we're building and why
