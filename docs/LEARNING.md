@@ -74,3 +74,4 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 ## Custom domain
 - A custom domain needs two halves: DNS records at the registrar saying "this name lives at GitHub" (four A records plus a `www` CNAME), and a `CNAME` file in the repo telling GitHub Pages which name is ours.
 - Multiple A records for the same name are intentional: they give redundancy across GitHub's servers.
+- Safari reports a zoomed element's position at full size, while Chrome reports it as drawn. field.js detects which one it got (the column is centered, so the right answer has its middle on the window's middle) before fading the letters behind the content.

@@ -365,7 +365,14 @@
     var main = document.querySelector("main");
     if (!main) return;
     var r = main.getBoundingClientRect();
-    gl.uniform4f(U.uQuiet, (r.left - 12) / CELL_W, (r.top - 12) / CELL_H, (r.right + 12) / CELL_W, (r.bottom + 12) / CELL_H);
+    var L = r.left, T = r.top, R = r.right, B = r.bottom;
+    // The home column uses CSS zoom (0.8). Chrome reports its position as drawn on screen, but
+    // Safari reports it at full size, which put the faded box in the wrong place. The column is
+    // centered, so if scaling by the zoom brings its middle onto the window's middle, scale it.
+    var z = parseFloat(getComputedStyle(main).zoom) || 1;
+    var mid = window.innerWidth / 2, c = (L + R) / 2;
+    if (z !== 1 && Math.abs(c * z - mid) < Math.abs(c - mid)) { L *= z; T *= z; R *= z; B *= z; }
+    gl.uniform4f(U.uQuiet, (L - 12) / CELL_W, (T - 12) / CELL_H, (R + 12) / CELL_W, (B + 12) / CELL_H);
     // The water sits at the bottom of the page, not the window: on a long page it stays out of
     // sight below and rolls into view as you scroll to the end.
     var bottom = Math.max(window.innerHeight, document.documentElement.scrollHeight - window.scrollY);
