@@ -17,7 +17,7 @@
   if (!gl) return;
 
   // ---- settings (sizes in CSS pixels) ----
-  var CELL_W = 7;            // width of one letter cell (small, so the painting has enough detail)
+  var CELL_W = 7;            // width of one letter cell
   var CELL_H = 12;           // height of one letter cell
   var HOVER_RADIUS = 120;    // size of the dissolving circle around the cursor
   var RIPPLE_WIDTH = 110;    // thickness of the ripple's wave
@@ -75,7 +75,7 @@
     "out vec2 vUv;",
     "out float vAlpha;",
     "out vec3 vColor;",
-    "out vec4 vTile;                  // a colored tile behind the letter (inside the painting only)",
+    "out vec4 vTile;                  // a tile behind the letter (used by the water)",
     "out vec2 vPos;                   // where this corner is, in cells (for per-pixel water light)",
     "out float vWater;                // how much pool light to show here (0 outside the water)",
     "",

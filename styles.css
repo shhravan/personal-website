@@ -4,11 +4,9 @@
 :root {
   --bg: #f3ecdc;          /* creamy background */
   --ink: #1a1a1a;         /* near-black text */
-  --name: #444444;        /* the name, a touch softer than body ink */
   --soft: #6b6b6b;        /* gray for secondary text */
   --link: #2563eb;        /* blue links */
   --link-hover: #1e40af;  /* darker blue when you point at one */
-  --green: #2d5a46;       /* accent, saved for the work banner later */
   --photo-bg: #e9e5da;    /* shown behind a photo while it loads */
   --plate: #ece8de;       /* the light switch: wall plate, slot and lever */
   --slot: #fbfaf6;
@@ -23,11 +21,9 @@
   :root:not([data-theme="light"]) {
     --bg: #161512;
     --ink: #ece8de;
-    --name: #cfcabd;
     --soft: #a39e92;
     --link: #7aa2ff;
     --link-hover: #a9c1ff;
-    --green: #6fae93;
     --photo-bg: #25231f;
     --plate: #2a2823;
     --slot: #0d0c0a;
@@ -37,11 +33,9 @@
 :root[data-theme="dark"] {
   --bg: #161512;
   --ink: #ece8de;
-  --name: #cfcabd;
   --soft: #a39e92;
   --link: #7aa2ff;
   --link-hover: #a9c1ff;
-  --green: #6fae93;
   --photo-bg: #25231f;
   --plate: #2a2823;
   --slot: #0d0c0a;
@@ -92,10 +86,6 @@ a:hover { text-decoration-color: color-mix(in srgb, var(--ink) 35%, transparent)
   object-fit: cover;             /* fills the frame, cropping if needed */
   display: block;                /* photos swap instantly (script.js), no fade */
 }
-
-/* ---- name block ---- */
-.id { margin-bottom: 1.5rem; }
-.id p { color: var(--soft); margin: 0; }
 
 /* ---- intro: runs the full width of the photo above ---- */
 .intro p { color: var(--soft); margin-bottom: 0.3rem; }
@@ -218,7 +208,7 @@ nav li { margin: 0.05rem 0; }
 .page .lede { color: var(--soft); }
 a.logo { display: block; }   /* the name mark is a link home */
 
-/* ---- the letter field behind the home page (drawn by field.js) ----
+/* ---- the letter field behind every page (drawn by field.js) ----
    Fixed to the window, behind all content, and it never catches clicks itself. */
 .field {
   position: fixed;
@@ -440,7 +430,6 @@ body::before {
 }
 .title-link { color: inherit; text-decoration: none; }   /* names that link to the organisation: no underline, underline on hover */
 .title-link:hover { text-decoration: underline; }
-/* The last line is just "opticsbyshrvn"; pointing at it reveals what it is. */
 /* The last line is just "opticsbyshrvn". The word stays centered on the page; the arrow hangs
    off its right side and the note sits centered under the word, so neither pulls it off-center. */
 .foot .optics { position: relative; display: inline-block; }
@@ -496,7 +485,7 @@ body::before {
   animation: spin 1.8s linear infinite; animation-play-state: paused;
 }
 .deck.playing .deck-disc { animation-play-state: running; }
-/* The red label, with the name mark printed in dark ink and SIDE A near the bottom. */
+/* The cream label, with the name mark printed in dark ink and SIDE A near the bottom. */
 .deck-label {
   position: absolute; left: 32%; top: 32%; width: 36%; height: 36%; border-radius: 50%;
   background: radial-gradient(circle at 50% 45%, #f1e9d6, #e6dcc4 70%, #d8ccb1);   /* cream, like the page */
