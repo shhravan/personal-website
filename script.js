@@ -65,8 +65,8 @@ const FOCUS = {
 };
 
 // How long each photo stays (seconds). Set both the same for a steady pace.
-const MIN_SECONDS = 2;
-const MAX_SECONDS = 2;
+const MIN_SECONDS = 1.5;
+const MAX_SECONDS = 1.5;
 
 // Pick the smaller file when the frame is small enough (phones), the larger one otherwise.
 function photoUrl(name) {
@@ -91,7 +91,7 @@ let stopHero = null;
 let fontTimer = null;
 let nextFont = () => {};   // changes "opticsbyshrvn" to the next font (set up in initPage)
 
-// "opticsbyshrvn" in the last line changes font every 2 s, to make people curious enough to
+// "opticsbyshrvn" in the last line changes font every 1.5 s, to make people curious enough to
 // click it. The fonts are loaded in each page's <head>, only for these letters.
 // Each entry: [family, style, weight]. The full list, with notes, is in docs/DESIGN.md.
 const OPTICS_FONTS = [
@@ -126,7 +126,7 @@ function initPage() {
     };
     // On the home page the photo swaps call nextFont(), so photo and font change together.
     // Pages without the photo run their own 2-second timer.
-    if (!document.getElementById("hero-img")) fontTimer = setInterval(nextFont, 2000);
+    if (!document.getElementById("hero-img")) fontTimer = setInterval(nextFont, 1500);
   }
   const img = document.getElementById("hero-img");
 

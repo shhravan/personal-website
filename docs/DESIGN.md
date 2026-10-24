@@ -78,7 +78,7 @@ A pixel font used only for tiny hardware-style labels: the switch's ON/OFF, the 
 - Loaded for those letters only
 
 ### Display set — the "opticsbyshrvn" sign-off
-Ten fonts the sign-off cycles through every 2 s, each loaded only for the letters of that one word: Instrument Serif (italic), Gloock, Bodoni Moda (italic), Italiana, Young Serif, Fraunces (italic, light, opsz 144), Unbounded (300), Jacquard 12, Doto (700), Pixelify Sans. Each must look clearly different from the last and must draw lowercase.
+Ten fonts the sign-off cycles through every 1.5 s, each loaded only for the letters of that one word: Instrument Serif (italic), Gloock, Bodoni Moda (italic), Italiana, Young Serif, Fraunces (italic, light, opsz 144), Unbounded (300), Jacquard 12, Doto (700), Pixelify Sans. Each must look clearly different from the last and must draw lowercase.
 
 ### Type Scale
 
@@ -186,7 +186,7 @@ A 26px round button just left of the turntable, with an inset shadow like a pres
 
 ### Hero Photo
 **Role:** the home page's personality moment.
-A 1.9:1 frame (4:3 on phones) with 0.4rem corners. It swaps instantly every 2s from a shuffled set of 27 images, never repeating until all have shown. Each image is framed by hand with a focal point and zoom. Clicking empty space skips ahead.
+A 1.9:1 frame (4:3 on phones) with 0.4rem corners. It swaps instantly every 1.5s from a shuffled set of 27 images, never repeating until all have shown. Each image is framed by hand with a focal point and zoom. Clicking empty space skips ahead.
 
 ### Section Links and Profile Icons
 **Role:** home navigation.
@@ -273,8 +273,8 @@ At the bottom of each page, a shoreline seen from above: cream foam at the edge,
 
 | Element | Timing | Easing |
 |---|---|---|
-| Hero swap | every 2s, instant | — |
-| Sign-off font | every 2s | — |
+| Hero swap | every 1.5s, instant | — |
+| Sign-off font | every 1.5s | — |
 | Switch lever | 0.18s | ease |
 | Link underline fade | 0.2s | ease |
 | Top bar strip | 0.25s | ease |
