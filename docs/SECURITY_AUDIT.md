@@ -7,10 +7,9 @@ Static personal website: plain HTML, CSS and JavaScript in a **public** GitHub r
 visitor browser ──HTTPS──> GitHub Pages (static files from main)
       │
       ├── fonts.googleapis.com / fonts.gstatic.com   (fonts)
-      ├── www.youtube.com, s.ytimg.com               (record player)
       └── outbound links: LinkedIn, X, YouTube Music, GitHub, Instagram
 Trust boundary: everything in the repo is public; the browser runs only first-party scripts
-plus YouTube's player script.
+only (songs are self-hosted MP3s).
 ```
 Data handled: none collected. The site shows one email address (intentionally public, assembled by script) and stores one value, the light/dark choice, in `localStorage`.
 
@@ -29,7 +28,7 @@ No CRITICAL or HIGH issues.
 | SA-5 | Third-party images (film stills, band photos, album art) on a public site | INFO (legal, not security) | CONFIRMED | Owner decision |
 | SA-6 | Public email address can be scraped | INFO | CONFIRMED | Accepted; the address is split in HTML to deter simple bots |
 
-**SA-1.** Without a CSP, any future XSS bug or a compromised script could load code from anywhere. Fix: a `<meta http-equiv="Content-Security-Policy">` on every page allowing only self, Google Fonts and YouTube; `object-src 'none'`, `base-uri 'self'`, `form-action 'none'`, `upgrade-insecure-requests`. Verified: all features still work (letter field, photo rotation, light switch, fonts, YouTube player), no violations on load; an injected inline script did **not** execute and an off-list image was blocked.
+**SA-1.** Without a CSP, any future XSS bug or a compromised script could load code from anywhere. Fix: a `<meta http-equiv="Content-Security-Policy">` on every page allowing only self and Google Fonts; `object-src 'none'`, `base-uri 'self'`, `form-action 'none'`, `upgrade-insecure-requests`. Verified: all features still work (letter field, photo rotation, light switch, fonts, YouTube player), no violations on load; an injected inline script did **not** execute and an off-list image was blocked.
 
 **SA-2.** Outbound clicks sent the full page URL as referrer. Fix: `<meta name="referrer" content="strict-origin-when-cross-origin">`.
 
@@ -38,7 +37,7 @@ No CRITICAL or HIGH issues.
 - HTTPS: `http://` redirects (301) to HTTPS; `Strict-Transport-Security: max-age=31556952` is sent.
 - DOM: the only `innerHTML` uses are fixed strings in `theme.js` (switch and record drawings); no `eval`, `document.write`, `postMessage` handlers or URL-driven content.
 - `window.open` uses `noopener`. No forms, cookies or user input processed.
-- The WebGL field is disabled for reduced-motion users; YouTube loads only for the record player.
+- The WebGL field is disabled for reduced-motion users. The record player uses self-hosted audio (`media-src 'self'`); no third-party scripts or frames.
 - Automated tests (`tests/`) check the CSP, inline code, link safety, secrets and workflow permissions on every push.
 
 ## External actions for the owner

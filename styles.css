@@ -262,7 +262,6 @@ a.logo { display: block; }   /* the name mark is a link home */
 .vinyl .head { fill: var(--ink); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .vinyl .record { animation: none; } .vinyl .arm { transition: none; } }
-.yt-hidden, #yt-player { position: fixed; width: 1px; height: 1px; left: -10px; bottom: 0; opacity: 0; pointer-events: none; }
 
 /* ---- home page centered in the window, both ways ---- */
 body:has(main.col) {

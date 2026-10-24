@@ -43,10 +43,12 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - The dial is one SVG; each cover is clipped to a ring-shaped slice with a `clipPath` built with a little trigonometry.
 - The security policy blocks inline `style="..."`, so per-cover values are set with `style.setProperty`, which it allows.
 - The groove sheen is a `conic-gradient` whose angle is a CSS variable registered with `@property`, so it can animate.
-- Phones only allow sound to start during a tap, so the player preloads on touch screens and the first tap plays.
+- Songs are plain MP3 files in `audio/`, played by the browser's built-in audio player (`new Audio()`), with `preload = "none"` so nothing downloads until a song plays. `#t=28` on the file's address starts it 28 seconds in.
+- Phones only allow sound to start during a tap; calling `audio.play()` inside the tap handler satisfies that.
+- Re-saving the MP3s at 128 kbps and stripping their tags (`ffmpeg -map_metadata -1`) cut the folder size and removed hidden details such as embedded art.
 
 ## Security
-- A **Content-Security-Policy** meta tag on every page allows only the site itself, Google Fonts and YouTube; injected inline scripts don't run.
+- A **Content-Security-Policy** meta tag on every page allows only the site itself and Google Fonts; injected inline scripts don't run.
 - **Referrer-Policy** limits what outbound links reveal.
 - Automated tests check every page for the CSP, inline code, unsafe links, exposed email addresses and secrets.
 

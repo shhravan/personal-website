@@ -29,3 +29,6 @@
 | One bad post or image | Whole sync aborted | Failures are per post / per image and logged |
 Site-wide checks added in `tests/test_site.py`: strict CSP on every page (no unsafe-inline/eval, object-src none, form-action none, base-uri self), no inline scripts/handlers/styles, noopener on new-tab links, no whole email address in source, no eval/document.write, no URL data written as HTML, page swaps same-origin only, theme value whitelisted, YouTube IDs well-formed, no secrets or key files in the repo, workflows with explicit minimal permissions and only official pinned actions.
 
+
+## 2026-10 · Record player moved to self-hosted audio
+YouTube's player script and iframe removed. CSP tightened to `script-src 'self'` and `media-src 'self'` (no `frame-src`). Tests check every song has its file and that no YouTube embed remains.

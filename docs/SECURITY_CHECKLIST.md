@@ -25,4 +25,4 @@
 | M. Logging / monitoring | NOT APPLICABLE | No server; GitHub keeps deploy history |
 | N. Automated security tests | PASS | `tests/` runs on every push (site, sync pipeline, relay) |
 | O. AI / LLM at runtime | NOT APPLICABLE | None |
-| P. Third-party script privileges | PASS | Only YouTube's player script, loaded on demand, restricted by CSP |
+| P. Third-party script privileges | PASS | None: `script-src 'self'`, songs are self-hosted |

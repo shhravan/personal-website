@@ -166,7 +166,7 @@ Invisible at the top of the page. After scrolling, a frosted strip (`--bg` at 82
 
 ### Small Record (phones and tablets)
 **Role:** music on touch screens.
-A black record with grooves, two light streaks and a cream label, plus a tonearm. Tapping swings the arm on (0.6s) and spins the record (1.8s per turn). It keeps a thin `--soft` rim in dark mode.
+A black record with grooves, two light streaks and a cream label, plus a tonearm. Tapping swings the arm on (0.6s), spins the record (1.8s per turn) and plays a shuffled song from side A; tapping again pauses. It keeps a thin `--soft` rim in dark mode.
 
 ### Record Deck (desktop)
 **Role:** the signature object, a jukebox in the corner.
@@ -175,6 +175,10 @@ A black record with grooves, two light streaks and a cream label, plus a tonearm
 - **The record:** fine repeating grooves, four wider track gaps, a raised rim, a cream label printed with the name mark, "ALL OVER THE PLACE" and "SIDE A", and a groove sheen that turns toward the cursor while playing.
 - **Hover a cover:** it pops outward in full color while the rest go grey (`grayscale(.75) brightness(.45)`), and a frosted readout beside the dial shows "NOW SELECTING · 04", the title in 30px Garamond and the artist in italic.
 - **Playing:** the playing cover keeps a bright 2px rim and the others dim a little; the readout says "NOW PLAYING" or "PAUSED".
+
+### Audio
+**Role:** the music itself.
+The 15 songs are self-hosted MP3s in `audio/` (128 kbps or less, tags stripped), named after their covers and listed in `TRACKS` in `theme.js`. Nothing downloads until a song plays; Memory Box starts at 0:28 and Clown on the 22nd Floor + Happiness at 1:50. No ads, no third-party player.
 
 ### Now-Playing Toast
 **Role:** confirms a song change.
