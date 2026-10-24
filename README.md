@@ -1,8 +1,18 @@
 # shravanlad.com
 
-Source for [shravanlad.com](https://shravanlad.com), the personal website of Shravan Lad.
+The personal website of Shravan Lad: work, writing, photography and the things I'm into.
 
-A static site in plain HTML, CSS and JavaScript (no framework or build step), hosted on GitHub Pages. Highlights: a WebGL letter-field background, a record player with an album-cover dial, music that keeps playing across pages, and a blog synced automatically from Substack.
+**Live at [shravanlad.com](https://shravanlad.com)**
+
+Hand-built in plain HTML, CSS and JavaScript, with no framework, no dependencies and no build step. Every page is a static file served by GitHub Pages.
+
+## Features
+
+- **Record player.** A turntable in the corner opens into a dial of 15 album covers on desktop. Songs shuffle, and the music keeps playing as you move between pages.
+- **Letter field.** A faint WebGL field of letters behind every page that reacts to the cursor and clicks, with a shoreline washing in at the bottom.
+- **Light switch.** A drawn wall switch toggles light and dark mode and remembers your choice.
+- **Blog synced from Substack.** A scheduled GitHub Action copies posts into the site, cleans their HTML and hosts the images locally.
+- **Fast and private.** No analytics, no cookies, a strict Content Security Policy, and it works on phones and with reduced motion.
 
 ## Run locally
 
@@ -12,7 +22,7 @@ cd personal-website
 python3 -m http.server 8000
 ```
 
-Then open http://localhost:8000/.
+Open http://localhost:8000.
 
 ## Tests
 
@@ -20,20 +30,25 @@ Then open http://localhost:8000/.
 python3 -m unittest discover -s tests -v
 ```
 
-Tests use only the Python standard library (plus Node for the relay test) and never touch the network. They run on every push.
+The suite covers the site (security policy, links, inline code), the Substack sync (hostile HTML, broken feeds, rate limits) and the Cloudflare relay. It needs only Python's standard library, plus Node for the relay test, never touches the network, and runs on every push.
 
-## Structure
+## Project structure
 
-| Path | Purpose |
-|---|---|
-| `index.html`, `work/`, `projects/`, `blog/`, `photography/`, `rabbit-hole/` | Pages |
-| `styles.css` | All styles, light and dark |
-| `theme.js` | Theme switch, record player, in-place page navigation |
-| `script.js`, `field.js` | Hero rotation and email link; WebGL background |
-| `scripts/substack_sync.py` | Blog sync from Substack (runs monthly via GitHub Actions) |
-| `worker/feed-relay.js` | Cloudflare Worker relay used by the sync |
-| `tests/` | Automated tests |
-| `docs/` | Product, design, technical and security notes |
+```
+index.html                 home
+work/  projects/  blog/  photography/  rabbit-hole/
+styles.css                 all styles, light and dark
+theme.js                   light switch, record player, page navigation
+script.js                  hero photos, email link
+field.js                   WebGL letter field and shoreline
+images/                    photos, album covers, logos
+scripts/substack_sync.py   blog sync (runs monthly via GitHub Actions)
+worker/feed-relay.js       Cloudflare Worker used by the sync
+tests/                     automated tests
+docs/                      design, product, technical and security notes
+```
+
+The design is documented in [docs/DESIGN.md](docs/DESIGN.md).
 
 ## Security
 
