@@ -47,6 +47,12 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - Phones only allow sound to start during a tap; calling `audio.play()` inside the tap handler satisfies that.
 - Re-saving the MP3s at 128 kbps and stripping their tags (`ffmpeg -map_metadata -1`) cut the folder size and removed hidden details such as embedded art.
 
+## Music visualizer
+- Web Audio's `AnalyserNode` splits the playing sound into frequency bands about 60 times a second (an FFT). Bass, overall loudness and treble are averages over slices of those bands.
+- `createMediaElementSource` routes the `<audio>` through the analyser and on to the speakers. It must be set up after a click, and if the audio context stays suspended the song would be silent, so it is resumed in the same click.
+- Raw levels twitch, so they are smoothed: quick to rise, slow to fall. A beat is the bass jumping well above its recent average, with a short rest between beats.
+- Only works because the songs are our own files; browsers don't let a page analyse audio from other sites (like a YouTube embed).
+
 ## Security
 - A **Content-Security-Policy** meta tag on every page allows only the site itself and Google Fonts; injected inline scripts don't run.
 - **Referrer-Policy** limits what outbound links reveal.
