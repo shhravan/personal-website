@@ -32,7 +32,7 @@ Source of truth docs (read before building):
    1. new branch
    2. **plan first** and wait for Shravan's OK
    3. build
-   4. Shravan checks it in the browser
+   4. Shravan checks it in the browser, on staging.shravanlad.com (Cloudflare Pages, deploys the working branch)
    5. open a PR
    6. explain back what the code does in plain English
    7. add to `docs/LEARNING.md`

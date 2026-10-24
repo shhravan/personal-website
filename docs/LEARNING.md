@@ -71,6 +71,10 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - A **Cloudflare Worker** is a small program Cloudflare runs on its network. Ours fetches only allowlisted Substack addresses, only with a secret key, so it isn't an open proxy. The key lives only in Cloudflare and GitHub secrets.
 - **HTTP 429** means "too many requests": the sync waits (10 s, 30 s, 90 s, or what `Retry-After` asks, capped at 2 minutes) and retries before giving up.
 
+## Staging
+- A staging site is a private-ish copy where changes are checked before going live. Cloudflare Pages deploys the working branch to `staging.shravanlad.com` and gives every pull request its own preview link.
+- An `X-Robots-Tag: noindex` header (set in `_headers`) tells search engines not to list staging, so it never competes with the real site.
+
 ## Custom domain
 - A custom domain needs two halves: DNS records at the registrar saying "this name lives at GitHub" (four A records plus a `www` CNAME), and a `CNAME` file in the repo telling GitHub Pages which name is ours.
 - Multiple A records for the same name are intentional: they give redundancy across GitHub's servers.
