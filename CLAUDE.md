@@ -21,6 +21,7 @@ Source of truth docs (read before building):
 - `docs/TECH_RULES.md`: technical rules (written before the first build slice)
 - `docs/todo.md`: thin slices, one at a time
 - `docs/LEARNING.md`: running notes of what each slice taught
+- `docs/CHANGELOG.md`: every live change, the commit before it, and how to revert. **Add an entry in every PR.**
 - `docs/SECURITY_*.md`: audit, checklist, remediation log, runbook
 
 ## Workflow
