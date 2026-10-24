@@ -15,11 +15,13 @@ be returned to how it looked.
 
 ---
 
-## #65 · Calmer visualizer, CHANGELOG
+## #65 · Visualizer removed; CHANGELOG added
 - **Before:** `ade895a`
-- **Changed:** the visualizer flickered (water jumping high-low several times a second). Now at most one beat wave every 0.7 s, the tide rises over ~0.5 s and settles over ~1.5 s, beat waves rise gently, and the effect fades in over ~2 s when a song starts. Added this changelog.
-- **Before this:** beats up to ~3 a second and a tide that reacted in ~0.1 s.
-- **Files:** `field.js` (the `listen()` function and the beat surge), docs.
+- **Changed:** the music visualizer from #64 is gone (it made the water flicker). `theme.js` and
+  `field.js` are back to exactly how they were before #64 (`c8a2258`); the shoreline moves on its
+  own rhythm again. Staging setup from #64 stays. Added this changelog.
+- **Before this:** the water and letters reacted to the playing song.
+- **To bring the visualizer back:** its full code is in #64 (commit `ade895a`).
 
 ## #64 · Music visualizer and staging setup
 - **Before:** `c8a2258`
@@ -28,9 +30,7 @@ be returned to how it looked.
   letters twinkle. Added `_headers` so `staging.shravanlad.com` stays out of search engines.
 - **Before this:** the shoreline moved on its own rhythm only, whatever was playing.
 - **Files:** `theme.js` (audio analyser), `field.js` (water and twinkle), `_headers`, docs.
-- **Partial undo:** the strength of each effect is one number in `field.js`: `0.07 * uLevel`
-  (tide), `0.07 * surge * uBeatAmp` (beats) and `0.035 * uTreble` (twinkle). Set any to `0` to
-  switch that effect off.
+- **Status:** visualizer removed in #65.
 
 ## #63 · Safari: dark box behind the home column
 - **Before:** `a79531f`
