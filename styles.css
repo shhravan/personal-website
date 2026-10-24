@@ -6,7 +6,7 @@
   --ink: #1a1a1a;         /* near-black text */
   --name: #444444;        /* the name, a touch softer than body ink */
   --soft: #6b6b6b;        /* gray for secondary text */
-  --link: #2563eb;        /* blue links (idea from chinmay.blog) */
+  --link: #2563eb;        /* blue links */
   --link-hover: #1e40af;  /* darker blue when you point at one */
   --green: #2d5a46;       /* accent, saved for the work banner later */
   --photo-bg: #e9e5da;    /* shown behind a photo while it loads */
@@ -351,7 +351,7 @@ body::before {
 :root[data-theme="dark"] .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; } }
 
-/* ---- work page (layout inspired by hrishabhayush.com, in this site's fonts and colors) ---- */
+/* ---- work page ---- */
 .work section { margin-bottom: 2.4rem; }
 .work h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 0.8rem; }
 .about-work { color: var(--soft); }
@@ -375,8 +375,8 @@ body::before {
 .logo-link { line-height: 0; flex: none; border-radius: 0.55rem; transition: transform 0.15s ease; }
 .logo-link:hover { transform: scale(1.06); }   /* logos that link to the organisation's site */
 
-/* banner: a soft, pale water blue mixed from the page color, with a fine speckle of light dots
-   (idea from ronaldleung.co's banner). Quiet enough to sit with the cream and the dark theme. */
+/* banner: a soft, pale water blue mixed from the page color, with a fine speckle of light dots.
+   Quiet enough to sit with the cream and the dark theme. */
 .banner {
   position: relative; overflow: hidden;
   background: color-mix(in srgb, #5f8f99 34%, var(--bg));
@@ -411,7 +411,7 @@ body::before {
 .banner h1 { position: relative; z-index: 2; color: inherit; font-size: 1.7rem; font-weight: 500; margin: 0; }
 .banner p { position: relative; z-index: 2; margin: 0; color: var(--soft); }
 
-/* panels: each section sits in a soft rounded box, like ronaldleung.co */
+/* panels: each section sits in a soft rounded box */
 .panel {
   background: color-mix(in srgb, var(--ink) 4%, var(--bg));
   border: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);

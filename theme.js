@@ -14,7 +14,7 @@
   function save(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
 
   // Apply a saved choice immediately (this script is in <head>, so there is no flash).
-  // With no saved choice the site starts in dark mode (Shravan's pick), whatever the device says.
+  // With no saved choice the site starts in dark mode (a design choice), whatever the device says.
   var saved = load();
   root.setAttribute("data-theme", saved === "light" ? "light" : "dark");
 

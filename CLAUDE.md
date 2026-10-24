@@ -4,7 +4,7 @@ Instructions for Claude Code in this repo. Read this first every session.
 
 ## Who I'm working with
 
-Shravan Lad, a beginner coder (intro Python + intro data science at Cornell, no web dev experience). This is their first coding project. They want to **ship it and understand it**. Everything lives on GitHub and runs in a cloud environment (no local laptop storage).
+Shravan Lad, who is learning web development through this project and wants to **ship it and understand it**. Everything lives on GitHub and runs in a cloud environment.
 
 - Explain jargon the first time it appears, in plain English.
 - Balance learning and shipping. Don't dump big blocks of code without explaining them.

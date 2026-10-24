@@ -1,198 +1,74 @@
-# LEARNING
+# Learning notes
 
-What each slice taught, in plain English.
+What building this site taught, in plain English. Grouped by topic, newest topics last.
 
-## Slice 1: hello world
+## HTML and CSS basics
+- **HTML** is a page's content and structure; **CSS** is how it looks; **JavaScript** adds behavior.
+- **CSS variables** (`--bg`, `--ink`) define each color once. Dark mode only redefines the variables, so no other rule changes.
+- **Pages as folders:** `work/index.html` is served at `/work/`, which keeps URLs clean. Links are **relative** (`../styles.css`), so the site works at any address, which made the move to `shravanlad.com` a one-file change.
+- **Layout:** flexbox (`justify-content: space-between`) pushes dates to the right edge; CSS grid makes equal columns; media queries switch layouts on phones. `clamp(min, preferred, max)` lets sizes grow with the window within limits.
+- **`aspect-ratio` + `object-fit: cover`** keep the hero frame a fixed shape; `object-position` and `transform: scale()` choose which part of each photo stays in view.
+- **Sizes in `vw`** stay the same on screen when the browser zooms, which keeps the top bar steady.
+- **`<details>` / `<summary>`** give expandable rows with no JavaScript.
+- **Cache-busting:** browsers keep old copies of CSS and JS; a `?v=` number on each link forces a fresh download when it changes.
 
-- **HTML** (`index.html`) is the content of a page. Tags like `<h1>` (big heading) and `<p>` (paragraph) wrap pieces of text. The `<head>` holds behind-the-scenes info (title, font, stylesheet); the `<body>` is what you see.
-- **CSS** (`styles.css`) is the look. A rule like `body { background: ... }` says "style everything matching this".
-- **CSS variables** (`--cream`, `--ink`) are named colors defined once in `:root` and reused with `var(--cream)`, so changing the palette later means editing one line.
-- **Relative link** (`href="styles.css"`): the path is relative to the page, so it works on `shhravan.github.io/personal-website/` now and `shravanlad.com` later.
-- **Font fallback** (`"EB Garamond", Georgia, serif`): if the first font can't load, the browser tries the next.
-- **One narrow centered column**: `max-width` caps the width and `margin: 0 auto` centers it.
+## JavaScript
+- **Shuffle bag** (Fisher–Yates): shuffle the list, deal it out, reshuffle only when empty. Every item shows once before any repeat; a check at the seam prevents back-to-back repeats.
+- **Preloading** the next photos with `new Image()` makes swaps instant.
+- **`localStorage`** remembers the theme choice; `theme.js` runs in the `<head>` so the right theme is set before the page draws (no flash).
+- **`data-` attributes** hold the email's parts; `script.js` joins them, so the full address never sits in the page source for simple bots.
+- **In-place page swaps:** a normal link click reloads everything, stopping the music. Instead, `fetch` loads the next page, its `<main>` is swapped in, and `history.pushState` updates the address bar so back, forward and bookmarks still work. Page code re-initializes on a custom `page:load` event.
+- **Web Audio** synthesizes the switch click (a short filtered noise burst plus a falling tone), so there is no audio file to download.
 
-## Slice 2: home page (with the rotating hero)
+## Accessibility
+- `role="switch"` + `aria-checked`, `aria-pressed` and `aria-label` tell screen readers what controls do and how they're set.
+- Keyboard support: real `<button>`s, focusable controls, Enter/Space handlers.
+- `prefers-reduced-motion` turns off rotation, the letter field and other motion.
+- Tap targets get padding so small icons are easy to hit.
 
-- **Pages as folders.** `about/index.html` is served at `.../about/`. Every page is a folder holding an `index.html`, so URLs stay clean.
-- **Relative paths with `../`.** From inside `about/`, `../styles.css` means "go up one folder, then find styles.css". That's why the same stylesheet works for every page.
-- **CSS Grid** (`display: grid; grid-template-columns: 1fr 1fr`) makes two equal columns. A **media query** (`@media (max-width: 34rem)`) switches to one column on narrow screens.
-- **`aspect-ratio` + `object-fit: cover`** keep the hero frame a fixed shape and crop any photo to fit, so the page doesn't jump when photos change.
-- **JavaScript basics in `script.js`:**
-  - an **array** (`HERO_IMAGES`) is a list of file names
-  - `Math.random()` picks one
-  - a `do...while` loop re-picks until it's different from the current one
-  - `setInterval` runs a function every 5 seconds
-  - an `Image()` object preloads the next photo so nothing flashes blank
-  - a CSS class (`fading`) plus a `transition` does the fade
-- **Reduced motion.** `prefers-reduced-motion` is a setting some people turn on; the script respects it by not rotating.
-- **Placeholders** are clearly marked `[placeholder]` in the HTML. The real location, email, intro and photos still need to be added.
+## Fonts and images
+- Font weights are separate files; request the real bold instead of letting the browser fake it.
+- Google Fonts' `&text=` option downloads only the listed letters, which keeps the ten display fonts and the Devanagari name tiny.
+- `font-family` is a fallback list: the browser uses the first font that has each character.
+- Images: WebP is about half the size of JPEG; phones get a 700px version. Re-saving strips EXIF metadata (camera, sometimes GPS), which matters on a public site.
+- A logo used as a CSS **mask** takes its color from the theme, so one file works in both modes.
 
-### Slice 2 follow-up: matching the reference layout
-- **`clamp(min, preferred, max)`** gives the top padding a size that grows with window height but never goes below or above set limits.
-- **`aspect-ratio: 3 / 1`** makes the hero a wide, short banner; a media query makes it taller on phones.
-- **`text-transform: uppercase`** shows capitals on screen while the HTML stays lowercase, used for the small spaced-out "explore" label.
-
-### Home layout, measured from the reference site
-- Measuring a site you like (in the browser's inspector) beats guessing. Rishi's column is **one third of the window width** (`calc(100vw / 3)`), with the space above the photo about **18% of the window height** (`calc(100vh / 5.5)`).
-- We keep ours from getting too small or big with `clamp(20rem, 33.333vw, 32rem)`.
-- A **modifier class** (`<main class="home">`) lets only the home page use that narrow column, while other pages keep their own width.
-- An **8px spacing scale** (8, 16, 24, 32, 60) keeps gaps consistent: 24px under the photo, 16px between columns.
-- Garamond has a smaller x-height than Inter, so it looks smaller at the same font size. That is why our body text is about 18px where his is 16px.
-
-### Links, dark mode and emails
-- **Link style.** `a { color: var(--link); text-decoration: underline; transition: color 0.2s }` plus `a:hover { color: darker }` gives blue links that ease to a darker blue when you point at them.
-- **Light and dark with CSS variables.** Every color is a variable (`--bg`, `--ink`, ...). Dark mode only redefines the variables, so none of the other rules change. `@media (prefers-color-scheme: dark)` follows the device; `:root[data-theme="dark"]` is the manual switch.
-- **`theme.js` in the `<head>`.** It runs before the page is drawn, so the right theme is already set and you never see a flash of the wrong one. The button remembers your choice in **`localStorage`**, the browser's small per-site memory.
-- **`data-` attributes** (`data-user`, `data-domain`) store small pieces of information in the HTML. script.js joins them into a `mailto:` link, so the full address never sits in the page text for simple bots to read.
-- **No bullets:** `list-style: none` on the nav list.
-
-### Instant photo swap
-- To remove the fade, the CSS `transition: opacity` and the `fading` class are gone, and the script simply sets `img.src = next` once the next photo has loaded in the background (`new Image()` preloads it). Preloading is what stops a blank flash even without a fade.
-- `<em>` inside a link makes italic text that is still clickable.
-
-### Click to change the photo
-- **Functions** (`showNext`, `startTimer`, `skip`) give a name to a chunk of work so it can be reused from the timer and from a click.
-- **`addEventListener("click", ...)`** runs code when the visitor clicks. `clearInterval` + `setInterval` restarts the 2-second countdown so a click isn't followed by an instant automatic change.
-- **Keyboard access:** `role="button"`, `tabindex="0"` and a `keydown` handler for Enter and Space let people without a mouse use it too.
-
-### Space below the last line
-- A page needs breathing room at the bottom as well as the top. `padding: 0 0 4rem` on the home column leaves 64px under the last line, and a bigger gap above it (`margin-top: 2.5rem`) separates the sign-off from the links. Roughly: more space between groups than within them.
-
-### Preparing photos for the web
-- **File size matters.** A 2.7 MB photo is far bigger than needed for a 512px-wide frame. Resizing to about 1600px wide and saving as JPEG at quality ~80 cut the hero folder from 17.9 MB to 4.7 MB with no visible loss.
-- **Web-safe file names:** lowercase letters, numbers and hyphens, no spaces or symbols, so links never break.
-- **Hidden metadata (EXIF)** in photos can include camera model and sometimes GPS location. Re-saving strips it, which matters on a public site.
-- **Keep the original name different from the new one** when converting: I once overwrote an original by reusing its name, then deleted it in cleanup. Git still had the original, which is why every change goes through git.
-
-### Shuffling, click zones, and invisible controls
-- **Shuffle like a deck of cards** (Fisher-Yates): walk the list from the end and swap each item with a random earlier one. Showing the whole shuffled list before reshuffling means every photo appears once per round, and a check at the seam stops the same photo appearing twice in a row.
-- **Preloading ahead:** quietly downloading the next two photos (`new Image().src = ...`) lets each swap at one per second be instant.
-- **`e.target`** is the exact element that was clicked. Comparing it (the page, the body or `main` means "empty space"; `closest("a")` means "inside a link") lets one click mean different things in different places.
-- **Hidden but accessible:** the theme button is clipped to 1 pixel so you cannot see it, but it still exists, so keyboard and screen-reader users can Tab to it (it becomes visible on focus).
-- **Testing tip:** an automatic timer can make tests lie. I turned rotation off (reduced-motion mode) to test clicks alone.
-
-### Choosing what part of a photo to show
-- A wide frame crops tall photos. **`object-position`** chooses which part stays: `50% 20%` means centered sideways, 20% down from the top. The `FOCUS` list in `script.js` sets it for individual photos; the rest stay centered.
-
-### Icon row
-- **Inline SVG:** an icon is a small drawing written as code (`<svg><path d="..."/></svg>`). Placed straight in the page it needs no extra download, and `fill: currentColor` makes it use the text color, so it switches with light and dark mode automatically.
-- **`justify-content: space-between`** in a flex row puts the first item on the left edge, the last on the right edge, and shares the leftover space evenly. That is how the icons line up exactly with the photo above.
-- **Tap targets:** a 22px icon is hard to tap, so each link has 8px of padding, and the row is pulled out 8px on each side (negative margin) so the visible icons, not the padding, align with the edges.
-- **`aria-label`** gives an icon-only link a name for screen readers.
-
-### Framing photos, true randomness, vertical icons
-- **Framing:** `object-position` picks which part of a photo stays in view and `transform: scale()` with `transform-origin` zooms toward that point. Each photo has its own `[x, y, zoom]` in the `FOCUS` list. I looked at every photo before choosing, because a computer cannot tell what the subject is.
-- **True randomness vs. a shuffled deck:** a shuffled deck guarantees variety but is secretly predictable (every photo once per round). Independent random picks are unpredictable, so some photos repeat sooner and some come up less. I checked with numbers: over 451 picks every photo appeared, none twice in a row, and there was no repeating pattern.
-- **Flexbox column:** `flex-direction: column` with `justify-content: space-between` stacks the icons vertically and spreads them over the height of the link list beside them.
-
-### The light switch
-- **`role="switch"` and `aria-checked`** tell assistive technology this button is an on/off switch and which way it is set. We keep them in sync with the theme, so the lever, the "on/off" text, and what a screen reader announces always agree.
-- **Drawing with SVG shapes:** the switch is a few `<rect>`, `<path>` and `<circle>` shapes. The two side strips fake a 3D box. Colors come from CSS variables, so it re-colors itself for dark mode.
-- **A CSS transition on `transform`** slides the lever: `translateY(12px)` moves it down, and `transition: transform 0.18s` makes the move smooth. `prefers-reduced-motion` turns the animation off for people who ask for that.
-- **Tab order:** the switch is the first thing in the page, so pressing Tab once lands on it.
-- Clicking empty space no longer switches the theme (it was easy to trigger by accident), so a click anywhere on the home page now changes the photo.
-
-### Bold, other writing systems, and emoji
-- **Font weights are separate files.** The font request now asks for weight 700; without it the browser fakes bold by smearing the regular letters, which looks muddy. The test confirmed the real bold file loaded.
-- **Fallback fonts for other scripts:** EB Garamond has no Devanagari letters (भारत). `font-family` is a list: the browser uses the first font that has each letter. The second entry, Noto Serif Devanagari, fills in only what Garamond lacks. The font request includes `&text=` with just those four letters, so the download is tiny.
-- **`lang="hi"`** marks that word as Hindi, which helps screen readers pronounce it. **`role="img"` + `aria-label`** gives the emoji a spoken name ("back and forth") instead of its default description.
-
-### A pixel font for the switch label
-- **Where fonts load from:** the label font is requested in `theme.js` (which every page already runs), so there is one place to change it, instead of editing every page.
-- **`&text=ONFonf`** asks Google Fonts for only those letters, so the download is a few hundred bytes.
-- **Fallback:** `font-family: "Silkscreen", ui-monospace, monospace` shows a monospace font for an instant if the pixel font is slow, then swaps.
-- **Why a pixel font suits it:** pixel fonts are drawn on a grid, so at small sizes they look deliberate, like labels stamped on hardware. Other options I mocked up were a stamped monospace and a fully pixel-drawn switch.
-
-### The letter field, and faster, fairer photos
-- **WebGL instancing:** one small shape (a cell) is drawn thousands of times in one go; the shader moves each copy into place and picks its letter from an "atlas" image of all the glyphs. That is why the field stays smooth.
-- **Bugs worth remembering:** at first the field was almost invisible. Blending was multiplying each letter's opacity by itself, and the browser expected "pre-multiplied" colors (color already scaled by opacity). Using pre-multiplied output with `blendFunc(ONE, ONE_MINUS_SRC_ALPHA)` fixed both light and dark mode.
-- **Saving battery:** the field redraws every frame only while you hover or a ripple runs; otherwise about 20 times a second for the twinkle, and not at all when the tab is hidden.
-- **WebP** images are about half the size of the JPEGs; phones get a 700px version. `devicePixelRatio` tells how sharp the screen is, so sharp screens get the 1200px file.
-- **Shuffle bag:** shuffle all photos, deal them out, reshuffle only when empty, so nothing repeats until everything has shown. `setTimeout` with a fresh random wait (0.4 to 1 s) each time makes the timing unpredictable.
-
-### Darker field, quiet zone behind the writing
-- Stronger letters (opacity 0.14 light, 0.16 dark) made the field visible, but it fought the text. The shader now measures each cell's distance from the content column (`uQuiet`) and fades letters to about a third there, with a soft edge (`smoothstep`) so there is no visible box.
-
-### The Great Wave in letters
-- **Brightness map:** the painting was shrunk to 480px, turned grayscale and inverted (`images/field/wave.png`), so white means "dark ink here". Each cell reads its spot in that map and sets its letter's strength from it; that is how the wave appears out of the text.
-- **Making it move:** before reading the map, each cell's position is nudged by a few slow sine waves that depend on time. The picture underneath sways, so the water appears to roll, while the letters themselves stay on the grid.
-- **Two scripts:** the atlas now holds Latin and Devanagari letters. The Devanagari font request asks only for those letters (`&text=`), and each placeholder "word" picks one script at random.
-- **Contrast matters:** the first version was barely recognizable; widening the gap between strong and faint letters (`0.05 + 3.2 * ink^1.7`) made the wave readable.
-
-### Making the painting explicit
-- Thin colored letters alone looked gray at small sizes. Giving each cell inside the painting a **tile** of the painting's color, with the letter drawn on top in a contrasting shade (darker in light mode, lighter in dark), turned it into a clear mosaic of the Great Wave.
-- The fragment shader now mixes two layers per cell: `letter` on top, `tile` showing around it, both pre-multiplied by opacity.
-- The painting's box is computed from the content column's position (`getBoundingClientRect`), so it always sits in the left margin and disappears when there is no room.
-
-### 80% size and a tiled sea
-- **`zoom: 0.8`** shrinks the home column like zooming the browser out. Because zoom also shrinks widths, the column width and top spacing are divided by 0.8 to keep the same proportions.
-- **Procedural waves:** no image this time. The shader computes a surface height from three sine waves moving at different speeds; any cell below it becomes a tile, colored by how deep it is, with foam just under the surface.
-
-### Subtle, monochrome sea
-- Tiles now use the text color at low opacity, so they follow light/dark mode automatically. The foam is one thin line whose width breathes with a slow sine, and the sea fades by 85% behind the content so every word stays readable.
-
-### Shore foam
-- `0.5 - 0.5 * cos(time * 2π / 4.5)` goes smoothly from 0 to 1 and back every 4.5 s; it sets how far the foam reaches up. **Value noise** (`vnoise`, smooth random bumps) at two sizes makes the edge and the lace look frothy instead of straight.
-
-### Realistic swash
-- The cycle is lopsided: a fast surge (ease-out over 27% of a 4.8 s period) and a slow backwash. A noise-based time offset (`lag`) per column makes parts of the shore arrive at different moments, and `strength` gives each wave its own height.
-
-### Logo that follows the theme
-- The logo image is used as a CSS **mask**: only its shape matters, and the fill is `background: var(--ink)`, so it is dark on cream and light in dark mode with no second file.
-
-### Cache-busting
-- Browsers keep old copies of `styles.css`. When the new HTML arrived with old CSS, the logo got the old (huge) size. Adding `?v=2` to the stylesheet link makes browsers fetch the new file; bump the number when CSS changes matter.
-
-### Zoom-proof top bar and the record player
-- Sizes in `vw` (a share of the window width) stay the same on screen when the browser zooms, because zooming changes how many CSS pixels fit across the window. The switch, logo and vinyl use vw on wide screens.
-- The vinyl is a link whose `href` is picked at random from a list at the moment you click. YouTube Music has no public API for this, so the list is maintained by hand.
-
-### Turntable
-- The record is a button; `aria-pressed` toggles CSS that swings the tonearm and spins the record. Songs play through YouTube's embeddable IFrame player, hidden at 1px. `body:has(main.home)` with flexbox centers the home page in the window.
-
-### Switch click sound
-- The light switch plays a short click made with the Web Audio API: a 25 ms noise burst through a high-pass filter (the snap) plus a falling low tone (the thump). No audio file, so nothing extra to download and nothing for the security policy to allow.
-
-## Shared layout + music that survives page changes
-- A normal link click throws the whole page away, including the hidden YouTube player, so the song stops. The fix: for links to our own pages, JavaScript fetches the next page in the background (`fetch`), pulls out its `<main>`, swaps it in, and changes the address bar with `history.pushState` so the URL, back button and bookmarks still work. The top bar and player are never reloaded.
-- Because scripts no longer re-run on every page, page code listens for a custom `page:load` event and sets itself up again (and cleans up the old page's timers first).
-- Every section page now reuses the home page's skeleton, so new pages get the look for free.
-
-## Work page
-- Rows use flexbox with `justify-content: space-between` to push dates and places to the right edge, and `flex-wrap` on phones so long titles drop onto a second line instead of squashing.
-- Project cards use CSS grid (`grid-template-columns: 1fr 1fr`): two equal columns, collapsing to one on phones.
-- Each role row is a `<details>` element: a built-in HTML open/close box. The `<summary>` is the always-visible row; the rest shows when clicked, with no JavaScript.
-- The water used to be glued to the bottom of the window. Now field.js works out where the bottom of the *page* is on screen (`scrollHeight - scrollY`) and draws the shore there, so long pages only show it at the end.
-- The banner grain is an SVG noise image (feTurbulence) moved around in jumps with `steps()`, which reads as flicker instead of smooth motion.
-
-## Water you can touch, a font that won't sit still
-- Hovering over the water drops "splash" ripples: JavaScript keeps a short list of where and when the cursor touched the water and hands it to the shader, which draws expanding rings.
-- Google Fonts' `text=` option downloads only the letters you list, so twelve display fonts for "opticsbyshrvn" cost very little. script.js swaps the font every 0.8 s.
+## The letter field (WebGL)
+- **Instancing** draws one small shape thousands of times in a single call; a shader positions each copy and picks its letter from an atlas image of glyphs.
+- Colors must be **pre-multiplied** by opacity for correct blending (`blendFunc(ONE, ONE_MINUS_SRC_ALPHA)`).
+- The field redraws every frame only while something moves, and stops when the tab is hidden, to save battery.
+- The shoreline is computed per pixel: value noise for frothy edges, a lopsided cycle (fast surge, slow backwash) and per-column offsets so each stretch of shore moves differently. Its position follows the bottom of the *page*, not the window.
 
 ## The record deck
-- The dial is one SVG: each cover is an `<image>` cut to a ring-shaped slice with a `clipPath` (two arcs joined by straight lines, worked out with a little trigonometry in theme.js).
-- The site's security policy blocks inline `style="..."` attributes, so per-cover values (stagger delay, pop-out direction) are set from JavaScript with `style.setProperty`, which the policy allows.
-- The groove reflection is a `conic-gradient` whose start angle is a CSS variable registered with `@property`, so the browser can animate it; JavaScript points it toward the cursor.
-- Phones only allow sound to start during a tap, so the YouTube player now preloads on touch screens and the first tap plays.
+- The dial is one SVG; each cover is clipped to a ring-shaped slice with a `clipPath` built with a little trigonometry.
+- The security policy blocks inline `style="..."`, so per-cover values are set with `style.setProperty`, which it allows.
+- The groove sheen is a `conic-gradient` whose angle is a CSS variable registered with `@property`, so it can animate.
+- Phones only allow sound to start during a tap, so the player preloads on touch screens and the first tap plays.
 
-## Blog from Substack: a small content pipeline
-- Substack has no official API or webhooks. It does have an official RSS feed (`/feed`) and the JSON endpoints its own site uses (`/api/v1/archive`, `/api/v1/posts/<slug>`). The script tries the JSON first and falls back to RSS: a habit worth keeping whenever you rely on something undocumented.
-- Fetch → transform → render. "Transform" means cleaning the HTML with an allowlist (only known-safe tags survive; scripts, embeds and Substack's buttons don't) and downloading images so the site doesn't depend on Substack's servers.
-- A GitHub Action is a computer GitHub lends you for a few minutes. `schedule` with a cron line runs it on a schedule (once a month for now: `17 9 1 * *` = 09:17 UTC on the 1st); `workflow_dispatch` adds a "Run workflow" button. It commits only if something changed.
-- A `canonical` link tells search engines which copy is the original, so the same post in two places isn't treated as duplicate content.
-- Hitting an API too fast gets "429 Too Many Requests"; a one-second pause between requests avoids it.
+## Security
+- A **Content-Security-Policy** meta tag on every page allows only the site itself, Google Fonts and YouTube; injected inline scripts don't run.
+- **Referrer-Policy** limits what outbound links reveal.
+- Automated tests check every page for the CSP, inline code, unsafe links, exposed email addresses and secrets.
 
-## Stress-testing the blog pipeline
-- The tests replace the network with a fake Substack, so they can serve hostile or broken data on purpose: 31 kinds of script-injection HTML, slugs like `../../index`, images that are really HTML pages, XML "bombs", wrong JSON shapes, endless pagination, and an empty response that would otherwise wipe the blog.
-- Check output the way a browser reads it (parse the HTML), not with text search: an escaped `&quot; onmouseover=` inside a link is harmless text, which a regex wrongly flagged.
-- Mutation testing: break the safety code on purpose and make sure a test fails. One deliberate break survived because it changed nothing; re-adding the original `<source>` bug was caught.
-- A real run exposed a scaling problem (re-fetching every old post each time), fixed with a cache. Cached posts are cleaned again every run, so editing the cache can't sneak anything in.
+## Blog pipeline (Substack)
+- Substack has no official API or webhooks, but it has an RSS feed and the JSON endpoints its own site uses. The script tries JSON first and falls back to RSS: a good habit whenever you rely on something undocumented.
+- **Fetch → transform → render.** Transform means cleaning the HTML to an allowlist (scripts, embeds and buttons are dropped) and downloading images so the site doesn't depend on Substack's servers.
+- A **GitHub Action** is a computer GitHub lends for a few minutes. A cron line schedules it (`17 9 1 * *` = 09:17 UTC on the 1st of each month); `workflow_dispatch` adds a "Run workflow" button. It commits only when something changed.
+- A **canonical** link tells search engines which copy of a post is the original.
+- A cache of each post's source means old posts aren't re-fetched every run.
 
-## Servers, Cloudflare and a Worker relay
+## Testing
+- Tests replace the network with a fake Substack that serves hostile or broken data on purpose: script injection, path-traversal slugs, fake images, XML bombs, wrong JSON shapes, empty responses.
+- Check output the way a browser reads it (parse the HTML), not with text search, which gives false alarms.
+- **Mutation testing:** break the safety code on purpose and confirm a test fails. Every fix in this repo was checked this way.
+- Reliability tests replay every real failure (a missing folder in the commit step, rate limits on both routes) plus the next likely one (main moving mid-run), running the workflow's real commit step in throwaway git repos.
+
+## Servers, Cloudflare and the relay
 - A server is an always-on computer that answers requests. GitHub Pages only hands out files; it runs none of our code.
-- Cloudflare sits in front of Substack as a delivery network and bouncer. It blocks GitHub's data-centre machines ("Just a moment..."), which we proved with a probe workflow that tried every endpoint and several relays.
-- A Cloudflare Worker is a few lines of code Cloudflare runs on its own network. Ours fetches only Shravan's Substack addresses, only for requests carrying a secret key, so it isn't an open proxy. The key lives in Cloudflare and GitHub's encrypted secrets, never in the code or on the site.
-- The Worker is tested locally with Node and a fake `fetch`, including look-alike hosts, wrong keys, cloud-metadata addresses and path tricks.
+- Cloudflare protects Substack and blocks data-centre machines like GitHub's runners. A probe workflow confirmed it.
+- A **Cloudflare Worker** is a small program Cloudflare runs on its network. Ours fetches only allowlisted Substack addresses, only with a secret key, so it isn't an open proxy. The key lives only in Cloudflare and GitHub secrets.
+- **HTTP 429** means "too many requests": the sync waits (10 s, 30 s, 90 s, or what `Retry-After` asks, capped at 2 minutes) and retries before giving up.
 
-- Substack sometimes answers "429 Too Many Requests". The sync now waits (10s, 30s, 90s, or whatever Substack asks for in `Retry-After`) and tries again before giving up, so a busy moment doesn't turn the run red.
-- `tests/test_sync_reliability.py` replays every way the sync has failed (missing `images/blog`, Substack's 429s on both routes) plus the next likely one (someone merges to main mid-run, so the push gets rejected; the commit step now rebases first). It runs the workflow's real commit step in throwaway git repos, and was checked by putting each old bug back and watching the tests go red. The job also has a 20-minute timeout so retries can never hang it.
+## Custom domain
+- A custom domain needs two halves: DNS records at the registrar saying "this name lives at GitHub" (four A records plus a `www` CNAME), and a `CNAME` file in the repo telling GitHub Pages which name is ours.
+- Multiple A records for the same name are intentional: they give redundancy across GitHub's servers.

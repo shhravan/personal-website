@@ -1,32 +1,26 @@
-# todo
+# Roadmap
 
-One slice per branch and PR. Plan first, then build, then check in the browser, PR, explain, LEARNING.md.
+One slice per branch and pull request: plan, build, check in the browser, open a PR, document.
 
-## Setup
-- [x] 0. Merge PR #1 (CLAUDE.md, PRD, DESIGN, TECH_RULES, todo)
-- [x] 1. Hello world page + GitHub Pages live at shhravan.github.io/personal-website
+## Done
+- [x] Home page: hero rotation, intro, links, profile icons
+- [x] Dark mode light switch
+- [x] Letter field and shoreline background
+- [x] Top bar: name mark and record player; music survives page changes
+- [x] Desktop record deck with a 15-cover dial
+- [x] Work page: about, experience, education, honors, get in touch
+- [x] Projects page (placeholder card)
+- [x] Blog: Substack sync pipeline, relay and tests
+- [x] Security hardening: CSP, referrer policy, automated tests
+- [x] Custom domain shravanlad.com
 
-## Pages
-- [x] 2. Home: cream background, EB Garamond, name/email/location, short intro, link list (links go to stubs)
-- [x] 3. Home: rotating hero image (truly random from a folder, every 1s, each photo framed by hand; click anything to change)
-- [x] 3b. Dark mode on every page, switched with a wall light switch in the top-left corner
-- [x] 3c. Profile icons on home, stacked vertically beside the links (LinkedIn, X, YouTube Music, GitHub)
-- [x] 3d. Letter field behind the home page (hover circle, click ripple); photos as WebP, shuffled, 0.4–1s
-- [x] 3e. Top bar: name mark, turntable that plays a song, fixed while scrolling, zoom-proof
-- [x] 3f. Phone layout spacing; security audit (CSP, referrer policy, docs/SECURITY_*)
-- [ ] 4. About: separate page for the story (placeholder text first)
-- [ ] 5. Work: green banner, experience list, project cards, resume download
-- [x] 6. Blog: Substack sync script + scheduled GitHub Action; posts become the list page and post pages
-- [ ] 7. Blog: hover image on titles
-- [ ] 8. Photography: page with portfolio sections
-- [ ] 9. Photography: film roll (built from the `images/film/` folder by the build script)
-- [ ] 10. Rabbit hole: music picks, favorites, facts
+## Next
+- [ ] Record player: self-hosted audio instead of YouTube (no ads)
+- [ ] Photography: portfolio sections
+- [ ] Photography: film roll
+- [ ] Rabbit hole: music picks, favorites, facts
+- [ ] Blog: hover image on titles
+- [ ] Polish: link previews, accessibility, speed
 
-## End
-- [ ] 11. Polish: spacing, mobile check, link previews, accessibility, speed
-- [ ] 12. Custom domain shravanlad.com
-
-## Later
-- Owner: GitHub MFA and branch protection on main
-- Fall-in (black-hole) transition into the rabbit hole
-- Automatic Instagram sync
+## Owner settings
+- [ ] GitHub MFA and branch protection on `main`

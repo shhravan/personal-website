@@ -1,16 +1,10 @@
-# personal-website
+# shravanlad.com
 
-Source code for my personal website, published at https://shhravan.github.io/personal-website/.
+Source for [shravanlad.com](https://shravanlad.com), the personal website of Shravan Lad.
 
-## Technology stack
+A static site in plain HTML, CSS and JavaScript (no framework or build step), hosted on GitHub Pages. Highlights: a WebGL letter-field background, a record player with an album-cover dial, music that keeps playing across pages, and a blog synced automatically from Substack.
 
-- Plain HTML, CSS and JavaScript: no framework, package manager, dependencies or build step.
-- WebGL 2 for the animated background on the home page (`field.js`).
-- Hosted with GitHub Pages, served from the `main` branch.
-
-## Getting started
-
-Prerequisites: Git, a modern browser, and any static file server. The example below uses Python 3.
+## Run locally
 
 ```sh
 git clone https://github.com/shhravan/personal-website.git
@@ -18,32 +12,29 @@ cd personal-website
 python3 -m http.server 8000
 ```
 
-Open http://localhost:8000/. Pages use relative links, so the site also works under a sub-path such as GitHub Pages' `/personal-website/`.
+Then open http://localhost:8000/.
 
-There are no build, lint, format or test scripts.
+## Tests
 
-## Configuration
+```sh
+python3 -m unittest discover -s tests -v
+```
 
-None. No environment variables or secrets are required.
+Tests use only the Python standard library (plus Node for the relay test) and never touch the network. They run on every push.
 
-## Project structure
+## Structure
 
 | Path | Purpose |
 |---|---|
-| `index.html` | Home page |
-| `about/`, `work/`, `blog/`, `photography/`, `rabbit-hole/` | Section pages (`index.html` each) |
-| `styles.css` | All styles, including light and dark themes |
-| `theme.js` | Shared top bar: theme switch, logo, music player (loaded on every page) |
-| `script.js`, `field.js` | Home page photo rotation and WebGL background |
-| `images/` | Logo and hero photos (`NAME.webp` and `NAME-700.webp` per photo) |
-| `docs/` | Product, design, technical, progress and security documentation |
-
-## Maintenance notes
-
-- Every page sets a Content Security Policy in a `<meta>` tag. Adding a new external resource (fonts, scripts, embeds) requires updating that policy on every page. See [docs/SECURITY_RUNBOOK.md](docs/SECURITY_RUNBOOK.md).
-- Stylesheet and script links carry a `?v=` query string. Increment it on every page when those files change, so browsers fetch the new version.
-- Changes are made on a branch and merged to `main` through a pull request. GitHub Pages redeploys automatically after each merge.
+| `index.html`, `work/`, `projects/`, `blog/`, `photography/`, `rabbit-hole/` | Pages |
+| `styles.css` | All styles, light and dark |
+| `theme.js` | Theme switch, record player, in-place page navigation |
+| `script.js`, `field.js` | Hero rotation and email link; WebGL background |
+| `scripts/substack_sync.py` | Blog sync from Substack (runs monthly via GitHub Actions) |
+| `worker/feed-relay.js` | Cloudflare Worker relay used by the sync |
+| `tests/` | Automated tests |
+| `docs/` | Product, design, technical and security notes |
 
 ## Security
 
-To report a security issue, contact the repository owner privately rather than opening a public issue. Audit notes are in [docs/SECURITY_AUDIT.md](docs/SECURITY_AUDIT.md).
+Please report security issues privately to the repository owner rather than opening a public issue.

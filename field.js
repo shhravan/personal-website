@@ -8,8 +8,6 @@
 // thousands of letters stay smooth. All the letter shapes are drawn once into a small image
 // (the "atlas"); each cell of the grid shows one tile of that image. The small program below
 // (a "shader") decides, for every cell, which letter to show and how strong it is.
-//
-// Idea inspired by contentarchitecture.dev; this code is written from scratch for this site.
 (function () {
   // No field for people who ask for less motion, or browsers without WebGL 2: the page simply
   // looks as it did before.
