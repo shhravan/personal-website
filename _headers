@@ -1,0 +1,4 @@
+# Cloudflare Pages only (staging.shravanlad.com). GitHub Pages ignores this file.
+# Keeps the staging copy out of search engines so it never competes with shravanlad.com.
+/*
+  X-Robots-Tag: noindex, nofollow

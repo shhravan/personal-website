@@ -10,6 +10,7 @@ Keep it simple: a site that is easy to read, explain and maintain.
   - retries on HTTP 429/503 (honoring `Retry-After`, capped), and the job has a 20-minute timeout
   - Substack blocks GitHub's runners, so requests go through a Cloudflare Worker relay (`worker/feed-relay.js`) with a fixed allowlist and a secret key (`X-Relay-Key`; GitHub secret `SUBSTACK_RELAY_KEY`, Worker secret `RELAY_KEY`, address in the GitHub variable `SUBSTACK_RELAY_URL`)
 - **Hosting:** GitHub Pages from `main`, at `shravanlad.com` (the `CNAME` file; DNS at Spaceship: four A records to GitHub Pages and a `www` CNAME to `shhravan.github.io`).
+- **Staging:** Cloudflare Pages deploys the working branch (`claude/personal-website-workflow-pjo7rz`) to `staging.shravanlad.com`, plus a preview link per pull request. `_headers` marks staging `noindex` (GitHub Pages ignores that file). Check changes there before merging to `main`.
 - **Fonts:** Google Fonts.
 - **Music:** self-hosted MP3s in `audio/`, played with the browser's built-in audio player. Keep files at 128 kbps or less with tags stripped (`ffmpeg -map_metadata -1`).
 

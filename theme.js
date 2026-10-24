@@ -125,6 +125,36 @@
 
     var audio = new Audio();
     audio.preload = "none";
+
+    // Visualizer: an "analyser" measures the playing song about 60 times a second, split into
+    // bass, overall loudness and treble. The letter field (field.js) reads them through
+    // window.siteMusic.levels() to move the water and letters with the music. It's set up on the
+    // first play (browsers only allow audio processing after a click). If anything about it fails,
+    // the song still plays normally, just without the visualizer.
+    var actx = null, analyser = null, bins = null;
+    function hookAnalyser() {
+      if (actx) { if (actx.state === "suspended") actx.resume(); return; }
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      try {
+        actx = new AC();
+        analyser = actx.createAnalyser();
+        analyser.fftSize = 512;               // 256 frequency bands, each about 90 Hz wide
+        analyser.smoothingTimeConstant = 0.55;
+        actx.createMediaElementSource(audio).connect(analyser);
+        analyser.connect(actx.destination);   // and on to the speakers
+        bins = new Uint8Array(analyser.frequencyBinCount);
+        if (actx.state === "suspended") actx.resume();
+      } catch (e) { actx = null; analyser = null; }
+    }
+    function band(a, b) { var s = 0; for (var i = a; i < b; i++) s += bins[i]; return s / ((b - a) * 255); }
+    window.siteMusic = {
+      levels: function () {
+        if (!analyser || audio.paused || audio.ended) return null;
+        analyser.getByteFrequencyData(bins);
+        return { bass: band(1, 4), level: band(1, 96), treble: band(40, 120) };
+      }
+    };
     function fileOf(t) { return BASE + "audio/" + (t.file || t.cover) + ".mp3"; }
 
     // Engraved-style record drawn from scratch: many thin grooves, a light band, a label, a hole.
@@ -160,6 +190,7 @@
       var playing = player.getAttribute("aria-pressed") === "true";
       player.setAttribute("aria-pressed", playing ? "false" : "true");   // CSS swings the needle
       if (playing) { audio.pause(); return; }
+      hookAnalyser();
       if (deckSong < 0) playTrack(nextShuffled());
       else audio.play().catch(function () {});
     });
@@ -209,6 +240,7 @@
       if (deck) { markNow(i); announce(i); }
       deckSong = i;
       var t = TRACKS[i];
+      hookAnalyser();
       audio.src = fileOf(t) + (t.start ? "#t=" + t.start : "");   // #t= starts the file partway in
       audio.play().catch(function () { if (deck) setPlaying(false); });
       if (deck) setPlaying(true);
@@ -332,6 +364,7 @@
       function togglePlay() {
         var on = !deck.classList.contains("playing");
         setPlaying(on);
+        if (on) hookAnalyser();
         if (on) audio.play().catch(function () { setPlaying(false); }); else audio.pause();
       }
       rec.addEventListener("click", function () {

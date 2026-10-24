@@ -47,6 +47,12 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - Phones only allow sound to start during a tap; calling `audio.play()` inside the tap handler satisfies that.
 - Re-saving the MP3s at 128 kbps and stripping their tags (`ffmpeg -map_metadata -1`) cut the folder size and removed hidden details such as embedded art.
 
+## Music visualizer
+- Web Audio's `AnalyserNode` splits the playing sound into frequency bands about 60 times a second (an FFT). Bass, overall loudness and treble are averages over slices of those bands.
+- `createMediaElementSource` routes the `<audio>` through the analyser and on to the speakers. It must be set up after a click, and if the audio context stays suspended the song would be silent, so it is resumed in the same click.
+- Raw levels twitch, so they are smoothed: quick to rise, slow to fall. A beat is the bass jumping well above its recent average, with a short rest between beats.
+- Only works because the songs are our own files; browsers don't let a page analyse audio from other sites (like a YouTube embed).
+
 ## Security
 - A **Content-Security-Policy** meta tag on every page allows only the site itself and Google Fonts; injected inline scripts don't run.
 - **Referrer-Policy** limits what outbound links reveal.
@@ -70,6 +76,10 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - Cloudflare protects Substack and blocks data-centre machines like GitHub's runners. A probe workflow confirmed it.
 - A **Cloudflare Worker** is a small program Cloudflare runs on its network. Ours fetches only allowlisted Substack addresses, only with a secret key, so it isn't an open proxy. The key lives only in Cloudflare and GitHub secrets.
 - **HTTP 429** means "too many requests": the sync waits (10 s, 30 s, 90 s, or what `Retry-After` asks, capped at 2 minutes) and retries before giving up.
+
+## Staging
+- A staging site is a private-ish copy where changes are checked before going live. Cloudflare Pages deploys the working branch to `staging.shravanlad.com` and gives every pull request its own preview link.
+- An `X-Robots-Tag: noindex` header (set in `_headers`) tells search engines not to list staging, so it never competes with the real site.
 
 ## Custom domain
 - A custom domain needs two halves: DNS records at the registrar saying "this name lives at GitHub" (four A records plus a `www` CNAME), and a `CNAME` file in the repo telling GitHub Pages which name is ours.
