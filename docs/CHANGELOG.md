@@ -15,6 +15,12 @@ be returned to how it looked.
 
 ---
 
+## #65 · Calmer visualizer, CHANGELOG
+- **Before:** `ade895a`
+- **Changed:** the visualizer flickered (water jumping high-low several times a second). Now at most one beat wave every 0.7 s, the tide rises over ~0.5 s and settles over ~1.5 s, beat waves rise gently, and the effect fades in over ~2 s when a song starts. Added this changelog.
+- **Before this:** beats up to ~3 a second and a tide that reacted in ~0.1 s.
+- **Files:** `field.js` (the `listen()` function and the beat surge), docs.
+
 ## #64 · Music visualizer and staging setup
 - **Before:** `c8a2258`
 - **Changed:** while a song plays, the shoreline listens to it. The tide rises with loudness (up

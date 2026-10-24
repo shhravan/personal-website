@@ -104,8 +104,8 @@
     "  // Music (only while a song plays): the tide rises with loudness, and each bass beat sends a",
     "  // quick extra surge up the shore that drains back, a little uneven along the beach.",
     "  float ba = uBeatAge;",
-    "  float surge = ba < 0.28 ? 1.0 - pow(1.0 - ba / 0.28, 3.0) : 1.0 - smoothstep(0.0, 1.0, (ba - 0.28) / 1.3);",
-    "  surge *= step(ba, 1.6) * (0.55 + 0.6 * vnoise(vec2(x * 0.04, uBeatSeed)));",
+    "  float surge = ba < 0.45 ? smoothstep(0.0, 1.0, ba / 0.45) : 1.0 - smoothstep(0.0, 1.0, (ba - 0.45) / 1.5);",
+    "  surge *= step(ba, 1.95) * (0.55 + 0.6 * vnoise(vec2(x * 0.04, uBeatSeed)));",
     "  return uGrid.y * (0.045 + 0.12 * cycle * strength + 0.07 * uLevel + 0.07 * surge * uBeatAmp)",
     "      + 2.5 * vnoise(vec2(x * 0.12, uTime * 0.4)) + 1.5 * vnoise(vec2(x * 0.5, uTime * 0.9));",
     "}",
@@ -429,17 +429,21 @@
   // theme.js publishes window.siteMusic.levels(): bass, loudness and treble (0 to 1) of the song
   // playing right now, or null when nothing plays. They are smoothed here so the water moves
   // fluidly. A beat is a sudden jump of the bass above its recent average, at most ~3 a second.
-  var music = { level: 0, treble: 0, bassAvg: 0, beatAt: -10, beatAmp: 0, beatSeed: 0, on: false };
+  var music = { level: 0, treble: 0, bassAvg: 0, beatAt: -10, beatAmp: 0, beatSeed: 0, on: false, gain: 0 };
   function listen(dt) {
     var m = window.siteMusic && window.siteMusic.levels();
     music.on = !!m;
-    var level = m ? m.level : 0, treble = m ? m.treble : 0, bass = m ? m.bass : 0;
-    var k = 1 - Math.exp(-dt / (level > music.level ? 0.12 : 0.6));   // rise quickly, settle slowly
+    // Fade the whole effect in over ~2 s when a song starts (and out when it stops), so the water
+    // never jumps at the first note.
+    music.gain += ((m ? 1 : 0) - music.gain) * (1 - Math.exp(-dt / 0.8));
+    var level = m ? m.level * music.gain : 0, treble = m ? m.treble * music.gain : 0, bass = m ? m.bass : 0;
+    var k = 1 - Math.exp(-dt / (level > music.level ? 0.5 : 1.5));   // rise over ~0.5 s, settle over ~1.5 s
     music.level += (level - music.level) * k;
-    music.treble += (treble - music.treble) * (1 - Math.exp(-dt / 0.25));
-    if (m && bass > 0.3 && bass > music.bassAvg * 1.3 && now - music.beatAt > 0.32) {
+    music.treble += (treble - music.treble) * (1 - Math.exp(-dt / 0.6));
+    // At most one beat wave every 0.7 s, so busy drums don't make the water flicker.
+    if (m && music.gain > 0.5 && bass > 0.3 && bass > music.bassAvg * 1.3 && now - music.beatAt > 0.7) {
       music.beatAt = now;
-      music.beatAmp = Math.min(1, (bass - music.bassAvg) * 3 + 0.4);
+      music.beatAmp = Math.min(1, (bass - music.bassAvg) * 3 + 0.4) * music.gain;
       music.beatSeed = (music.beatSeed + 7.31) % 100;
     }
     music.bassAvg += (bass - music.bassAvg) * (1 - Math.exp(-dt / 0.8));
@@ -498,7 +502,7 @@
     listen(dt);
     // Busy (hovering or rippling): draw every frame. Idle: only the slow twinkle, ~20 times a second.
     var busy = ripples.length > 0 || splashes.length > 0 || Math.abs(flowVel) > 0.01 || hover > 0.001 || hoverTarget > 0 ||
-      music.on || music.level > 0.005 || now - music.beatAt < 1.6;
+      music.on || music.level > 0.005 || music.gain > 0.01 || now - music.beatAt < 2.0;
     if (busy || t - lastDraw > 50) { draw(); lastDraw = t; }
     frame = document.hidden ? 0 : requestAnimationFrame(tick);
   }

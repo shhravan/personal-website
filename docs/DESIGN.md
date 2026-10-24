@@ -273,7 +273,7 @@ A faint grid of small Garamond and Devanagari letters covers the window, drawn w
 
 At the bottom of each page, a shoreline seen from above: cream foam at the edge, then pool-blue water with drifting caustic lines, at low opacity. Each wave surges up quickly (about 1.3s) and drains back slowly (about 3.5s), with each stretch of shore and each wave a little different. Moving the cursor over the water drops small ripples. The field and shore are off for reduced motion or without WebGL.
 
-**Music visualizer.** While a song plays, the field listens to it (a Web Audio analyser in `theme.js`, read by `field.js`): the tide rises with overall loudness (up to about 7% of the screen), each bass beat sends an extra surge up the shore that drains back over about 1.5 s (at most about three a second, each a little uneven along the beach), and treble makes more letters twinkle. Everything eases back to the normal calm motion within about a second of pausing. Silent, the site looks exactly as before.
+**Music visualizer.** While a song plays, the field listens to it (a Web Audio analyser in `theme.js`, read by `field.js`): the tide rises with overall loudness (up to about 7% of the screen), each bass beat sends an extra surge up the shore that rises gently and drains back over about 1.5 s (at most one every 0.7 s, each a little uneven along the beach), the effect fades in over about 2 s when a song starts, and treble makes more letters twinkle. Everything eases back to the normal calm motion within about a second of pausing. Silent, the site looks exactly as before.
 
 ## Motion
 
