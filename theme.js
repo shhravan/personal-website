@@ -239,7 +239,7 @@
       var C = 330, R0 = 186, R1 = 318, N = TRACKS.length, GAP = 1;
       // The dial runs from the right edge of the window to the top edge. The record's centre sits
       // 150px from the right and 130px from the top, and the deck is scaled by s (same formula
-      // as --s in styles.css), so the edge angles depend on the window width.
+      // as setScale below), so the edge angles depend on the window width.
       var sc = Math.min(1.05, Math.max(0.62, window.innerWidth / 1440 * 0.62 + 0.38));
       var e0 = Math.acos(Math.min(1, 150 / (sc * R1))) * 180 / Math.PI;          // angle where the right edge cuts the dial
       var e1 = 180 + Math.asin(Math.min(1, 130 / (sc * R1))) * 180 / Math.PI;   // angle where the top edge cuts it
@@ -275,6 +275,11 @@
       }
       deck = document.createElement("div");
       deck.className = "deck";
+      // The deck's scale, from the window width. Done here rather than in CSS because older
+      // Safari can't work out "100vw / 1440px", which left the deck stuck at full size.
+      function setScale() { deck.style.setProperty("--s", Math.min(1.05, Math.max(0.62, window.innerWidth / 1440 * 0.62 + 0.38)).toFixed(4)); }
+      setScale();
+      window.addEventListener("resize", setScale);
       deck.innerHTML =
         '<div class="deck-plinth" aria-hidden="true"><i></i><b class="sc s1"></b><b class="sc s2"></b><b class="sc s3"></b><b class="sc s4"></b><u class="knob"></u><u class="led"></u></div>' +   // turntable base, dark mode only (see styles.css)
         '<div class="deck-glass"></div>' +
