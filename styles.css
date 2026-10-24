@@ -1,0 +1,692 @@
+/* ---- colors ----
+   Named once here so we can change the palette in one place.
+   Light is the default. Dark overrides the same names. */
+:root {
+  --bg: #f3ecdc;          /* creamy background */
+  --ink: #1a1a1a;         /* near-black text */
+  --soft: #6b6b6b;        /* gray for secondary text */
+  --link: #2563eb;        /* blue links */
+  --link-hover: #1e40af;  /* darker blue when you point at one */
+  --photo-bg: #e9e5da;    /* shown behind a photo while it loads */
+  --plate: #ece8de;       /* the light switch: wall plate, slot and lever */
+  --slot: #fbfaf6;
+  --lever: #d6d1c4;
+}
+
+/* Dark colors, used in two cases:
+   1) the device is set to dark AND you haven't picked light yourself
+   2) you clicked the toggle to choose dark.
+   The two blocks hold the same values on purpose. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161512;
+    --ink: #ece8de;
+    --soft: #a39e92;
+    --link: #7aa2ff;
+    --link-hover: #a9c1ff;
+    --photo-bg: #25231f;
+    --plate: #2a2823;
+    --slot: #0d0c0a;
+    --lever: #4d493f;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161512;
+  --ink: #ece8de;
+  --soft: #a39e92;
+  --link: #7aa2ff;
+  --link-hover: #a9c1ff;
+  --photo-bg: #25231f;
+  --plate: #2a2823;
+  --slot: #0d0c0a;
+  --lever: #4d493f;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "EB Garamond", "Noto Serif Devanagari", Georgia, serif;   /* the Devanagari font only fills in letters EB Garamond lacks */
+  font-size: 1.15rem;   /* a little bigger than 16px: Garamond runs small */
+  line-height: 1.5;
+}
+
+/* One narrow centered column. */
+main {
+  max-width: 38rem;
+  margin: 0 auto;
+  padding: 3.75rem 2rem 4rem;   /* 60px above, 32px at the sides */
+}
+
+h1 { font-weight: 700; font-size: 1.3rem; margin: 0 0 0.2rem; color: var(--ink); }   /* bold */
+p  { margin: 0 0 0.6rem; }
+
+/* Links: in the full text color (a step brighter than the softer grey text around them) and
+   underlined, like "Cornell" in the work page's About panel. Pointing at one fades the underline. */
+a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+a:hover { text-decoration-color: color-mix(in srgb, var(--ink) 35%, transparent); }
+
+/* ---- hero image ---- */
+.hero {
+  aspect-ratio: 1.9 / 1;         /* same shape for every photo, so crops stay consistent */
+  border-radius: 0.4rem;         /* softly rounded corners */
+  overflow: hidden;              /* crops the image to the rounded frame */
+  background: var(--photo-bg);
+  margin-bottom: 1.5rem;         /* 24px between photo and name (8px grid) */
+  cursor: pointer;               /* clicking shows another photo */
+}
+.hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;             /* fills the frame, cropping if needed */
+  display: block;                /* photos swap instantly (script.js), no fade */
+}
+
+/* ---- intro: runs the full width of the photo above ---- */
+.intro p { color: var(--soft); margin-bottom: 0.3rem; }
+
+/* small letter-spaced label above the links */
+.label {
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;   /* shows capitals even though we type lowercase */
+  color: var(--soft);
+  margin: 0 0 0.3rem;
+  line-height: 1.2rem;
+}
+nav ul { list-style: none; margin: 0; padding: 0; }   /* no bullet points */
+nav li { margin: 0.05rem 0; }
+
+/* ---- link list + profile icons, side by side ----
+   The link list sits on the left. The profile icons are stacked in a vertical column on the
+   right, with their right edge exactly on the right edge of the photo. */
+.links {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-top: 1.2rem;
+}
+.links nav:first-child { flex: 1; }
+.social ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;   /* spreads the icons from the top link to the bottom link */
+  align-items: flex-end;
+  height: calc(100% - 1.5rem);      /* 1.5rem = the height of the "explore" label above the links */
+  margin: 1.5rem -0.4rem 0 0;       /* -0.4rem cancels the tap padding so the icon, not the padding, meets the edge */
+}
+.social { display: flex; }
+.social ul { flex: 1; }
+.social-link {
+  display: block;
+  padding: 0.4rem;
+  color: var(--soft);
+  line-height: 0;
+}
+.social-link svg { width: 1.3rem; height: 1.3rem; fill: currentColor; display: block; }
+.social-link:hover { color: var(--link-hover); }
+
+/* centered line at the bottom of the page */
+.foot { text-align: center; color: var(--soft); font-size: 1.08rem; margin: 2.5rem 0 0; }   /* 40px above: sets the sign-off apart from the links */
+
+/* ---- the light switch (added by theme.js) ----
+   A wall switch fixed in the top-left corner of every page. Lever up and "on" is light mode;
+   lever down and "off" is dark mode. */
+.switch {
+  position: fixed;
+  top: 0.55rem;
+  left: 0.7rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem;
+  background: none;
+  border: 0;
+  border-radius: 0.3rem;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.switch:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
+.switch svg { width: 1.7rem; height: 2.4rem; display: block; overflow: visible; }
+.switch svg * { stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+.switch .plate { fill: var(--plate); }
+.switch .side { fill: var(--lever); }
+.switch .screw { fill: none; stroke-width: 0.9; }
+.switch .slot { fill: var(--slot); }
+.switch .lever-face { fill: var(--lever); }
+.switch .lever-lip { fill: var(--plate); }
+.switch .lever { transition: transform 0.18s ease; }
+.switch[aria-checked="false"] .lever { transform: translateY(12px); }   /* lever down = off */
+.switch-text {
+  font-family: "Silkscreen", ui-monospace, monospace;   /* pixel font, like a stamped hardware label */
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+  transition: color 0.2s ease;
+}
+.switch:hover .switch-text { color: var(--link-hover); }
+@media (prefers-reduced-motion: reduce) {
+  .switch .lever { transition: none; }
+}
+
+/* ---- home page only ----
+   The home column is one third of the window width, so the photo and text scale
+   with the screen. clamp(min, preferred, max) keeps it from getting too small or too big. */
+@media (min-width: 48rem) {
+  /* zoom: 0.8 shows the home page at 80% size (as if the browser were zoomed out), so it fits
+     on one screen. Widths and spacing are divided by 0.8 so the layout keeps its proportions. */
+  main.col {
+    zoom: 0.8;
+    width: clamp(25rem, 41.667vw, 40rem);
+    max-width: none;
+    padding: 0 0 4rem;
+    margin-top: 4.7rem;
+  }
+}
+/* On large screens the space above grows with the window height (about 18%). */
+@media (min-width: 64rem) {
+  main.col { margin-top: calc(100vh / 7); }
+}
+
+/* On phones the photo gets a taller shape. */
+@media (max-width: 47.99rem) {
+  .home .hero { aspect-ratio: 4 / 3; }
+}
+
+/* ---- section pages (about, work, ...) ----
+   Same column, top bar, letter field and sign-off as home, just without the photo. */
+.page h1 { font-size: 1.6rem; font-weight: 500; margin: 0 0 1rem; }
+.page .back { display: inline-block; margin-bottom: 1.5rem; }
+.page .lede { color: var(--soft); }
+a.logo { display: block; }   /* the name mark is a link home */
+
+/* ---- the letter field behind every page (drawn by field.js) ----
+   Fixed to the window, behind all content, and it never catches clicks itself. */
+.field {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ---- name mark at the top of the home page ----
+   The logo image is used as a mask (only its shape counts); the color comes from --ink,
+   so it is dark on cream and light in dark mode. */
+.logo {
+  position: absolute;          /* top center of the page, level with the light switch */
+  top: 1.05rem;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2.4rem;              /* same height as the light switch */
+  aspect-ratio: 900 / 197;
+  background: var(--ink);
+  -webkit-mask: url("images/logo.png") center / contain no-repeat;
+  mask: url("images/logo.png") center / contain no-repeat;
+}
+
+/* ---- the record player (added by theme.js): top right, mirrors the light switch ---- */
+.vinyl {
+  position: fixed;
+  top: 0.55rem;
+  right: 0.7rem;
+  z-index: 10;
+  padding: 0.3rem;
+  line-height: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.vinyl:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; border-radius: 0.3rem; }
+.vinyl svg { width: 2.84rem; height: 2.4rem; display: block; overflow: visible; }
+.vinyl .record { transform-origin: 20px 22px; animation: spin 1.8s linear infinite; animation-play-state: paused; }
+.vinyl[aria-pressed="true"] .record { animation-play-state: running; }   /* spins while playing */
+.vinyl .disc { fill: var(--ink); }
+.vinyl .groove { fill: none; stroke: var(--bg); stroke-width: 0.18; opacity: 0.45; }
+.vinyl .shine { fill: none; stroke: var(--bg); stroke-width: 1.6; stroke-linecap: round; opacity: 0.55; }
+.vinyl .label { fill: var(--bg); }
+.vinyl .label-ring { fill: none; stroke: var(--ink); stroke-width: 0.4; }
+.vinyl .hole { fill: var(--ink); }
+.vinyl .arm { transform-origin: 46px 5px; transform: rotate(-28deg); transition: transform 0.6s ease; }
+.vinyl[aria-pressed="true"] .arm { transform: rotate(0deg); }               /* needle on the record */
+.vinyl .pivot { fill: var(--bg); stroke: var(--ink); stroke-width: 1; }
+.vinyl .arm-line { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.vinyl .head { fill: var(--ink); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .vinyl .record { animation: none; } .vinyl .arm { transition: none; } }
+.yt-hidden, #yt-player { position: fixed; width: 1px; height: 1px; left: -10px; bottom: 0; opacity: 0; pointer-events: none; }
+
+/* ---- home page centered in the window, both ways ---- */
+body:has(main.col) {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 48rem) {
+  body:has(main.col) main.col { margin: 0 auto !important; padding: 4.5rem 0 3.5rem; }
+}
+
+/* ---- top bar keeps its size when the browser is zoomed ----
+   On wider screens the switch, logo and record are sized in vw (a share of the window width).
+   Zooming the browser changes how many CSS pixels fit in the window, so vw-sized things stay
+   the same size on screen. (Numbers are the rem sizes as they look on a 1440px-wide window.) */
+@media (min-width: 48rem) {
+  .switch { top: 0.61vw; left: 0.78vw; padding: 0.33vw; gap: 0.5vw; border-radius: 0.33vw; }
+  .switch svg { width: 1.89vw; height: 2.67vw; }
+  .switch-text { font-size: 0.69vw; }
+  .logo { top: 1.17vw; height: 2.67vw; }
+  .vinyl { top: 0.61vw; right: 0.78vw; padding: 0.33vw; }
+  .vinyl svg { width: 3.16vw; height: 2.67vw; }
+}
+
+/* ---- phones: more breathing room, calmer text, smaller top bar ---- */
+@media (max-width: 47.99rem) {
+  body { font-size: 1.02rem; line-height: 1.6; }
+  .logo { height: 1.9rem; top: 1.15rem; }
+  .switch svg { width: 1.4rem; height: 2rem; }
+  .vinyl svg { width: 2.37rem; height: 2rem; }
+  main.col { padding: 5.75rem 1.75rem 4rem; }
+  .home .hero { aspect-ratio: 4 / 3; margin-bottom: 2rem; }
+  .intro p { margin-bottom: 0.7rem; }
+  .links { margin-top: 2rem; }
+  nav li { margin: 0.2rem 0; }
+  .foot { margin-top: 3rem; }
+}
+
+/* ---- top bar stays put while scrolling ----
+   The logo is fixed like the switch and record, and a strip in the page color sits behind all
+   three, so content scrolls underneath instead of overlapping them. */
+.logo { position: fixed; z-index: 10; }
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4rem;
+  background: var(--bg);
+  z-index: 9;
+}
+@media (min-width: 48rem) { body::before { height: 4.6vw; } }
+@media (max-width: 47.99rem) { body::before { height: 3.9rem; } }
+
+/* Clear by default; the strip only fades in once the page has scrolled and content would pass
+   under the bar. Soft frosted look with a faded bottom edge instead of a hard line. */
+body::before {
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  -webkit-mask: linear-gradient(to bottom, #000 70%, transparent);
+  mask: linear-gradient(to bottom, #000 70%, transparent);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.scrolled body::before { opacity: 1; }
+
+/* The record is always black vinyl with a cream label, whatever the theme. In dark mode a thin
+   light rim keeps it visible against the dark background. */
+.vinyl .disc { fill: #111; }
+.vinyl .groove, .vinyl .shine { stroke: #f1eee7; }
+.vinyl .label { fill: #f1eee7; }
+.vinyl .label-ring { stroke: #111; }
+.vinyl .hole { fill: #111; }
+:root[data-theme="dark"] .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .vinyl .disc { stroke: #a39e92; stroke-width: 0.6; } }
+
+/* ---- work page ---- */
+.work section { margin-bottom: 2.4rem; }
+.work h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 0.8rem; }
+.about-work { color: var(--soft); }
+.roles { list-style: none; margin: 0; padding: 0; }
+.roles li { margin: 0 0 0.35rem; }
+.role summary {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  list-style: none; cursor: pointer; padding: 0.3rem 0;
+}
+.role summary::-webkit-details-marker { display: none; }
+/* Logos: square tiles get rounded corners; round and see-through logos sit straight on the page. */
+.logo-mark { width: 2.5rem; height: 2.5rem; border-radius: 0.55rem; flex: none; object-fit: contain; }
+.role-text { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.3; }
+.role-text b { font-weight: 500; }
+.role-title { color: var(--soft); font-size: 0.9rem; }
+.dates { color: var(--soft); font-size: 0.82rem; padding-top: 0.2rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.role summary:hover b { color: var(--link-hover); }
+.role-note { margin: 0.2rem 0 0.6rem 3.35rem; font-size: 0.92rem; color: var(--soft); }
+
+.role-row { display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.3rem 0; }
+.logo-link { line-height: 0; flex: none; border-radius: 0.55rem; transition: transform 0.15s ease; }
+.logo-link:hover { transform: scale(1.06); }   /* logos that link to the organisation's site */
+
+/* banner: a soft, pale water blue mixed from the page color, with a fine speckle of light dots.
+   Quiet enough to sit with the cream and the dark theme. */
+.banner {
+  position: relative; overflow: hidden;
+  background: color-mix(in srgb, #5f8f99 34%, var(--bg));
+  border: 1.5px solid color-mix(in srgb, #5f8f99 58%, var(--bg));
+  color: var(--ink);
+  border-radius: 0.7rem; padding: 1.4rem 1.5rem 1.3rem; margin-bottom: 1.2rem;
+}
+.banner::before {
+  content: ""; position: absolute; inset: -50%; z-index: 1;
+  /* tiny scattered dots: high-frequency noise turned into sparse light specks */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 9 -6.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E");
+  opacity: 0.35; pointer-events: none;
+  animation: grain 1.5s steps(6) infinite;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); } 20% { transform: translate(-6%, 4%); } 40% { transform: translate(5%, -7%); }
+  60% { transform: translate(-3%, 8%); } 80% { transform: translate(7%, 2%); } 100% { transform: translate(0, 0); }
+}
+/* faint water ripples drifting slowly under the dots */
+.banner::after {
+  content: ""; position: absolute; inset: -40% -10%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1400' height='500'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.012 0.045' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0.85 0 0 0 0 0.95 0 0 0 0 1 0 0 0 -2.2 1.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+  background-size: 1400px 500px; background-repeat: no-repeat; background-position: center;
+  opacity: 0.14; pointer-events: none;
+  animation: drift 16s ease-in-out infinite alternate;
+}
+@keyframes drift { from { transform: translate(-4%, -3%); } to { transform: translate(4%, 3%); } }
+/* On cream, white dots vanish, so light mode uses soft blue dots instead. */
+:root[data-theme="light"] .banner::after { opacity: 0.32; }
+:root[data-theme="light"] .banner::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.30 0 0 0 0 0.55 0 0 0 0 0.70 0 0 0 9 -6.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E"); opacity: 0.65; }
+@media (prefers-reduced-motion: reduce) { .banner::before, .banner::after { animation: none; } }
+.banner h1 { position: relative; z-index: 2; color: inherit; font-size: 1.7rem; font-weight: 500; margin: 0; }
+.banner p { position: relative; z-index: 2; margin: 0; color: var(--soft); }
+
+/* panels: each section sits in a soft rounded box */
+.panel {
+  background: color-mix(in srgb, var(--ink) 4%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+  border-radius: 0.6rem; padding: 1.1rem 1.3rem 0.9rem;
+  margin-bottom: 1.2rem !important;
+}
+.panel .about-work { margin: 0 0 0.7rem; }
+.panel .about-work:last-child { margin-bottom: 0.2rem; }
+.about-work strong { color: var(--ink); font-weight: 700; }
+
+/* projects: heading, then stacked cards in the same soft style */
+.projects h2 { padding-left: 1.3rem; }
+.card {
+  background: color-mix(in srgb, var(--bg) 70%, #fff);
+  border: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+  border-radius: 0.6rem; padding: 0.8rem 1.1rem; margin-bottom: 0.6rem;
+}
+:root[data-theme="dark"] .card { background: color-mix(in srgb, var(--ink) 6%, var(--bg)); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .card { background: color-mix(in srgb, var(--ink) 6%, var(--bg)); } }
+.card-title { font-weight: 500; margin: 0; }
+.card-text { font-size: 0.92rem; color: var(--soft); margin: 0.1rem 0 0; }
+@media (max-width: 47.99rem) {
+  .panel { padding: 1rem 1rem 0.8rem; }
+  .role summary { align-items: flex-start; }
+  .dates { font-size: 0.75rem; padding-top: 0.15rem; }
+}
+.title-link { color: inherit; text-decoration: none; }   /* names that link to the organisation: no underline, underline on hover */
+.title-link:hover { text-decoration: underline; }
+/* The last line is just "opticsbyshrvn". The word stays centered on the page; the arrow hangs
+   off its right side and the note sits centered under the word, so neither pulls it off-center. */
+.foot .optics { position: relative; display: inline-block; }
+.foot .optics a { position: relative; }
+.foot .arrow {
+  position: absolute; left: 100%; top: 50%; margin-left: 0.4em;
+  width: 0.7em; height: 0.7em; transform: translateY(-45%);
+  fill: none; stroke: var(--soft); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
+  opacity: 0; transition: opacity 0.25s ease;
+}
+.foot .reveal {
+  position: absolute; left: 50%; top: 100%; margin-top: 0.3rem; white-space: nowrap;
+  font-size: 0.8rem; color: var(--soft); letter-spacing: 0.04em;
+  opacity: 0; transform: translate(-50%, -0.2rem); transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+.foot .optics:hover .arrow, .foot .optics:focus-within .arrow { opacity: 1; }
+.foot .optics:hover .reveal, .foot .optics:focus-within .reveal { opacity: 1; transform: translate(-50%, 0); }
+/* Phones and tablets have no hover, so there the arrow and note simply stay visible. */
+@media (hover: none) { .foot .arrow { opacity: 1; } .foot .reveal { opacity: 1; transform: translate(-50%, 0); } }
+
+/* ---- the record deck (desktop only, built by theme.js) ----
+   A 660px box centred on the record, which sits near the top-right corner. The whole box scales
+   with the window width (--s), so it keeps its proportions on smaller and larger screens. */
+.deck-on .vinyl { display: none; }   /* the big deck replaces the small record on desktop */
+.deck {
+  --s: clamp(0.62, calc(100vw / 1440px * 0.62 + 0.38), 1.05);
+  position: fixed; z-index: 12; width: 660px; height: 660px;
+  right: calc(150px - 330px); top: calc(130px - 330px);
+  /* At rest the record is tiny and sits in the top bar, level with the switch and the name mark;
+     it springs to full size when the dial opens, and shrinks back once a song is chosen. */
+  transform: translate(114px, -99px) scale(calc(var(--s) * 0.15)); transform-origin: 330px 330px;
+  transition: transform .55s cubic-bezier(.2,.8,.2,1);
+  pointer-events: none;
+}
+.deck.open { transform: scale(var(--s)); }
+.deck-record {
+  position: absolute; left: 160px; top: 160px; width: 340px; height: 340px; padding: 0; border: 0;
+  border-radius: 50%; background: none; cursor: pointer; pointer-events: auto;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, .32), 0 2px 6px rgba(0, 0, 0, .28);
+}
+.deck-record:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+/* Black vinyl: fine grooves, a few wider gaps between tracks, a raised rim. */
+.deck-disc {
+  position: absolute; inset: 0; border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 0 46.6%, rgba(255,255,255,.07) 47%, transparent 47.6%),
+    radial-gradient(circle, transparent 0 58.5%, #050505 59%, rgba(255,255,255,.06) 59.6%, transparent 60.2%),
+    radial-gradient(circle, transparent 0 70.5%, #050505 71%, rgba(255,255,255,.06) 71.6%, transparent 72.2%),
+    radial-gradient(circle, transparent 0 83%, #050505 83.5%, rgba(255,255,255,.06) 84%, transparent 84.6%),
+    radial-gradient(circle, transparent 0 96%, #222 97%, #0a0a0a 98.5%),
+    repeating-radial-gradient(circle, #0d0d0d 0 1px, #141414 1.4px 2.2px);
+  animation: spin 1.8s linear infinite; animation-play-state: paused;
+}
+.deck.playing .deck-disc { animation-play-state: running; }
+/* The cream label, with the name mark printed in dark ink and SIDE A near the bottom. */
+.deck-label {
+  position: absolute; left: 32%; top: 32%; width: 36%; height: 36%; border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #f1e9d6, #e6dcc4 70%, #d8ccb1);   /* cream, like the page */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18);
+}
+.deck-label::before {
+  content: ""; position: absolute; left: 20%; right: 20%; top: 22%; height: 19%;
+  background: rgba(26, 24, 20, .85);   /* name mark printed in ink */
+  -webkit-mask: url("images/logo.png") center / contain no-repeat; mask: url("images/logo.png") center / contain no-repeat;
+}
+.deck-label::after {
+  content: ""; position: absolute; left: 47.5%; top: 47.5%; width: 5%; height: 5%; border-radius: 50%;
+  background: #efe6d2; box-shadow: 0 0 0 1px rgba(0, 0, 0, .4);
+}
+.deck-label i { position: absolute; inset: 9%; border-radius: 50%; border: 1px solid rgba(26, 24, 20, .14); }
+.deck-label b {
+  position: absolute; left: 0; right: 0; bottom: 30%; text-align: center; font-weight: 400;
+  font-family: "Silkscreen", monospace; font-size: 5.6px; letter-spacing: .12em; color: rgba(26, 24, 20, .78);
+}
+.deck-label span {
+  position: absolute; left: 0; right: 0; bottom: 19%; text-align: center;
+  font-family: "Silkscreen", monospace; font-size: 6.5px; letter-spacing: .18em; color: rgba(26, 24, 20, .55);
+}
+/* Light caught in the grooves. It doesn't spin with the record; its angle follows the cursor. */
+@property --la { syntax: "<angle>"; inherits: false; initial-value: 18deg; }
+.deck-sheen {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background:
+    conic-gradient(from var(--la), transparent 0 4deg, rgba(255,255,255,.05) 12deg, rgba(255,255,255,.22) 24deg, rgba(255,255,255,.05) 36deg, transparent 46deg 180deg,
+      rgba(255,255,255,.04) 190deg, rgba(255,255,255,.17) 204deg, rgba(255,255,255,.04) 218deg, transparent 228deg),
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.06), transparent 55%);
+  -webkit-mask: radial-gradient(circle, transparent 0 34%, #000 35% 97%, transparent 98%);
+  mask: radial-gradient(circle, transparent 0 34%, #000 35% 97%, transparent 98%);
+  transition: --la .2s linear;
+}
+.deck.playing .deck-sheen { animation: shimmer 1.8s ease-in-out infinite; }
+@keyframes shimmer { 50% { opacity: .82; } }
+
+/* Tonearm: parked off the record; theme.js swings it on and creeps it inward while playing. */
+.deck-arm { position: absolute; left: 347px; top: 205px; width: 120px; height: 300px; overflow: visible; pointer-events: none; }
+.deck-swing { transform-origin: 78px 30px; transform: rotate(-24deg); }
+
+/* The dial of album covers: a frosted ring with tick marks, opening around the record. */
+.deck-glass {
+  position: absolute; inset: 12px; border-radius: 50%;
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  -webkit-mask: radial-gradient(circle, transparent 0 168px, #000 169px 316px, transparent 317px);
+  mask: radial-gradient(circle, transparent 0 168px, #000 169px 316px, transparent 317px);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  opacity: 0; transform: scale(.86) rotate(-8deg);
+  transition: opacity .45s ease, transform .7s cubic-bezier(.2,.8,.2,1);
+}
+.deck.open .deck-glass { opacity: 1; transform: none; pointer-events: auto; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }   /* invisible: the page shows through where there are no covers; it only keeps the dial open between covers */
+.deck-dial { position: absolute; inset: 0; width: 660px; height: 660px; overflow: visible; }
+.deck-rot { transform-origin: 330px 330px; animation: deck-drift 60s linear infinite; animation-play-state: paused; }
+.deck.open .deck-rot { animation-play-state: running; }
+.deck.hovering .deck-rot { animation-play-state: paused; }
+@keyframes deck-drift { to { transform: rotate(10deg); } }
+.deck-ticks { opacity: 0; transition: opacity .6s ease .15s; }
+.deck.open .deck-ticks { opacity: 1; }
+.deck-ticks line { stroke: color-mix(in srgb, var(--ink) 30%, transparent); stroke-width: 1; }
+.deck .seg {
+  transform-origin: 330px 330px; opacity: 0; transform: scale(.7) rotate(-14deg); cursor: pointer; outline: none;
+  transition: opacity .35s ease, transform .6s cubic-bezier(.2,.9,.25,1.15); transition-delay: calc(var(--i) * 28ms);
+}
+.deck.open .seg { opacity: 1; transform: none; pointer-events: auto; }
+.deck .seg image { transition: filter .3s ease; }
+.deck .seg .rim { fill: none; stroke: color-mix(in srgb, var(--ink) 18%, transparent); stroke-width: 1; }
+.deck.hovering .seg image { filter: grayscale(.75) brightness(.45); }
+.deck.hovering .seg.hot image { filter: none; }
+.deck .seg.hot { transform: translate(var(--dx), var(--dy)) scale(1.04) !important; transition-delay: 0s; }
+.deck .seg.hot .rim { stroke: var(--ink); stroke-width: 1.6; }
+.deck .seg.sel .rim { stroke: color-mix(in srgb, var(--ink) 70%, transparent); }
+
+/* What you're pointing at, beside the dial, in the site's own type. */
+.deck-readout {
+  position: absolute; right: calc(100% + 14px); top: 270px; width: max-content; max-width: 340px; text-align: right;
+  padding: 0.75rem 1rem 0.8rem; border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  opacity: 0; transform: translateX(10px); transition: opacity .3s ease, transform .4s cubic-bezier(.2,.8,.2,1);
+}
+.deck.hovering .deck-readout, .deck.open.has-now .deck-readout { opacity: 1; transform: none; }
+.deck-readout .k { font-family: "Silkscreen", monospace; font-size: 9px; letter-spacing: .28em; color: var(--soft); }
+.deck-readout .t { font-size: 30px; line-height: 1.1; margin-top: 6px; color: var(--ink); }
+.deck-readout .a { font-size: 18px; font-style: italic; color: var(--soft); margin-top: 2px; }
+.deck-readout .h { font-size: 12px; color: var(--soft); margin-top: 10px; letter-spacing: .04em; }
+@media (prefers-reduced-motion: reduce) {
+  .deck-disc, .deck-rot, .deck.playing .deck-sheen { animation: none; }
+  .deck .seg, .deck-glass { transition: opacity .2s; }
+}
+/* In dark mode a thin light rim keeps the black record visible, like the old small one. */
+:root[data-theme="dark"] .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 12px 26px rgba(0, 0, 0, .32); } }
+
+
+/* The playing song stays marked in the dial: bright rim, and the other covers dim a little until you hover. */
+.deck .seg.sel .rim { stroke: var(--ink); stroke-opacity: 1; stroke-width: 2; }
+.deck.has-now:not(.hovering) .seg:not(.sel) image { filter: brightness(.62) saturate(.8); }
+
+/* "Now playing" card that slides in under the record when the song changes. */
+.deck-toast {
+  position: fixed; z-index: 12; top: 62px; right: 16px; max-width: 260px; text-align: right;
+  padding: 0.55rem 0.8rem 0.6rem; border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+  opacity: 0; transform: translateY(-6px); pointer-events: none;
+  transition: opacity .35s ease, transform .45s cubic-bezier(.2,.8,.2,1);
+}
+.deck-toast.show { opacity: 1; transform: none; }
+.deck-open .deck-toast { opacity: 0; }
+.deck-toast .k { font-family: "Silkscreen", monospace; font-size: 8px; letter-spacing: .26em; color: var(--soft); }
+.deck-toast .t { font-size: 1.05rem; line-height: 1.15; margin-top: 3px; color: var(--ink); }
+.deck-toast .a { font-size: 0.85rem; font-style: italic; color: var(--soft); }
+
+/* Dark mode only: the small record sits on a cream turntable base, so from across the room it reads
+   unmistakably as a record player. A plain rounded plinth with a soft edge and a recessed platter
+   ring, nothing more. It fades away when the dial opens, so the covers have the stage. */
+/* Light mode gets a charcoal base instead, so the record stands out on the cream page the same way. */
+.deck-plinth { --pl-a: #45433f; --pl-b: #2e2d2a; --pl-edge: #1b1a18; --pl-line: #111; --pl-hi: rgba(255,255,255,.08);
+  --pl-screw-a: #8d8a84; --pl-screw-b: #4a4844; --pl-slot: rgba(0,0,0,.55); }
+:root[data-theme="dark"] .deck-plinth { --pl-a: #f3ecdc; --pl-b: #e4dac4; --pl-edge: #b8ab90; --pl-line: #9c8f75; --pl-hi: rgba(255,255,255,.35);
+  --pl-screw-a: #fbf7ee; --pl-screw-b: #b5a98f; --pl-slot: rgba(90,75,50,.5); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-plinth { --pl-a: #f3ecdc; --pl-b: #e4dac4; --pl-edge: #b8ab90; --pl-line: #9c8f75; --pl-hi: rgba(255,255,255,.35);
+  --pl-screw-a: #fbf7ee; --pl-screw-b: #b5a98f; --pl-slot: rgba(90,75,50,.5); } }
+.deck-plinth {
+  position: absolute; left: 140px; top: 150px; width: 400px; height: 400px; border-radius: 46px;
+  background: linear-gradient(160deg, var(--pl-a), var(--pl-b));
+  /* Seen slightly from the side, like the light switch: a solid darker edge on the left and bottom
+     gives the box its depth, then a soft shadow on the page. */
+  box-shadow: inset 0 0 0 2px var(--pl-hi), inset 0 -10px 24px rgba(0, 0, 0, .15),
+    -10px 12px 0 var(--pl-edge), -10px 12px 0 1px var(--pl-line), -14px 26px 40px rgba(0, 0, 0, .5);
+  transition: opacity .35s ease;
+}
+.deck-plinth i {   /* the platter well around the record */
+  position: absolute; left: 14px; top: 14px; width: 360px; height: 360px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(60, 50, 35, .22) 0 47%, transparent 50%);
+  box-shadow: 0 0 0 2px rgba(120, 100, 70, .16);
+}
+.deck.open .deck-plinth { opacity: 0; }
+.deck-plinth { pointer-events: auto; }
+/* On the cream base the record doesn't need the light rim it has against the dark page. */
+:root[data-theme="dark"] .deck-record { box-shadow: 0 6px 14px rgba(0, 0, 0, .35); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deck-record { box-shadow: 0 6px 14px rgba(0, 0, 0, .35); } }
+
+/* Details: four corner screws, a speed knob and a little red power light, like the switch's screws. */
+.deck-plinth .sc { position: absolute; width: 14px; height: 14px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--pl-screw-a), var(--pl-screw-b)); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .3); }
+.deck-plinth .sc::after { content: ""; position: absolute; left: 3px; right: 3px; top: 6px; height: 2px; background: var(--pl-slot); transform: rotate(35deg); }
+.deck-plinth .s1 { left: 16px; top: 16px; } .deck-plinth .s2 { right: 16px; top: 16px; }
+.deck-plinth .s3 { left: 16px; bottom: 16px; } .deck-plinth .s4 { right: 16px; bottom: 16px; }
+.deck-plinth .led { position: absolute; left: 84px; bottom: 48px; width: 10px; height: 10px; border-radius: 50%; background: #6b2a22; box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); }
+.deck.playing .deck-plinth .led { background: #e2553f; box-shadow: 0 0 8px #e2553f; }
+
+.deck-plinth .knob { position: absolute; left: 30px; bottom: 34px; width: 38px; height: 38px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--pl-screw-a), var(--pl-screw-b)); box-shadow: -3px 4px 0 var(--pl-edge), 0 0 0 1px rgba(0,0,0,.3); }
+.deck-plinth .knob::after { content: ""; position: absolute; left: 18px; top: 5px; width: 2px; height: 11px; border-radius: 1px; background: var(--pl-slot); }
+
+/* Play/pause: the small round button just left of the turntable (theme.js places it).
+   Appears once a song has played; hides while the dial is open. */
+.deck-toggle {
+  position: fixed; z-index: 12; width: 26px; height: 26px; padding: 0;
+  border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  background: color-mix(in srgb, var(--ink) 7%, var(--bg));
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .25), 0 1px 0 color-mix(in srgb, var(--ink) 10%, transparent);
+  color: var(--ink); cursor: pointer;
+  opacity: 0; transform: scale(.6); pointer-events: none;
+  transition: opacity .3s ease, transform .35s cubic-bezier(.2,.9,.25,1.2), background .2s ease;
+}
+.deck-played .deck-toggle { opacity: 1; transform: none; pointer-events: auto; }
+.deck-played.deck-open .deck-toggle { opacity: 0; pointer-events: none; }
+.deck-toggle:hover { background: color-mix(in srgb, var(--ink) 14%, var(--bg)); }
+.deck-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.deck-toggle svg { width: 100%; height: 100%; display: block; fill: currentColor; }
+.deck-toggle .i-pause { display: none; }
+.deck-toggle[aria-pressed="true"] .i-play { display: none; }
+.deck-toggle[aria-pressed="true"] .i-pause { display: inline; }
+
+/* "Get in touch" at the bottom of the work page: the same water banner as the top. */
+.banner.touch { margin-top: 0.4rem; }
+.banner.touch h2 { position: relative; z-index: 2; font-size: 1.4rem; font-weight: 500; margin: 0 0 0.25rem; color: inherit; }
+.banner.touch p a { color: var(--ink); }
+
+/* ---- blog: list and posts (pages written by scripts/substack_sync.py) ---- */
+.posts { list-style: none; margin: 1.6rem 0 0; padding: 0; }
+.posts li { margin: 0 0 1.1rem; }
+.posts li a { font-size: 1.15rem; }
+.posts .date { display: block; color: var(--soft); font-size: 0.85rem; margin-top: 0.1rem; }
+.posts .empty { color: var(--soft); }
+.post h1 { font-size: 1.9rem; font-weight: 500; line-height: 1.15; margin: 0 0 0.4rem; }
+.post-sub { font-size: 1.15rem; font-style: italic; color: var(--soft); margin: 0 0 0.6rem; }
+.post-meta { font-size: 0.85rem; color: var(--soft); margin: 0 0 2rem; }
+.post-meta a { color: var(--soft); }
+.post-body { font-size: 1.12rem; line-height: 1.7; }
+.post-body p { margin: 0 0 1.1rem; }
+.post-body h2, .post-body h3 { font-weight: 500; margin: 2rem 0 0.6rem; line-height: 1.2; }
+.post-body img { max-width: 100%; height: auto; border-radius: 0.4rem; display: block; margin: 1.4rem auto; }
+.post-body figcaption { text-align: center; font-size: 0.85rem; color: var(--soft); margin-top: -0.8rem; }
+.post-body blockquote { margin: 1.4rem 0; padding: 0 0 0 1rem; border-left: 2px solid color-mix(in srgb, var(--ink) 30%, transparent); color: var(--soft); font-style: italic; }
+.post-body pre { overflow-x: auto; font-size: 0.85rem; padding: 0.8rem 1rem; border-radius: 0.4rem; background: color-mix(in srgb, var(--ink) 6%, var(--bg)); }
+.post-body hr { border: 0; border-top: 1px solid color-mix(in srgb, var(--ink) 15%, transparent); margin: 2rem 0; }
