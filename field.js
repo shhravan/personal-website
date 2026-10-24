@@ -71,11 +71,6 @@
     "uniform float uDark;             // 1 in dark mode",
     "uniform vec3 uColor;             // normal letter color (the text color)",
     "uniform float uShore;            // the bottom of the page, in rows from the top of the window",
-    "uniform float uLevel;            // music: overall loudness, smoothed (0 when nothing plays)",
-    "uniform float uTreble;           // music: brightness (cymbals, vocals), smoothed",
-    "uniform float uBeatAge;          // music: seconds since the last bass beat (large when none)",
-    "uniform float uBeatAmp;          // music: how hard that beat hit",
-    "uniform float uBeatSeed;         // music: changes every beat, so each beat's wave has its own shape",
     "uniform vec4 uQuiet;             // the content column (x0, y0, x1, y1 in cells): letters are fainter there",
     "out vec2 vUv;",
     "out float vAlpha;",
@@ -101,12 +96,7 @@
     "  float cycle = p < 0.27 ? 1.0 - pow(1.0 - p / 0.27, 3.0)        // surge: quick, slowing at the top",
     "                         : 1.0 - smoothstep(0.0, 1.0, (p - 0.27) / 0.73);   // backwash: slow drain",
     "  float strength = 0.55 + 0.6 * vnoise(vec2(x * 0.03, floor(tt) * 1.7));   // each wave differs",
-    "  // Music (only while a song plays): the tide rises with loudness, and each bass beat sends a",
-    "  // quick extra surge up the shore that drains back, a little uneven along the beach.",
-    "  float ba = uBeatAge;",
-    "  float surge = ba < 0.28 ? 1.0 - pow(1.0 - ba / 0.28, 3.0) : 1.0 - smoothstep(0.0, 1.0, (ba - 0.28) / 1.3);",
-    "  surge *= step(ba, 1.6) * (0.55 + 0.6 * vnoise(vec2(x * 0.04, uBeatSeed)));",
-    "  return uGrid.y * (0.045 + 0.12 * cycle * strength + 0.07 * uLevel + 0.07 * surge * uBeatAmp)",
+    "  return uGrid.y * (0.045 + 0.12 * cycle * strength)",
     "      + 2.5 * vnoise(vec2(x * 0.12, uTime * 0.4)) + 1.5 * vnoise(vec2(x * 0.5, uTime * 0.9));",
     "}",
     "void main() {",
@@ -120,8 +110,7 @@
     "  float letter = floor(texelFetch(uText, ivec2(int(mod(cell.x + rowStart, uTextLen)), 0), 0).r * 255.0 + 0.5);",
     "",
     "  // Twinkle: each cell has its own slow clock; now and then it scrambles for a moment.",
-    "  // Bright music makes more letters twinkle.",
-    "  float twinkle = step(0.985 - 0.035 * uTreble, sin(uTime * 0.25 + r * 6.2832) * 0.5 + 0.5);",
+    "  float twinkle = step(0.985, sin(uTime * 0.25 + r * 6.2832) * 0.5 + 0.5);",
     "  letter = mix(letter, randomLetter(r * 17.13 + floor(uTime * 3.0), count), twinkle);",
     "",
     "  // Ripples: a ring that grows from each click; strongest on the ring, fading in and out.",
@@ -277,7 +266,7 @@
   var U = {};
   ["uGrid", "uAtlasGrid", "uAspect", "uTime", "uText", "uTextLen", "uMouse", "uHover", "uRadius",
    "uRippleStart", "uRippleCenter", "uRippleCount", "uSplashStart", "uSplashCenter", "uSplashCount", "uFlow", "uRippleMax", "uRippleWidth", "uBase", "uBright",
-   "uAtlas", "uColor", "uQuiet", "uShore", "uDark", "uLevel", "uTreble", "uBeatAge", "uBeatAmp", "uBeatSeed"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+   "uAtlas", "uColor", "uQuiet", "uShore", "uDark"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
   // One cell = two triangles. Every cell reuses this shape; the shader moves it into place.
   var quad = new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]);
@@ -425,26 +414,6 @@
     wake();
   });
 
-  // ---- music ----
-  // theme.js publishes window.siteMusic.levels(): bass, loudness and treble (0 to 1) of the song
-  // playing right now, or null when nothing plays. They are smoothed here so the water moves
-  // fluidly. A beat is a sudden jump of the bass above its recent average, at most ~3 a second.
-  var music = { level: 0, treble: 0, bassAvg: 0, beatAt: -10, beatAmp: 0, beatSeed: 0, on: false };
-  function listen(dt) {
-    var m = window.siteMusic && window.siteMusic.levels();
-    music.on = !!m;
-    var level = m ? m.level : 0, treble = m ? m.treble : 0, bass = m ? m.bass : 0;
-    var k = 1 - Math.exp(-dt / (level > music.level ? 0.12 : 0.6));   // rise quickly, settle slowly
-    music.level += (level - music.level) * k;
-    music.treble += (treble - music.treble) * (1 - Math.exp(-dt / 0.25));
-    if (m && bass > 0.3 && bass > music.bassAvg * 1.3 && now - music.beatAt > 0.32) {
-      music.beatAt = now;
-      music.beatAmp = Math.min(1, (bass - music.bassAvg) * 3 + 0.4);
-      music.beatSeed = (music.beatSeed + 7.31) % 100;
-    }
-    music.bassAvg += (bass - music.bassAvg) * (1 - Math.exp(-dt / 0.8));
-  }
-
   // ---- the animation loop ----
   var now = 0, last = performance.now(), frame = 0, lastDraw = 0;
   var starts = new Float32Array(MAX_RIPPLES), centers = new Float32Array(MAX_RIPPLES * 2);
@@ -472,11 +441,6 @@
     gl.uniform2fv(U.uSplashCenter, sCenters);
     gl.uniform1f(U.uSplashCount, splashes.length);
     gl.uniform2f(U.uFlow, flow.x, flow.y);
-    gl.uniform1f(U.uLevel, music.level);
-    gl.uniform1f(U.uTreble, music.treble);
-    gl.uniform1f(U.uBeatAge, now - music.beatAt);
-    gl.uniform1f(U.uBeatAmp, music.beatAmp);
-    gl.uniform1f(U.uBeatSeed, music.beatSeed);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, cols * rows);
@@ -495,10 +459,8 @@
     mouse.x += (target.x - mouse.x) * follow;
     mouse.y += (target.y - mouse.y) * follow;
     hover += (hoverTarget - hover) * fade;
-    listen(dt);
     // Busy (hovering or rippling): draw every frame. Idle: only the slow twinkle, ~20 times a second.
-    var busy = ripples.length > 0 || splashes.length > 0 || Math.abs(flowVel) > 0.01 || hover > 0.001 || hoverTarget > 0 ||
-      music.on || music.level > 0.005 || now - music.beatAt < 1.6;
+    var busy = ripples.length > 0 || splashes.length > 0 || Math.abs(flowVel) > 0.01 || hover > 0.001 || hoverTarget > 0;
     if (busy || t - lastDraw > 50) { draw(); lastDraw = t; }
     frame = document.hidden ? 0 : requestAnimationFrame(tick);
   }
