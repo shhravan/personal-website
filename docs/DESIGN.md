@@ -78,7 +78,7 @@ A pixel font used only for tiny hardware-style labels: the switch's ON/OFF, the 
 - Loaded for those letters only
 
 ### Display set — the "opticsbyshrvn" sign-off
-Ten fonts the sign-off cycles through every 2 s, each loaded only for the letters of that one word: Instrument Serif (italic), Gloock, Bodoni Moda (italic), Italiana, Young Serif, Fraunces (italic, light, opsz 144), Unbounded (300), Jacquard 12, Doto (700), Pixelify Sans. Each must look clearly different from the last and must draw lowercase.
+Ten fonts the sign-off cycles through every 1.5 s, each loaded only for the letters of that one word: Instrument Serif (italic), Gloock, Bodoni Moda (italic), Italiana, Young Serif, Fraunces (italic, light, opsz 144), Unbounded (300), Jacquard 12, Doto (700), Pixelify Sans. Each must look clearly different from the last and must draw lowercase.
 
 ### Type Scale
 
@@ -166,7 +166,7 @@ Invisible at the top of the page. After scrolling, a frosted strip (`--bg` at 82
 
 ### Small Record (phones and tablets)
 **Role:** music on touch screens.
-A black record with grooves, two light streaks and a cream label, plus a tonearm. Tapping swings the arm on (0.6s) and spins the record (1.8s per turn). It keeps a thin `--soft` rim in dark mode.
+A black record with grooves, two light streaks and a cream label, plus a tonearm. Tapping swings the arm on (0.6s), spins the record (1.8s per turn) and plays a shuffled song from side A; tapping again pauses. It keeps a thin `--soft` rim in dark mode.
 
 ### Record Deck (desktop)
 **Role:** the signature object, a jukebox in the corner.
@@ -175,6 +175,10 @@ A black record with grooves, two light streaks and a cream label, plus a tonearm
 - **The record:** fine repeating grooves, four wider track gaps, a raised rim, a cream label printed with the name mark, "ALL OVER THE PLACE" and "SIDE A", and a groove sheen that turns toward the cursor while playing.
 - **Hover a cover:** it pops outward in full color while the rest go grey (`grayscale(.75) brightness(.45)`), and a frosted readout beside the dial shows "NOW SELECTING · 04", the title in 30px Garamond and the artist in italic.
 - **Playing:** the playing cover keeps a bright 2px rim and the others dim a little; the readout says "NOW PLAYING" or "PAUSED".
+
+### Audio
+**Role:** the music itself.
+The 15 songs are self-hosted MP3s in `audio/` (128 kbps or less, tags stripped), named after their covers and listed in `TRACKS` in `theme.js`. Nothing downloads until a song plays; Memory Box starts at 0:28 and Clown on the 22nd Floor + Happiness at 1:50. No ads, no third-party player.
 
 ### Now-Playing Toast
 **Role:** confirms a song change.
@@ -186,7 +190,7 @@ A 26px round button just left of the turntable, with an inset shadow like a pres
 
 ### Hero Photo
 **Role:** the home page's personality moment.
-A 1.9:1 frame (4:3 on phones) with 0.4rem corners. It swaps instantly every 2s from a shuffled set of 28 images, never repeating until all have shown. Each image is framed by hand with a focal point and zoom. Clicking empty space skips ahead.
+A 1.9:1 frame (4:3 on phones) with 0.4rem corners. It swaps instantly every 1.5s from a shuffled set of 27 images, never repeating until all have shown. Each image is framed by hand with a focal point and zoom. Clicking empty space skips ahead.
 
 ### Section Links and Profile Icons
 **Role:** home navigation.
@@ -273,8 +277,8 @@ At the bottom of each page, a shoreline seen from above: cream foam at the edge,
 
 | Element | Timing | Easing |
 |---|---|---|
-| Hero swap | every 2s, instant | — |
-| Sign-off font | every 2s | — |
+| Hero swap | every 1.5s, instant | — |
+| Sign-off font | every 1.5s | — |
 | Switch lever | 0.18s | ease |
 | Link underline fade | 0.2s | ease |
 | Top bar strip | 0.25s | ease |

@@ -15,7 +15,7 @@ One slice per branch and pull request: plan, build, check in the browser, open a
 - [x] Custom domain shravanlad.com
 
 ## Next
-- [ ] Record player: self-hosted audio instead of YouTube (no ads)
+- [x] Record player: self-hosted audio instead of YouTube (no ads)
 - [ ] Photography: portfolio sections
 - [ ] Photography: film roll
 - [ ] Rabbit hole: music picks, favorites, facts

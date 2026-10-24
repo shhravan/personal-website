@@ -99,14 +99,33 @@
     });
 
     // ---- the record player, top right ----
-    // Click the record: the needle swings onto it and a random song plays right here on the page
-    // (through YouTube's embeddable player, kept hidden). Click again: the needle lifts, music stops.
-    // SONGS holds YouTube video IDs: the part after "v=" in a music.youtube.com/watch?v=... link.
-    // Until songs are added, clicking opens the YouTube Music channel instead.
-    var SONGS = [
-      "ZoSD4l32m2I",
+    // Songs are our own files in audio/ (NAME.mp3), played by the browser's built-in audio player:
+    // no ads and nothing from other sites. A song only downloads when it is played.
+    // Side A: "all over the place". Spread out so the same artist never sits next to itself.
+    // start: where the song begins, in seconds. cover: images/covers/NAME.webp; the audio file has
+    // the same name unless "file" says otherwise. fx, fy: the point of the cover to keep in view
+    // inside its small slice in the dial (0 to 1 across, down).
+    var TRACKS = [
+      { start: 28, title: "Memory Box", artist: "Peter Cat Recording Co.", cover: "memory-box", fx: .22, fy: .45 },
+      { start: 0, title: "Don't Look Back in Anger", artist: "Oasis", cover: "dont-look-back-in-anger", fx: .53, fy: .62 },
+      { start: 0, title: "Selfless", artist: "The Strokes", cover: "selfless", fx: .3, fy: .3 },
+      { start: 0, title: "Sweet Caroline", artist: "Neil Diamond", cover: "sweet-caroline", fx: .48, fy: .42 },
+      { start: 0, title: "Bohemian Rhapsody", artist: "Queen", cover: "bohemian-rhapsody", fx: .5, fy: .38 },
+      { start: 0, title: "Control Room", artist: "Peter Cat Recording Co.", cover: "control-room", fx: .52, fy: .48 },
+      { start: 0, title: "Theme from New York, New York", artist: "Frank Sinatra", cover: "new-york-new-york", fx: .33, fy: .32 },
+      { start: 0, title: "Ode to the Mets", artist: "The Strokes", cover: "ode-to-the-mets", fx: .62, fy: .58 },
+      { start: 0, title: "Ain't No Sunshine", artist: "Bill Withers", cover: "lean-on-me", file: "aint-no-sunshine", fx: .3, fy: .42 },
+      { start: 0, title: "Vienna", artist: "Billy Joel", cover: "vienna", fx: .55, fy: .6 },
+      { start: 110, title: "Clown on the 22nd Floor + Happiness", artist: "Peter Cat Recording Co.", cover: "portrait-of-a-time", fx: .45, fy: .55 },
+      { start: 0, title: "Hey Jude", artist: "The Beatles", cover: "hey-jude", fx: .7, fy: .42 },
+      { start: 0, title: "The Adults Are Talking", artist: "The Strokes", cover: "the-adults-are-talking", fx: .82, fy: .4 },
+      { start: 0, title: "Tennessee Whiskey", artist: "Chris Stapleton", cover: "tennessee-whiskey", fx: .5, fy: .5 },
+      { start: 0, title: "Pull Me Out of This", artist: "Fred again..", cover: "pull-me-out-of-this", fx: .45, fy: .45 },
     ];
-    var CHANNEL = "https://music.youtube.com/@itshravanlad";
+
+    var audio = new Audio();
+    audio.preload = "none";
+    function fileOf(t) { return BASE + "audio/" + (t.file || t.cover) + ".mp3"; }
 
     // Engraved-style record drawn from scratch: many thin grooves, a light band, a label, a hole.
     var grooves = "";
@@ -114,7 +133,7 @@
     var player = document.createElement("button");
     player.className = "vinyl";
     player.type = "button";
-    player.setAttribute("aria-label", SONGS.length ? "play a song i like" : "open my YouTube Music");
+    player.setAttribute("aria-label", "play a song i like");
     player.setAttribute("aria-pressed", "false");
     player.innerHTML =
       '<svg viewBox="0 0 52 44" aria-hidden="true" focusable="false">' +
@@ -135,48 +154,14 @@
       '</svg>';
     document.body.insertBefore(player, document.body.firstChild);
 
-    var yt = null, ytReady = false, wantPlay = false;
-    var deckSong = -1;   // on desktop, which record from TRACKS is on the turntable (-1: none yet)
-    function pick() { return SONGS[Math.floor(Math.random() * SONGS.length)]; }
-    function loadYouTube(preload, firstId, firstStart) {
-      var holder = document.createElement("div");
-      holder.id = "yt-player";
-      holder.className = "yt-hidden";
-      document.body.appendChild(holder);
-      window.onYouTubeIframeAPIReady = function () {
-        yt = new YT.Player("yt-player", {
-          height: "1", width: "1", videoId: firstId || pick(),
-          playerVars: { autoplay: preload ? 0 : 1, playsinline: 1, start: firstId ? firstStart : 28 },
-          events: {
-            onReady: function () { ytReady = true; if (wantPlay) yt.playVideo(); },
-            onStateChange: function (e) {
-              // 1 means sound is actually playing: only then does the little play/pause key appear.
-              if (e.data === 1 && deckSong >= 0) root.classList.add("deck-played");
-              if (e.data !== 0) return;   // 0 means the song ended
-              if (deckSong >= 0) { playTrack(nextShuffled()); return; }   // desktop: shuffle on through side A
-              yt.loadVideoById({ videoId: pick(), startSeconds: 28 });                    // phone: another random one
-            }
-          }
-        });
-      };
-      var s = document.createElement("script");
-      s.src = "https://www.youtube.com/iframe_api";
-      document.head.appendChild(s);
-    }
-    // Phones only let sound start during the tap itself. If the player is still loading when the
-    // tap happens, the phone blocks it and you have to tap again. So on touch screens the player
-    // loads quietly in the background a moment after the page, and the first tap plays at once.
-    if (SONGS.length && window.matchMedia("(hover: none)").matches) {
-      window.addEventListener("load", function () { setTimeout(function () { if (!yt) loadYouTube(true); }, 1200); });
-    }
+    var deckSong = -1;   // which song from TRACKS is loaded (-1: none yet)
+    // Phones and tablets: tap the record to play a random song, tap again to pause.
     player.addEventListener("click", function () {
-      if (!SONGS.length) { window.open(CHANNEL, "_blank", "noopener"); return; }
       var playing = player.getAttribute("aria-pressed") === "true";
       player.setAttribute("aria-pressed", playing ? "false" : "true");   // CSS swings the needle
-      if (playing) { wantPlay = false; if (ytReady) yt.pauseVideo(); return; }
-      wantPlay = true;
-      if (!yt) loadYouTube();
-      else if (ytReady) yt.playVideo();
+      if (playing) { audio.pause(); return; }
+      if (deckSong < 0) playTrack(nextShuffled());
+      else audio.play().catch(function () {});
     });
 
     // ---- the record deck (desktop only) ----
@@ -186,23 +171,6 @@
     // Phones and tablets keep the small record above, unchanged.
     // Side A: "all over the place". Spread out so the same artist never sits next to itself.
     // fx, fy: the point of the cover to keep in view inside its small slice (0 to 1 across, down).
-    var TRACKS = [
-      { id: "ZoSD4l32m2I", start: 28, title: "Memory Box", artist: "Peter Cat Recording Co.", cover: "memory-box", fx: .22, fy: .45 },
-      { id: "oplra1FJxWI", start: 0, title: "Don't Look Back in Anger", artist: "Oasis", cover: "dont-look-back-in-anger", fx: .53, fy: .62 },
-      { id: "1-W6whvn8Bs", start: 0, title: "Selfless", artist: "The Strokes", cover: "selfless", fx: .3, fy: .3 },
-      { id: "GmK5_lnQUbE", start: 0, title: "Sweet Caroline", artist: "Neil Diamond", cover: "sweet-caroline", fx: .48, fy: .42 },
-      { id: "fJ9rUzIMcZQ", start: 0, title: "Bohemian Rhapsody", artist: "Queen", cover: "bohemian-rhapsody", fx: .5, fy: .38 },
-      { id: "Dro607rLuls", start: 0, title: "Control Room", artist: "Peter Cat Recording Co.", cover: "control-room", fx: .52, fy: .48 },
-      { id: "8ifjLdWj4y0", start: 0, title: "Theme from New York, New York", artist: "Frank Sinatra", cover: "new-york-new-york", fx: .33, fy: .32 },
-      { id: "LNq4xox99HY", start: 0, title: "Ode to the Mets", artist: "The Strokes", cover: "ode-to-the-mets", fx: .62, fy: .58 },
-      { id: "YuKfiH0Scao", start: 0, title: "Ain't No Sunshine", artist: "Bill Withers", cover: "aint-no-sunshine", fx: .24, fy: .3 },
-      { id: "dvgZkm1xWPE", start: 0, title: "Viva la Vida", artist: "Coldplay", cover: "viva-la-vida", fx: .5, fy: .45 },
-      { id: "CnEIT_RJsq4", start: 110, title: "Clown on the 22nd Floor + Happiness", artist: "Peter Cat Recording Co.", cover: "portrait-of-a-time", fx: .45, fy: .55 },
-      { id: "mQER0A0ej0M", start: 0, title: "Hey Jude", artist: "The Beatles", cover: "hey-jude", fx: .7, fy: .42 },
-      { id: "o4qsjmLxhow", start: 0, title: "The Adults Are Talking", artist: "The Strokes", cover: "the-adults-are-talking", fx: .82, fy: .4 },
-      { id: "l6_w3887Rwo", start: 0, title: "Tennessee Whiskey", artist: "Chris Stapleton", cover: "tennessee-whiskey", fx: .5, fy: .5 },
-      { id: "Cl6Rz1Uvi2M", start: 0, title: "Pull Me Out of This", artist: "Fred again..", cover: "pull-me-out-of-this", fx: .45, fy: .45 },
-    ];
     var deckMode = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 64rem)").matches;
     var deck = null, needleSwing = null, driftTimer = 0, toggleBtn = null, toast = null, toastTimer = 0;
     // The playing song's cover keeps a bright rim in the dial, so reopening it shows what's on.
@@ -232,14 +200,17 @@
       }
       return bag.pop();
     }
+    // The little play/pause key appears only once sound has actually started.
+    audio.addEventListener("playing", function () { if (deck) root.classList.add("deck-played"); });
+    // When a song ends, shuffle on to the next one.
+    audio.addEventListener("ended", function () { playTrack(nextShuffled()); });
     function playTrack(i) {
       bag = bag.filter(function (x) { return x !== i; });
       if (deck) { markNow(i); announce(i); }
       deckSong = i;
       var t = TRACKS[i];
-      wantPlay = true;
-      if (!yt) loadYouTube(false, t.id, t.start);
-      else if (ytReady) yt.loadVideoById({ videoId: t.id, startSeconds: t.start });
+      audio.src = fileOf(t) + (t.start ? "#t=" + t.start : "");   // #t= starts the file partway in
+      audio.play().catch(function () { if (deck) setPlaying(false); });
       if (deck) setPlaying(true);
     }
     // The needle swings onto the outer groove, then creeps inward as the song plays, like a real
@@ -268,7 +239,7 @@
       var C = 330, R0 = 186, R1 = 318, N = TRACKS.length, GAP = 1;
       // The dial runs from the right edge of the window to the top edge. The record's centre sits
       // 150px from the right and 130px from the top, and the deck is scaled by s (same formula
-      // as --s in styles.css), so the edge angles depend on the window width.
+      // as setScale below), so the edge angles depend on the window width.
       var sc = Math.min(1.05, Math.max(0.62, window.innerWidth / 1440 * 0.62 + 0.38));
       var e0 = Math.acos(Math.min(1, 150 / (sc * R1))) * 180 / Math.PI;          // angle where the right edge cuts the dial
       var e1 = 180 + Math.asin(Math.min(1, 130 / (sc * R1))) * 180 / Math.PI;   // angle where the top edge cuts it
@@ -304,6 +275,11 @@
       }
       deck = document.createElement("div");
       deck.className = "deck";
+      // The deck's scale, from the window width. Done here rather than in CSS because older
+      // Safari can't work out "100vw / 1440px", which left the deck stuck at full size.
+      function setScale() { deck.style.setProperty("--s", Math.min(1.05, Math.max(0.62, window.innerWidth / 1440 * 0.62 + 0.38)).toFixed(4)); }
+      setScale();
+      window.addEventListener("resize", setScale);
       deck.innerHTML =
         '<div class="deck-plinth" aria-hidden="true"><i></i><b class="sc s1"></b><b class="sc s2"></b><b class="sc s3"></b><b class="sc s4"></b><u class="knob"></u><u class="led"></u></div>' +   // turntable base, dark mode only (see styles.css)
         '<div class="deck-glass"></div>' +
@@ -356,8 +332,7 @@
       function togglePlay() {
         var on = !deck.classList.contains("playing");
         setPlaying(on);
-        wantPlay = on;
-        if (ytReady) { if (on) yt.playVideo(); else yt.pauseVideo(); }
+        if (on) audio.play().catch(function () { setPlaying(false); }); else audio.pause();
       }
       rec.addEventListener("click", function () {
         if (deck.classList.contains("open")) { deck.classList.remove("open", "hovering"); rearm = false; return; }
@@ -448,7 +423,7 @@
     onScroll();
 
     // ---- moving between pages without stopping the music ----
-    // A normal link click loads a whole new page, which throws away the hidden YouTube player.
+    // A normal link click loads a whole new page, which throws away the audio player.
     // Instead, for links to our own pages, we fetch the new page in the background, swap in its
     // name mark and <main> content, and update the address bar (history.pushState). The top bar,
     // the letter field and the player are never reloaded, so the song keeps going.

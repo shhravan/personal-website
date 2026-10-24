@@ -12,7 +12,7 @@ Hand-built in plain HTML, CSS and JavaScript, with no framework, no dependencies
 - **Letter field.** A faint WebGL field of letters behind every page that reacts to the cursor and clicks, with a shoreline washing in at the bottom.
 - **Light switch.** A drawn wall switch toggles light and dark mode and remembers your choice.
 - **Blog synced from Substack.** A scheduled GitHub Action copies posts into the site, cleans their HTML and hosts the images locally.
-- **Fast and private.** No analytics, no cookies, a strict Content Security Policy, and it works on phones and with reduced motion.
+- **Fast and private.** Self-hosted music (no ads, no embeds), no analytics, no cookies, a strict Content Security Policy, and it works on phones and with reduced motion.
 
 ## Run locally
 
@@ -42,6 +42,7 @@ theme.js                   light switch, record player, page navigation
 script.js                  hero photos, email link
 field.js                   WebGL letter field and shoreline
 images/                    photos, album covers, logos
+audio/                     songs for the record player
 scripts/substack_sync.py   blog sync (runs monthly via GitHub Actions)
 worker/feed-relay.js       Cloudflare Worker used by the sync
 tests/                     automated tests

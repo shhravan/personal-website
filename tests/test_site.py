@@ -139,11 +139,24 @@ class ScriptTests(unittest.TestCase):
         src = read("theme.js")
         self.assertRegex(src, r'saved === "light" \? "light" : "dark"')   # localStorage can't inject anything
 
-    def test_youtube_ids_are_plain_ids(self):
-        ids = re.findall(r'id: "([^"]+)"', read("theme.js")) + re.findall(r'"([\w-]{6,})",\s*\n\s*\];', read("theme.js"))
-        self.assertTrue(ids)
-        for i in ids:
-            self.assertRegex(i, r"^[\w-]{11}$")
+    def test_every_song_has_its_audio_file_and_cover(self):
+        src = read("theme.js")
+        tracks = re.findall(r'\{ start: (\d+), title: "[^"]+", artist: "[^"]+", cover: "([\w-]+)"(?:, file: "([\w-]+)")?', src)
+        self.assertEqual(len(tracks), 15)
+        for start, cover, file in tracks:
+            with self.subTest(cover):
+                self.assertTrue(os.path.isfile(os.path.join(REPO, "images", "covers", cover + ".webp")))
+                self.assertTrue(os.path.isfile(os.path.join(REPO, "audio", (file or cover) + ".mp3")))
+        used = {(f or c) + ".mp3" for _, c, f in tracks}
+        on_disk = {f for f in os.listdir(os.path.join(REPO, "audio")) if f.endswith(".mp3")}
+        self.assertEqual(on_disk, used, "audio files not used by any song, or songs without a file")
+
+    def test_no_youtube_left(self):
+        for f in glob.glob(os.path.join(REPO, "**", "*.html"), recursive=True) + [os.path.join(REPO, "theme.js")]:
+            with self.subTest(os.path.relpath(f, REPO)):
+                with open(f, encoding="utf-8") as fh:
+                    src = fh.read()
+                self.assertNotRegex(src, r"youtube\.com/(iframe_api|embed)|ytimg|frame-src")
 
 
 class RepoTests(unittest.TestCase):

@@ -262,7 +262,6 @@ a.logo { display: block; }   /* the name mark is a link home */
 .vinyl .head { fill: var(--ink); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .vinyl .record { animation: none; } .vinyl .arm { transition: none; } }
-.yt-hidden, #yt-player { position: fixed; width: 1px; height: 1px; left: -10px; bottom: 0; opacity: 0; pointer-events: none; }
 
 /* ---- home page centered in the window, both ways ---- */
 body:has(main.col) {
@@ -456,7 +455,7 @@ body::before {
    with the window width (--s), so it keeps its proportions on smaller and larger screens. */
 .deck-on .vinyl { display: none; }   /* the big deck replaces the small record on desktop */
 .deck {
-  --s: clamp(0.62, calc(100vw / 1440px * 0.62 + 0.38), 1.05);
+  --s: 1;   /* set by theme.js from the window width (older Safari can't divide lengths in calc) */
   position: fixed; z-index: 12; width: 660px; height: 660px;
   right: calc(150px - 330px); top: calc(130px - 330px);
   /* At rest the record is tiny and sits in the top bar, level with the switch and the name mark;
