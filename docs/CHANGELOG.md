@@ -17,10 +17,10 @@ be returned to how it looked.
 
 ## Light rays around the name mark
 - **Before:** `a201b3a`
-- **Changed:** light rays stream out from behind the name mark and lean toward the cursor; light in dark mode, a soft dark shadow in light mode.
+- **Changed:** while the mouse moves, light rays fade in behind the name mark and glide toward the cursor, fading out about a second after it stops; light in dark mode, a soft dark shadow in light mode. Nothing shows at rest.
 - **Before this:** the name mark had no glow.
 - **Files:** `theme.js` ("light rays around the name mark" section), `styles.css` (`.logo-glow`), docs.
-- **Tuning:** in `theme.js`, `0.085` / `0.06` set the strength in dark / light mode, and `N = 28` with `0.045` sets how far the rays reach.
+- **Tuning:** in `theme.js`, `0.065` / `0.045` set the strength in dark / light mode, `N = 40` with `0.032` sets how far the rays reach, and `900` (ms) is how long they linger after the mouse stops.
 
 ## Substack sync: log retries
 - **Before:** `fadcbd0`

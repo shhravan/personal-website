@@ -439,6 +439,9 @@
       var tint = document.createElement("canvas"), tg = tint.getContext("2d");   // the shape, filled with the text color
       var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       var aim = { x: 0, y: -0.6 }, want = { x: 0, y: -0.6 }, frame = 0, lastInk = "";
+      // The rays only appear while the mouse moves: "level" fades up on movement and back down
+      // to nothing about a second after it stops.
+      var level = 0, show = 0, idle = 0, last = 0;
       function draw() {
         frame = 0;
         var logo = document.querySelector(".logo");
@@ -464,21 +467,28 @@
         var dark = root.getAttribute("data-theme") === "dark";
         g.setTransform(dpr, 0, 0, dpr, 0, 0);
         g.clearRect(0, 0, W, H);
+        if (level < 0.01) return;
         // The light sits behind the mark, nudged toward the cursor; rays point away from it.
         var ox = W / 2 + aim.x * r.width * 0.35, oy = H / 2 + aim.y * r.height * 0.9;
-        var N = 28, x0 = W / 2 - r.width / 2, y0 = H / 2 - r.height / 2;
+        var N = 40, x0 = W / 2 - r.width / 2, y0 = H / 2 - r.height / 2;
         for (var i = N; i >= 1; i--) {
-          var s = 1 + i * 0.045, t = i / N;
-          g.globalAlpha = (dark ? 0.085 : 0.06) * (1 - t) * (1 - t);
+          var s = 1 + i * 0.032, t = i / N;
+          g.globalAlpha = (dark ? 0.065 : 0.045) * (1 - t) * (1 - t) * level;
           g.drawImage(tint, ox + (x0 - ox) * s, oy + (y0 - oy) * s, r.width * s, r.height * s);
         }
         g.globalAlpha = 1;
       }
       function soon() { if (!frame) frame = requestAnimationFrame(draw); }
-      function ease() {
-        aim.x += (want.x - aim.x) * 0.12; aim.y += (want.y - aim.y) * 0.12;
+      // Time-based easing, so it glides at the same pace on every screen: the light drifts toward
+      // the cursor, the rays fade in quickly-ish and fade out slowly.
+      function ease(t) {
+        var dt = Math.min(0.25, (t - (last || t)) / 1000); last = t;
+        var k = 1 - Math.exp(-dt * 3.5);
+        aim.x += (want.x - aim.x) * k; aim.y += (want.y - aim.y) * k;
+        level += (show - level) * (1 - Math.exp(-dt * (show > level ? 2.5 : 1.8)));
         draw();
-        if (Math.abs(want.x - aim.x) + Math.abs(want.y - aim.y) > 0.002) frame = requestAnimationFrame(ease);
+        if (level > 0.01 || show > 0) frame = requestAnimationFrame(ease);
+        else { level = 0; draw(); frame = 0; last = 0; }
       }
       if (!still) {
         window.addEventListener("pointermove", function (e) {
@@ -491,7 +501,10 @@
           var dy = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
           want.x = Math.max(-1, Math.min(1, dx * 2.2));
           want.y = Math.max(-1, Math.min(1, dy * 2.2 - 0.3));
-          cancelAnimationFrame(frame); frame = requestAnimationFrame(ease);
+          show = 1;
+          clearTimeout(idle);
+          idle = setTimeout(function () { show = 0; }, 900);   // stop moving: let the rays fade away
+          if (!frame) frame = requestAnimationFrame(ease);
         }, { passive: true });
       }
       mark.addEventListener("load", soon);
