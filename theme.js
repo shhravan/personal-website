@@ -422,6 +422,183 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
+    // ---- light rays around the name mark ----
+    // Rays stream outward from behind the name mark, as if a light sat behind it, and the light
+    // leans toward the cursor. Dark mode: the rays are light (the text color). Light mode: the
+    // same shapes in the dark text color, so they read as a soft shadow instead.
+    // How: the name mark's shape is drawn many times on a small canvas, each copy a little bigger
+    // around the light's position and fainter, which smears its edges outward into rays.
+    (function () {
+      var glow = document.createElement("canvas");
+      glow.className = "logo-glow";
+      glow.setAttribute("aria-hidden", "true");
+      document.body.insertBefore(glow, document.body.firstChild);
+      var g = glow.getContext("2d");
+      var mark = new Image();
+      mark.src = BASE + "images/logo.png";
+      var tint = document.createElement("canvas"), tg = tint.getContext("2d");   // the shape, filled with the text color
+      var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var aim = { x: 0, y: -0.6 }, want = { x: 0, y: -0.6 }, frame = 0, lastInk = "";
+      // The rays only appear while the mouse moves: "level" fades up on movement and back down
+      // to nothing about a second after it stops.
+      var level = 0, show = 0, idle = 0, last = 0;
+      function draw() {
+        frame = 0;
+        var logo = document.querySelector(".logo");
+        if (!logo || !mark.complete || !mark.naturalWidth) return;
+        var r = logo.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+        var W = r.width * 2.2, H = r.height * 6;   // room for the rays to spread
+        if (glow.width !== Math.round(W * dpr) || glow.height !== Math.round(H * dpr)) {
+          glow.width = Math.round(W * dpr); glow.height = Math.round(H * dpr);
+          glow.style.width = W + "px"; glow.style.height = H + "px";
+        }
+        glow.style.left = (r.left + r.width / 2 - W / 2) + "px";
+        glow.style.top = (r.top + r.height / 2 - H / 2) + "px";
+        var ink = getComputedStyle(root).getPropertyValue("--ink").trim() || "#ece8de";
+        if (ink !== lastInk || tint.width !== Math.round(r.width * dpr)) {
+          lastInk = ink;
+          tint.width = Math.round(r.width * dpr); tint.height = Math.round(r.height * dpr);
+          tg.clearRect(0, 0, tint.width, tint.height);
+          tg.drawImage(mark, 0, 0, tint.width, tint.height);
+          tg.globalCompositeOperation = "source-in";
+          tg.fillStyle = ink; tg.fillRect(0, 0, tint.width, tint.height);
+          tg.globalCompositeOperation = "source-over";
+        }
+        var dark = root.getAttribute("data-theme") === "dark";
+        g.setTransform(dpr, 0, 0, dpr, 0, 0);
+        g.clearRect(0, 0, W, H);
+        if (level < 0.01) return;
+        // The light sits behind the mark, nudged toward the cursor; rays point away from it.
+        var ox = W / 2 + aim.x * r.width * 0.35, oy = H / 2 + aim.y * r.height * 0.9;
+        var N = 40, x0 = W / 2 - r.width / 2, y0 = H / 2 - r.height / 2;
+        for (var i = N; i >= 1; i--) {
+          var s = 1 + i * 0.032, t = i / N;
+          g.globalAlpha = (dark ? 0.065 : 0.045) * (1 - t) * (1 - t) * level;
+          g.drawImage(tint, ox + (x0 - ox) * s, oy + (y0 - oy) * s, r.width * s, r.height * s);
+        }
+        g.globalAlpha = 1;
+      }
+      function soon() { if (!frame) frame = requestAnimationFrame(draw); }
+      // Time-based easing, so it glides at the same pace on every screen: the light drifts toward
+      // the cursor, the rays fade in quickly-ish and fade out slowly.
+      function ease(t) {
+        var dt = Math.min(0.25, (t - (last || t)) / 1000); last = t;
+        var k = 1 - Math.exp(-dt * 3.5);
+        aim.x += (want.x - aim.x) * k; aim.y += (want.y - aim.y) * k;
+        level += (show - level) * (1 - Math.exp(-dt * (show > level ? 2.5 : 1.8)));
+        draw();
+        if (level > 0.01 || show > 0) frame = requestAnimationFrame(ease);
+        else { level = 0; draw(); frame = 0; last = 0; }
+      }
+      if (!still) {
+        window.addEventListener("pointermove", function (e) {
+          if (e.pointerType !== "mouse") return;   // on touch screens the light stays put above the mark
+          var logo = document.querySelector(".logo");
+          if (!logo) return;
+          var r = logo.getBoundingClientRect();
+          // Where the cursor is relative to the mark, softly limited so the light never strays far.
+          var dx = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
+          var dy = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
+          want.x = Math.max(-1, Math.min(1, dx * 2.2));
+          want.y = Math.max(-1, Math.min(1, dy * 2.2 - 0.3));
+          show = 1;
+          clearTimeout(idle);
+          idle = setTimeout(function () { show = 0; }, 900);   // stop moving: let the rays fade away
+          if (!frame) frame = requestAnimationFrame(ease);
+        }, { passive: true });
+      }
+      mark.addEventListener("load", soon);
+      window.addEventListener("resize", soon);
+      document.addEventListener("page:load", soon);
+      new MutationObserver(soon).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+      soon();
+    })();
+
+    // ---- link previews ----
+    // Hovering a link shows a small screenshot of where it goes, in a card that glides after the
+    // cursor and leans a little as it moves. Screenshots live in images/previews/ (taken by
+    // scripts/capture_previews.cjs); images/previews/index.json lists which links have one.
+    // Mouse only: phones and tablets have no hover.
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) (function () {
+      var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var have = null;   // names with a screenshot, loaded on the first hover
+      var card = document.createElement("div");
+      card.className = "link-preview";
+      card.setAttribute("aria-hidden", "true");
+      var img = document.createElement("img");
+      img.alt = "";
+      card.appendChild(img);
+      document.body.appendChild(card);
+      var pos = { x: 0, y: 0 }, target = { x: 0, y: 0 }, tilt = 0, current = null, showTimer = 0, frame = 0, last = 0;
+      // Same rule as the capture script: host + path, lowercase, with runs of other characters as "-".
+      function previewName(u) {
+        return (u.hostname.replace(/^www\./, "") + u.pathname).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+      }
+      function nameFor(a) {
+        var href = a.getAttribute("href");
+        if (!href || /^(mailto:|#)/.test(href)) return null;
+        var u = new URL(href, location.href);
+        // Our own pages are captured under the live address, wherever the site is running.
+        if (u.origin === location.origin) u = new URL(u.pathname.replace(new URL(BASE).pathname, "/"), "https://shravanlad.com");
+        var n = previewName(u);
+        return have && have.indexOf(n) >= 0 ? n : null;
+      }
+      function place(e) {
+        // Below and to the right of the cursor, flipped to the other side near the window's edges.
+        var w = 240, h = 150, gap = 18;
+        target.x = e.clientX + gap + w > innerWidth ? e.clientX - gap - w : e.clientX + gap;
+        target.y = e.clientY + gap + h > innerHeight ? e.clientY - gap - h : e.clientY + gap;
+      }
+      function step(t) {
+        var dt = Math.min(0.1, (t - (last || t)) / 1000); last = t;
+        var k = still ? 1 : 1 - Math.exp(-dt * 14);   // a soft spring toward the target
+        var dx = (target.x - pos.x) * k;
+        pos.x += dx; pos.y += (target.y - pos.y) * k;
+        tilt += (Math.max(-6, Math.min(6, dx * 0.6)) - tilt) * (1 - Math.exp(-dt * 10));   // lean into the motion
+        card.style.setProperty("--x", pos.x.toFixed(1) + "px");
+        card.style.setProperty("--y", pos.y.toFixed(1) + "px");
+        card.style.setProperty("--tilt", (still ? 0 : tilt).toFixed(2) + "deg");
+        frame = current ? requestAnimationFrame(step) : 0;
+        if (!current) last = 0;
+      }
+      function show(a, e) {
+        var n = nameFor(a);
+        if (!n) return;
+        current = a;
+        img.src = BASE + "images/previews/" + n + ".webp";
+        place(e); pos.x = target.x; pos.y = target.y; tilt = 0;   // appear at the cursor, then follow
+        clearTimeout(showTimer);
+        showTimer = setTimeout(function () { if (current === a) card.classList.add("show"); }, 120);
+        if (!frame) frame = requestAnimationFrame(step);
+      }
+      function hide() {
+        current = null;
+        clearTimeout(showTimer);
+        card.classList.remove("show");
+      }
+      document.addEventListener("pointerover", function (e) {
+        if (e.pointerType !== "mouse") return;
+        var a = e.target.closest && e.target.closest("a[href]");
+        if (!a || a === current || a.classList.contains("logo")) return;   // the name mark just goes home
+        if (have) { show(a, e); return; }
+        if (have === null) {
+          have = false;   // loading
+          fetch(BASE + "images/previews/index.json").then(function (r) { return r.ok ? r.json() : []; })
+            .catch(function () { return []; })
+            .then(function (list) { have = list; if (a.matches(":hover")) show(a, e); });
+        }
+      });
+      document.addEventListener("pointerout", function (e) {
+        if (!current) return;
+        var to = e.relatedTarget;
+        if (!to || !current.contains(to)) hide();
+      });
+      document.addEventListener("pointermove", function (e) { if (current) place(e); }, { passive: true });
+      document.addEventListener("page:load", hide);   // the link is gone after a page swap
+      document.addEventListener("click", hide);
+      window.addEventListener("blur", hide);
+    })();
+
     // ---- moving between pages without stopping the music ----
     // A normal link click loads a whole new page, which throws away the audio player.
     // Instead, for links to our own pages, we fetch the new page in the background, swap in its

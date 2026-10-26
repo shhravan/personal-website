@@ -160,6 +160,8 @@ A wall switch drawn in SVG: a plate with four screws, a slot and a lever, with a
 **Role:** identity and the link home, top center.
 श्रवण लाड over SHRAVAN LAD, drawn from `images/logo.png` used as a CSS mask filled with `--ink`, so it flips with the theme. Same height as the switch (2.4rem; 2.67vw on wide screens).
 
+**Light rays:** only while the mouse moves, rays fade in behind the mark as if a light sat behind it, the light gliding toward the cursor; about a second after the mouse stops they fade away (gone within ~2.5 s). Nothing shows at rest. In dark mode the rays are light; in light mode the same shapes in ink read as a soft shadow. Drawn on a small canvas behind the mark (`theme.js`) by stacking 40 progressively larger, fainter copies of its shape, with time-based easing so it is equally smooth on every screen. Not shown on touch screens or for reduced motion.
+
 ### Top Bar Strip
 **Role:** keeps the corners readable while scrolling.
 Invisible at the top of the page. After scrolling, a frosted strip (`--bg` at 82%, 10px blur) fades in over 0.25s behind the switch, name and record, with a soft faded bottom edge instead of a line.
@@ -199,6 +201,10 @@ A small uppercase "explore" label above a plain list: work, projects, blog, phot
 ### Sign-off
 **Role:** a closing line on every page.
 "*opticsbyshrvn*", centered, linking to Instagram, cycling through the display set. Hovering fades in a thin hand-drawn arrow to its right and the note "for if you have taste" beneath it; on touch screens both stay visible.
+
+### Link Preview
+**Role:** a peek at where a link goes.
+Hovering a link (mouse only) shows a 240×150 card with a screenshot of the destination, below-right of the cursor (flipped near window edges). It fades in after 120 ms, glides after the cursor on a soft spring and leans up to 6° into the motion; 0.6rem corners, hairline rim, soft shadow. Covers the site's own pages and outside links; social profiles (LinkedIn, X, Instagram, YouTube Music, Forbes, Substack) and sites that block automated browsers have none. Screenshots: `images/previews/` (listed in `index.json`), taken by `scripts/capture_previews.cjs`.
 
 ### Water Banner
 **Role:** title block on the work and projects pages, and the "Get in touch" block.

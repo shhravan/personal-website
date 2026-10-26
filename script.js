@@ -68,11 +68,16 @@ const FOCUS = {
 const MIN_SECONDS = 1.5;
 const MAX_SECONDS = 1.5;
 
+// Where the site's files live, from this script's own address. Photo addresses are built from it
+// rather than being relative to the page, because during a page swap the address bar moves to the
+// new page a moment before the home page's photo timer stops.
+const SITE = new URL(".", (document.currentScript && document.currentScript.src) || location.href).href;
+
 // Pick the smaller file when the frame is small enough (phones), the larger one otherwise.
 function photoUrl(name) {
   const frame = document.querySelector(".hero");
   const pixels = (frame ? frame.clientWidth : 500) * (window.devicePixelRatio || 1);
-  return "images/hero/" + name + (pixels <= 700 ? "-700" : "") + ".webp";
+  return SITE + "images/hero/" + name + (pixels <= 700 ? "-700" : "") + ".webp";
 }
 
 // Show a photo in the frame, using its framing from the FOCUS list.
