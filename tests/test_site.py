@@ -145,10 +145,10 @@ class ScriptTests(unittest.TestCase):
             src = read(f)
             with self.subTest(f):
                 meta = dict(re.findall(r'<meta (?:property|name)="((?:og|twitter):[\w:]+)" content="([^"]*)"', src))
-                for key in ("og:title", "og:description", "og:url", "og:image", "og:video", "og:video:type", "twitter:card"):
+                for key in ("og:title", "og:description", "og:url", "og:image", "twitter:card"):
                     self.assertTrue(meta.get(key), key)
                 self.assertEqual(meta["og:url"], "https://shravanlad.com/" + f.replace("index.html", ""))
-                for key in ("og:image", "og:video", "twitter:image"):
+                for key in ("og:image", "twitter:image"):
                     self.assertTrue(meta[key].startswith("https://shravanlad.com/"), key)   # apps need full addresses
                     self.assertTrue(os.path.isfile(os.path.join(REPO, meta[key].split("shravanlad.com/", 1)[1])), key)
 

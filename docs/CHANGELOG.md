@@ -15,6 +15,13 @@ be returned to how it looked.
 
 ---
 
+## Light rays and share video removed
+- **Before:** `29a02f2`
+- **Changed:** the light rays around the name mark are gone (the name stays still; the shoreline and record deck carry the motion). Shared links no longer offer the video loop; they still show the `home.jpg` picture.
+- **Why:** less competing motion, and the recorded loop was choppy (~7 real frames a second). A smooth recording will come back later.
+- **Files:** `theme.js`, `styles.css`, every page's `<head>`, `images/og/home-loop.mp4` (deleted), tests, docs.
+- **To bring them back:** revert this PR.
+
 ## Light rays point toward the cursor
 - **Before:** `366c90c`
 - **Changed:** the rays (and the shadow in light mode) now stream toward the cursor instead of away from it.

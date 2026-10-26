@@ -692,7 +692,6 @@ body::before {
 
 /* Light rays behind the name mark (drawn by theme.js): fixed with the top bar, under the mark
    itself, never catching clicks. */
-.logo-glow { position: fixed; z-index: 10; pointer-events: none; }
 
 /* Link preview card (built by theme.js): a small screenshot that follows the cursor over links.
    Position and lean come from --x, --y and --tilt; it fades and lifts in when shown. */
