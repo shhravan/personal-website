@@ -363,6 +363,16 @@ class UpstreamTests(SiteCase):
 # ---------------------------------------------------------------- generated pages meet the site rules
 
 class GeneratedPageTests(SiteCase):
+    def test_post_pages_get_their_own_share_preview(self):
+        self.run_sync(api_routes([{"slug": "hello-world", "title": 'Quotes "and" <tags>', "subtitle": "a first post"}]))
+        with open(os.path.join(self.tmp, "blog", "hello-world", "index.html"), encoding="utf-8") as f:
+            page = f.read()
+        self.assertIn('<meta property="og:title" content="Quotes &quot;and&quot; &lt;tags&gt; · shravan lad">', page)
+        self.assertIn('<meta property="og:url" content="https://shravanlad.com/blog/hello-world/">', page)
+        self.assertIn('<meta property="og:description" content="a first post">', page)
+        self.assertIn('<meta property="og:type" content="article">', page)
+        self.assertNotIn('content="blog · shravan lad"', page)
+
     def test_hostile_posts_produce_pages_that_pass_the_site_checks(self):
         sys.path.insert(0, HERE)
         import test_site as site
