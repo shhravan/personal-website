@@ -70,7 +70,10 @@ def get(url, as_json=False, limit=20 * 1024 * 1024):
             if e.code not in (429, 503) or wait is None:
                 raise
             retry_after = e.headers.get("Retry-After", "") if e.headers else ""
-            time.sleep(min(int(retry_after), 120) if retry_after.isdigit() else wait)
+            pause = min(int(retry_after), 120) if retry_after.isdigit() else wait
+            # Say so in the job log, so a slow or failed run explains itself.
+            print(f"HTTP {e.code} from {urllib.parse.urlsplit(url).path}; waiting {pause}s and retrying", file=sys.stderr)
+            time.sleep(pause)
     if len(data) > limit:
         raise ValueError(f"response too large: {url}")
     return json.loads(data) if as_json else data

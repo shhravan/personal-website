@@ -92,6 +92,13 @@ class RateLimitTests(FakeNet):
                 sync.get(f"{BASE}/feed")
                 self.assertEqual(self.waits, [sync.RETRY_WAITS[0]])
 
+    def test_retries_are_logged(self):
+        self.script = {"/feed": [429, RSS]}
+        err = io.StringIO()
+        with redirect_stderr(err):
+            sync.get(f"{BASE}/feed")
+        self.assertIn("HTTP 429 from /feed; waiting", err.getvalue())
+
     def test_503_is_retried_too(self):
         self.script = {"/feed": [503, 503, RSS]}
         self.assertEqual(sync.get(f"{BASE}/feed"), RSS)
