@@ -15,6 +15,12 @@ be returned to how it looked.
 
 ---
 
+## Link previews; photo-address fix
+- **Before:** `a201b3a` (same PR as the light rays)
+- **Changed:** hovering a link shows a small screenshot of where it goes, gliding after the cursor. 13 links have one (own pages and outside sites; not social profiles). Also fixed hero photos being requested from the wrong folder (`/work/images/hero/...`, 404s) during a page swap.
+- **Files:** `theme.js` ("link previews" section), `styles.css` (`.link-preview`), `images/previews/`, `scripts/capture_previews.cjs`, `script.js` (photo addresses), docs.
+- **Partial undo:** delete `images/previews/index.json` and no cards appear.
+
 ## Light rays around the name mark
 - **Before:** `a201b3a`
 - **Changed:** while the mouse moves, light rays fade in behind the name mark and glide toward the cursor, fading out about a second after it stops; light in dark mode, a soft dark shadow in light mode. Nothing shows at rest.

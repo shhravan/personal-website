@@ -14,6 +14,7 @@ Keep it simple: a site that is easy to read, explain and maintain.
 - **Hosting:** GitHub Pages from `main`, at `shravanlad.com` (the `CNAME` file; DNS at Spaceship: four A records to GitHub Pages and a `www` CNAME to `shhravan.github.io`).
 - **Staging:** Cloudflare Pages deploys the working branch (`claude/personal-website-workflow-pjo7rz`) to `staging.shravanlad.com`, plus a preview link per pull request. `_headers` marks staging `noindex` (GitHub Pages ignores that file). Check changes there before merging to `main`.
 - **Fonts:** Google Fonts.
+- **Link previews:** `node scripts/capture_previews.cjs` (Playwright + Pillow) re-takes the hover screenshots into `images/previews/` and rewrites `index.json`. Run it when links change.
 - **Music:** self-hosted MP3s in `audio/`, played with the browser's built-in audio player. Keep files at 128 kbps or less with tags stripped (`ffmpeg -map_metadata -1`).
 
 ## Folder layout

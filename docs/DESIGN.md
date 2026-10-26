@@ -202,6 +202,10 @@ A small uppercase "explore" label above a plain list: work, projects, blog, phot
 **Role:** a closing line on every page.
 "*opticsbyshrvn*", centered, linking to Instagram, cycling through the display set. Hovering fades in a thin hand-drawn arrow to its right and the note "for if you have taste" beneath it; on touch screens both stay visible.
 
+### Link Preview
+**Role:** a peek at where a link goes.
+Hovering a link (mouse only) shows a 240×150 card with a screenshot of the destination, below-right of the cursor (flipped near window edges). It fades in after 120 ms, glides after the cursor on a soft spring and leans up to 6° into the motion; 0.6rem corners, hairline rim, soft shadow. Covers the site's own pages and outside links; social profiles (LinkedIn, X, Instagram, YouTube Music, Forbes, Substack) and sites that block automated browsers have none. Screenshots: `images/previews/` (listed in `index.json`), taken by `scripts/capture_previews.cjs`.
+
 ### Water Banner
 **Role:** title block on the work and projects pages, and the "Get in touch" block.
 A box filled with water blue mixed into the page color, a 1.5px rim, 0.7rem corners. Two layers move inside it: a fine speckle of dots that jumps in 6 steps every 1.5s like film grain (white specks in dark mode, soft blue on cream) and faint ripples drifting over 16s. Title in 1.7rem Garamond 500, subtitle in `--soft`.

@@ -693,3 +693,20 @@ body::before {
 /* Light rays behind the name mark (drawn by theme.js): fixed with the top bar, under the mark
    itself, never catching clicks. */
 .logo-glow { position: fixed; z-index: 10; pointer-events: none; }
+
+/* Link preview card (built by theme.js): a small screenshot that follows the cursor over links.
+   Position and lean come from --x, --y and --tilt; it fades and lifts in when shown. */
+.link-preview {
+  position: fixed; left: 0; top: 0; z-index: 30; width: 240px; height: 150px;
+  border-radius: 0.6rem; overflow: hidden; pointer-events: none;
+  background: var(--photo-bg);
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .32), 0 2px 8px rgba(0, 0, 0, .18);
+  opacity: 0;
+  transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--tilt, 0deg)) scale(.92);
+  transform-origin: 20% 0;
+  transition: opacity .2s ease, scale .2s ease;
+}
+.link-preview.show { opacity: 1; transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--tilt, 0deg)) scale(1); }
+.link-preview img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+@media (prefers-reduced-motion: reduce) { .link-preview { transition: opacity .15s; } }

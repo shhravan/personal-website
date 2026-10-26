@@ -514,6 +514,91 @@
       soon();
     })();
 
+    // ---- link previews ----
+    // Hovering a link shows a small screenshot of where it goes, in a card that glides after the
+    // cursor and leans a little as it moves. Screenshots live in images/previews/ (taken by
+    // scripts/capture_previews.cjs); images/previews/index.json lists which links have one.
+    // Mouse only: phones and tablets have no hover.
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) (function () {
+      var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var have = null;   // names with a screenshot, loaded on the first hover
+      var card = document.createElement("div");
+      card.className = "link-preview";
+      card.setAttribute("aria-hidden", "true");
+      var img = document.createElement("img");
+      img.alt = "";
+      card.appendChild(img);
+      document.body.appendChild(card);
+      var pos = { x: 0, y: 0 }, target = { x: 0, y: 0 }, tilt = 0, current = null, showTimer = 0, frame = 0, last = 0;
+      // Same rule as the capture script: host + path, lowercase, with runs of other characters as "-".
+      function previewName(u) {
+        return (u.hostname.replace(/^www\./, "") + u.pathname).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+      }
+      function nameFor(a) {
+        var href = a.getAttribute("href");
+        if (!href || /^(mailto:|#)/.test(href)) return null;
+        var u = new URL(href, location.href);
+        // Our own pages are captured under the live address, wherever the site is running.
+        if (u.origin === location.origin) u = new URL(u.pathname.replace(new URL(BASE).pathname, "/"), "https://shravanlad.com");
+        var n = previewName(u);
+        return have && have.indexOf(n) >= 0 ? n : null;
+      }
+      function place(e) {
+        // Below and to the right of the cursor, flipped to the other side near the window's edges.
+        var w = 240, h = 150, gap = 18;
+        target.x = e.clientX + gap + w > innerWidth ? e.clientX - gap - w : e.clientX + gap;
+        target.y = e.clientY + gap + h > innerHeight ? e.clientY - gap - h : e.clientY + gap;
+      }
+      function step(t) {
+        var dt = Math.min(0.1, (t - (last || t)) / 1000); last = t;
+        var k = still ? 1 : 1 - Math.exp(-dt * 14);   // a soft spring toward the target
+        var dx = (target.x - pos.x) * k;
+        pos.x += dx; pos.y += (target.y - pos.y) * k;
+        tilt += (Math.max(-6, Math.min(6, dx * 0.6)) - tilt) * (1 - Math.exp(-dt * 10));   // lean into the motion
+        card.style.setProperty("--x", pos.x.toFixed(1) + "px");
+        card.style.setProperty("--y", pos.y.toFixed(1) + "px");
+        card.style.setProperty("--tilt", (still ? 0 : tilt).toFixed(2) + "deg");
+        frame = current ? requestAnimationFrame(step) : 0;
+        if (!current) last = 0;
+      }
+      function show(a, e) {
+        var n = nameFor(a);
+        if (!n) return;
+        current = a;
+        img.src = BASE + "images/previews/" + n + ".webp";
+        place(e); pos.x = target.x; pos.y = target.y; tilt = 0;   // appear at the cursor, then follow
+        clearTimeout(showTimer);
+        showTimer = setTimeout(function () { if (current === a) card.classList.add("show"); }, 120);
+        if (!frame) frame = requestAnimationFrame(step);
+      }
+      function hide() {
+        current = null;
+        clearTimeout(showTimer);
+        card.classList.remove("show");
+      }
+      document.addEventListener("pointerover", function (e) {
+        if (e.pointerType !== "mouse") return;
+        var a = e.target.closest && e.target.closest("a[href]");
+        if (!a || a === current || a.classList.contains("logo")) return;   // the name mark just goes home
+        if (have) { show(a, e); return; }
+        if (have === null) {
+          have = false;   // loading
+          fetch(BASE + "images/previews/index.json").then(function (r) { return r.ok ? r.json() : []; })
+            .catch(function () { return []; })
+            .then(function (list) { have = list; if (a.matches(":hover")) show(a, e); });
+        }
+      });
+      document.addEventListener("pointerout", function (e) {
+        if (!current) return;
+        var to = e.relatedTarget;
+        if (!to || !current.contains(to)) hide();
+      });
+      document.addEventListener("pointermove", function (e) { if (current) place(e); }, { passive: true });
+      document.addEventListener("page:load", hide);   // the link is gone after a page swap
+      document.addEventListener("click", hide);
+      window.addEventListener("blur", hide);
+    })();
+
     // ---- moving between pages without stopping the music ----
     // A normal link click loads a whole new page, which throws away the audio player.
     // Instead, for links to our own pages, we fetch the new page in the background, swap in its

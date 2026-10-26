@@ -44,6 +44,11 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - Filling an image with one color on a canvas: draw it, then set `globalCompositeOperation = "source-in"` and fill a rectangle. Only the image's shape keeps the new color.
 - Using the text color (`--ink`) for the rays makes one effect serve both themes: a glow on dark, a shadow on cream.
 
+## Link previews
+- Screenshots are taken ahead of time with an automated browser and served from our own site, so visitors' browsing isn't sent to a screenshot service and the security policy stays strict.
+- Pop-ups and cookie banners spoil screenshots; the capture script clicks "accept/close" buttons and removes layers named like pop-ups. Removing every fixed element was too blunt (it wiped GitHub's profile column).
+- Relative addresses (`images/hero/x.webp`) depend on the page the browser thinks it's on. During an in-place page swap the address changes first, so scripts should build addresses from their own location.
+
 ## The record deck
 - The dial is one SVG; each cover is clipped to a ring-shaped slice with a `clipPath` built with a little trigonometry.
 - The security policy blocks inline `style="..."`, so per-cover values are set with `style.setProperty`, which it allows.
