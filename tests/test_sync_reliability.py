@@ -133,6 +133,52 @@ class RateLimitTests(FakeNet):
         self.assertEqual((len(posts), via), (1, "rss"))
 
 
+class ScheduleTests(unittest.TestCase):
+    """The monthly schedule must survive GitHub's 60-day shutoff of idle scheduled workflows."""
+
+    def setUp(self):
+        with open(WORKFLOW, encoding="utf-8") as f:
+            self.src = f.read()
+
+    def test_keepalive_step_exists_and_cannot_break_the_job(self):
+        step = self.src[self.src.index("Keep the monthly schedule switched on"):]
+        self.assertIn("if: always()", step)
+        self.assertIn("continue-on-error: true", step)
+        self.assertIn("/actions/workflows/substack.yml/enable", step)
+        self.assertRegex(self.src, r"(?m)^  actions: write")
+
+    def test_actions_are_current_majors(self):
+        # v4 checkout / v5 setup-python run on Node 20, which GitHub is retiring
+        for use in re.findall(r"uses:\s*actions/([\w-]+)@v(\d+)", self.src):
+            self.assertGreaterEqual(int(use[1]), 6, use)
+
+
+class LimitTests(FakeNet):
+    """--limit N keeps a test run against a big publication short."""
+
+    def test_api_stops_after_limit(self):
+        import json as _json
+        archive = _json.dumps([{"slug": f"p{i}", "post_date": "2020-01-01", "type": "newsletter"} for i in range(25)]).encode()
+        post = _json.dumps({"title": "T", "body_html": "<p>b</p>", "post_date": "2020-01-01"}).encode()
+        self.script = {"/api/v1/archive": [archive], "/api/v1/posts/": [post]}
+        sync.LIMIT = 3
+        try:
+            posts = sync.fetch_from_api(BASE)
+        finally:
+            sync.LIMIT = 0
+        self.assertEqual(len(posts), 3)
+        self.assertEqual(sum("/api/v1/posts/" in c for c in self.calls), 3)
+
+    def test_rss_respects_limit(self):
+        many = RSS.replace(b"</channel>", RSS[RSS.index(b"<item>"):RSS.index(b"</item>") + 7] * 5 + b"</channel>")
+        self.script = {"/feed": [many]}
+        sync.LIMIT = 2
+        try:
+            self.assertEqual(len(sync.fetch_from_rss(BASE)), 2)
+        finally:
+            sync.LIMIT = 0
+
+
 def commit_step():
     """The exact shell script of the workflow's commit step."""
     with open(WORKFLOW, encoding="utf-8") as f:

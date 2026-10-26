@@ -104,6 +104,9 @@ def is_recent(iso):
         return True
 
 
+LIMIT = 0   # --limit N: only the newest N posts (for testing against big publications)
+
+
 def fetch_from_api(base, cache=None):
     """The endpoints Substack's own site uses. Undocumented, so they may change one day."""
     cache = cache or {}
@@ -115,6 +118,8 @@ def fetch_from_api(base, cache=None):
         if not page:
             break
         for p in page:
+            if LIMIT and len(posts) >= LIMIT:
+                return posts
             if not isinstance(p, dict) or not isinstance(p.get("slug"), str):
                 continue
             if p.get("audience", "everyone") != "everyone" or p.get("type") not in (None, "newsletter"):
@@ -165,7 +170,7 @@ def fetch_from_rss(base):
             "url": link,
             "body": item.findtext("content:encoded", namespaces=ns) or "",
         })
-    return posts
+    return posts[:LIMIT] if LIMIT else posts
 
 
 def fetch(base):
@@ -395,8 +400,11 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--source", default=PUBLICATION, help="publication URL (for testing)")
     ap.add_argument("--allow-delete", action="store_true", help="allow removing many posts at once")
+    ap.add_argument("--limit", type=int, default=0, help="only the newest N posts (for testing)")
     args = ap.parse_args()
     base = args.source.rstrip("/")
+    global LIMIT
+    LIMIT = max(0, args.limit)
     posts, via = fetch(base)
     posts = validate(posts, base)
     posts.sort(key=lambda p: p["date"], reverse=True)
