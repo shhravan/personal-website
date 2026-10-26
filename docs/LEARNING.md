@@ -65,6 +65,10 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - **Mutation testing:** break the safety code on purpose and confirm a test fails. Every fix in this repo was checked this way.
 - Reliability tests replay every real failure (a missing folder in the commit step, rate limits on both routes) plus the next likely one (main moving mid-run), running the workflow's real commit step in throwaway git repos.
 
+## Keeping a scheduled job alive
+- GitHub switches off scheduled workflows in public repos after 60 days with no repository activity. A monthly job that usually has nothing to commit would quietly stop. Calling the "enable workflow" API at the end of each run resets the clock.
+- A job that has only ever seen an empty feed hasn't proven much. Running the sync locally against a real public Substack (`--limit 4`) exercised the whole path: real API shapes, image downloads, generated pages in the browser.
+
 ## Servers, Cloudflare and the relay
 - A server is an always-on computer that answers requests. GitHub Pages only hands out files; it runs none of our code.
 - Cloudflare protects Substack and blocks data-centre machines like GitHub's runners. A probe workflow confirmed it.

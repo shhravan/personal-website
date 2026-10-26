@@ -15,6 +15,12 @@ be returned to how it looked.
 
 ---
 
+## Substack sync hardening
+- **Before:** `25b1295`
+- **Changed:** the sync now keeps its own monthly schedule switched on (GitHub disables idle scheduled jobs after 60 days, which would have silently stopped it before your first post), uses current versions of GitHub's checkout and Python steps (the old ones run on a retiring Node 20), and has a `--limit` option for testing. Verified end to end against a real public Substack: posts, images and pages all correct.
+- **Before this:** the job would have stopped running after ~60 quiet days, and warned about Node 20 on every run.
+- **Files:** `.github/workflows/substack.yml`, `.github/workflows/tests.yml`, `scripts/substack_sync.py`, tests, docs.
+
 ## #65 · Visualizer removed; CHANGELOG added
 - **Before:** `ade895a`
 - **Changed:** the music visualizer from #64 is gone (it made the water flicker). `theme.js` and
