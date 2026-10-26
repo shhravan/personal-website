@@ -15,6 +15,11 @@ be returned to how it looked.
 
 ---
 
+## Light rays point toward the cursor
+- **Before:** `366c90c`
+- **Changed:** the rays (and the shadow in light mode) now stream toward the cursor instead of away from it.
+- **Files:** `theme.js` (one line: the light's position flips to the side away from the cursor).
+
 ## Share previews (og:image, og:video)
 - **Before:** `94b6857`
 - **Changed:** sharing any page now shows a picture of the home page, and apps that support it play a ~10 s silent loop of the home page. Each page has its own title and description (section pages had no description before); blog posts get their own title, subtitle and address.
