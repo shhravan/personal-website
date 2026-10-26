@@ -15,6 +15,13 @@ be returned to how it looked.
 
 ---
 
+## Light rays around the name mark
+- **Before:** `a201b3a`
+- **Changed:** light rays stream out from behind the name mark and lean toward the cursor; light in dark mode, a soft dark shadow in light mode.
+- **Before this:** the name mark had no glow.
+- **Files:** `theme.js` ("light rays around the name mark" section), `styles.css` (`.logo-glow`), docs.
+- **Tuning:** in `theme.js`, `0.085` / `0.06` set the strength in dark / light mode, and `N = 28` with `0.045` sets how far the rays reach.
+
 ## Substack sync: log retries
 - **Before:** `fadcbd0`
 - **Changed:** when Substack says "slow down" (HTTP 429) or "busy" (503), the job log now says which address and how long it waits, so a slow or failed run explains itself.

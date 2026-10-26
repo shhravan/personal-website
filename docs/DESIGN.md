@@ -160,6 +160,8 @@ A wall switch drawn in SVG: a plate with four screws, a slot and a lever, with a
 **Role:** identity and the link home, top center.
 श्रवण लाड over SHRAVAN LAD, drawn from `images/logo.png` used as a CSS mask filled with `--ink`, so it flips with the theme. Same height as the switch (2.4rem; 2.67vw on wide screens).
 
+**Light rays:** rays stream outward from behind the mark as if a light sat behind it, and the light leans toward the cursor (easing, softly limited). In dark mode the rays are light; in light mode the same shapes in ink read as a soft shadow. Drawn on a small canvas behind the mark (`theme.js`) by stacking 28 progressively larger, fainter copies of its shape. On touch screens and for reduced motion the light stays fixed above the mark.
+
 ### Top Bar Strip
 **Role:** keeps the corners readable while scrolling.
 Invisible at the top of the page. After scrolling, a frosted strip (`--bg` at 82%, 10px blur) fades in over 0.25s behind the switch, name and record, with a soft faded bottom edge instead of a line.

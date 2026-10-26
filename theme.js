@@ -422,6 +422,85 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
+    // ---- light rays around the name mark ----
+    // Rays stream outward from behind the name mark, as if a light sat behind it, and the light
+    // leans toward the cursor. Dark mode: the rays are light (the text color). Light mode: the
+    // same shapes in the dark text color, so they read as a soft shadow instead.
+    // How: the name mark's shape is drawn many times on a small canvas, each copy a little bigger
+    // around the light's position and fainter, which smears its edges outward into rays.
+    (function () {
+      var glow = document.createElement("canvas");
+      glow.className = "logo-glow";
+      glow.setAttribute("aria-hidden", "true");
+      document.body.insertBefore(glow, document.body.firstChild);
+      var g = glow.getContext("2d");
+      var mark = new Image();
+      mark.src = BASE + "images/logo.png";
+      var tint = document.createElement("canvas"), tg = tint.getContext("2d");   // the shape, filled with the text color
+      var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var aim = { x: 0, y: -0.6 }, want = { x: 0, y: -0.6 }, frame = 0, lastInk = "";
+      function draw() {
+        frame = 0;
+        var logo = document.querySelector(".logo");
+        if (!logo || !mark.complete || !mark.naturalWidth) return;
+        var r = logo.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+        var W = r.width * 2.2, H = r.height * 6;   // room for the rays to spread
+        if (glow.width !== Math.round(W * dpr) || glow.height !== Math.round(H * dpr)) {
+          glow.width = Math.round(W * dpr); glow.height = Math.round(H * dpr);
+          glow.style.width = W + "px"; glow.style.height = H + "px";
+        }
+        glow.style.left = (r.left + r.width / 2 - W / 2) + "px";
+        glow.style.top = (r.top + r.height / 2 - H / 2) + "px";
+        var ink = getComputedStyle(root).getPropertyValue("--ink").trim() || "#ece8de";
+        if (ink !== lastInk || tint.width !== Math.round(r.width * dpr)) {
+          lastInk = ink;
+          tint.width = Math.round(r.width * dpr); tint.height = Math.round(r.height * dpr);
+          tg.clearRect(0, 0, tint.width, tint.height);
+          tg.drawImage(mark, 0, 0, tint.width, tint.height);
+          tg.globalCompositeOperation = "source-in";
+          tg.fillStyle = ink; tg.fillRect(0, 0, tint.width, tint.height);
+          tg.globalCompositeOperation = "source-over";
+        }
+        var dark = root.getAttribute("data-theme") === "dark";
+        g.setTransform(dpr, 0, 0, dpr, 0, 0);
+        g.clearRect(0, 0, W, H);
+        // The light sits behind the mark, nudged toward the cursor; rays point away from it.
+        var ox = W / 2 + aim.x * r.width * 0.35, oy = H / 2 + aim.y * r.height * 0.9;
+        var N = 28, x0 = W / 2 - r.width / 2, y0 = H / 2 - r.height / 2;
+        for (var i = N; i >= 1; i--) {
+          var s = 1 + i * 0.045, t = i / N;
+          g.globalAlpha = (dark ? 0.085 : 0.06) * (1 - t) * (1 - t);
+          g.drawImage(tint, ox + (x0 - ox) * s, oy + (y0 - oy) * s, r.width * s, r.height * s);
+        }
+        g.globalAlpha = 1;
+      }
+      function soon() { if (!frame) frame = requestAnimationFrame(draw); }
+      function ease() {
+        aim.x += (want.x - aim.x) * 0.12; aim.y += (want.y - aim.y) * 0.12;
+        draw();
+        if (Math.abs(want.x - aim.x) + Math.abs(want.y - aim.y) > 0.002) frame = requestAnimationFrame(ease);
+      }
+      if (!still) {
+        window.addEventListener("pointermove", function (e) {
+          if (e.pointerType !== "mouse") return;   // on touch screens the light stays put above the mark
+          var logo = document.querySelector(".logo");
+          if (!logo) return;
+          var r = logo.getBoundingClientRect();
+          // Where the cursor is relative to the mark, softly limited so the light never strays far.
+          var dx = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
+          var dy = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
+          want.x = Math.max(-1, Math.min(1, dx * 2.2));
+          want.y = Math.max(-1, Math.min(1, dy * 2.2 - 0.3));
+          cancelAnimationFrame(frame); frame = requestAnimationFrame(ease);
+        }, { passive: true });
+      }
+      mark.addEventListener("load", soon);
+      window.addEventListener("resize", soon);
+      document.addEventListener("page:load", soon);
+      new MutationObserver(soon).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+      soon();
+    })();
+
     // ---- moving between pages without stopping the music ----
     // A normal link click loads a whole new page, which throws away the audio player.
     // Instead, for links to our own pages, we fetch the new page in the background, swap in its
