@@ -468,8 +468,8 @@
         g.setTransform(dpr, 0, 0, dpr, 0, 0);
         g.clearRect(0, 0, W, H);
         if (level < 0.01) return;
-        // The light sits behind the mark, nudged toward the cursor; rays point away from it.
-        var ox = W / 2 + aim.x * r.width * 0.35, oy = H / 2 + aim.y * r.height * 0.9;
+        // The light sits behind the mark on the side away from the cursor, so the rays stream toward it.
+        var ox = W / 2 - aim.x * r.width * 0.35, oy = H / 2 - aim.y * r.height * 0.9;
         var N = 40, x0 = W / 2 - r.width / 2, y0 = H / 2 - r.height / 2;
         for (var i = N; i >= 1; i--) {
           var s = 1 + i * 0.032, t = i / N;
@@ -500,7 +500,7 @@
           var dx = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
           var dy = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
           want.x = Math.max(-1, Math.min(1, dx * 2.2));
-          want.y = Math.max(-1, Math.min(1, dy * 2.2 - 0.3));
+          want.y = Math.max(-1, Math.min(1, dy * 2.2));
           show = 1;
           clearTimeout(idle);
           idle = setTimeout(function () { show = 0; }, 900);   // stop moving: let the rays fade away
