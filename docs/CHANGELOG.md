@@ -15,6 +15,12 @@ be returned to how it looked.
 
 ---
 
+## Share previews (og:image, og:video)
+- **Before:** `94b6857`
+- **Changed:** sharing any page now shows a picture of the home page, and apps that support it play a ~10 s silent loop of the home page. Each page has its own title and description (section pages had no description before); blog posts get their own title, subtitle and address.
+- **Before this:** shared links showed only a plain title.
+- **Files:** the `<head>` of every page, `images/og/`, `scripts/substack_sync.py`, tests, docs.
+
 ## Link previews; photo-address fix
 - **Before:** `a201b3a` (same PR as the light rays)
 - **Changed:** hovering a link shows a small screenshot of where it goes, gliding after the cursor. 13 links have one (own pages and outside sites; not social profiles). Also fixed hero photos being requested from the wrong folder (`/work/images/hero/...`, 404s) during a page swap.

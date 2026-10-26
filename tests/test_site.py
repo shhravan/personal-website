@@ -139,6 +139,19 @@ class ScriptTests(unittest.TestCase):
         src = read("theme.js")
         self.assertRegex(src, r'saved === "light" \? "light" : "dark"')   # localStorage can't inject anything
 
+    def test_share_previews(self):
+        # every page tells iMessage/Slack/X what to show when it is shared, with files that exist
+        for f in ["index.html", "work/index.html", "projects/index.html", "blog/index.html", "photography/index.html", "rabbit-hole/index.html"]:
+            src = read(f)
+            with self.subTest(f):
+                meta = dict(re.findall(r'<meta (?:property|name)="((?:og|twitter):[\w:]+)" content="([^"]*)"', src))
+                for key in ("og:title", "og:description", "og:url", "og:image", "og:video", "og:video:type", "twitter:card"):
+                    self.assertTrue(meta.get(key), key)
+                self.assertEqual(meta["og:url"], "https://shravanlad.com/" + f.replace("index.html", ""))
+                for key in ("og:image", "og:video", "twitter:image"):
+                    self.assertTrue(meta[key].startswith("https://shravanlad.com/"), key)   # apps need full addresses
+                    self.assertTrue(os.path.isfile(os.path.join(REPO, meta[key].split("shravanlad.com/", 1)[1])), key)
+
     def test_every_song_has_its_audio_file_and_cover(self):
         src = read("theme.js")
         tracks = re.findall(r'\{ start: (\d+), title: "[^"]+", artist: "[^"]+", cover: "([\w-]+)"(?:, file: "([\w-]+)")?', src)

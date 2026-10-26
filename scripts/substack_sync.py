@@ -352,8 +352,15 @@ def render(posts, dry_run):
             continue
         title = html.escape(p["title"])
         date = nice_date(p["date"])
+        sub = html.escape(p["subtitle"] or "")
+        blog_desc = "things shravan writes, also on substack."
         page = (post_head
                 .replace("<title>blog · shravan lad</title>", f"<title>{title} · shravan lad</title>")
+                # share previews: this post's own title, subtitle and address, not the blog page's
+                .replace('content="blog · shravan lad"', f'content="{title} · shravan lad"')
+                .replace(f'content="{blog_desc}"', f'content="{sub or blog_desc}"')
+                .replace('content="https://shravanlad.com/blog/"', f'content="https://shravanlad.com/blog/{p["slug"]}/"')
+                .replace('<meta property="og:type" content="website">', '<meta property="og:type" content="article">')
                 # tells search engines the Substack post is the original, so this copy isn't penalised
                 .replace("</head>", f'  <link rel="canonical" href="{html.escape(p["url"])}">\n</head>'))
         page += f"""<body>

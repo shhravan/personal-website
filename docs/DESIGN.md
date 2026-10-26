@@ -228,6 +228,9 @@ The list is titles at 1.15rem with the date underneath in grey. A post has a 1.9
 
 ---
 
+## Share Previews
+When a page is shared (iMessage, Slack, Discord, LinkedIn, X), apps show `images/og/home.jpg` (1200×630: the home page with the record dial open on "Control Room", rays around the name mark, the shoreline), and apps that support video play `images/og/home-loop.mp4`, a ~10 s silent loop of the home page (photos changing, the cursor drifting past the name mark, the dial opening, a click ripple). Each page has its own title, description and address; synced blog posts use the post's title and subtitle.
+
 ## Do's and Don'ts
 
 ### Do

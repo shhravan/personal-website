@@ -44,6 +44,10 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - Filling an image with one color on a canvas: draw it, then set `globalCompositeOperation = "source-in"` and fill a rectangle. Only the image's shape keeps the new color.
 - Using the text color (`--ink`) for the rays makes one effect serve both themes: a glow on dark, a shadow on cream.
 
+## Share previews (Open Graph)
+- Apps read `<meta property="og:...">` tags to build the card shown when a link is shared. `og:image` is used almost everywhere (1200×630 is the safe size); `og:video` is played only by some apps (Discord, Slack, iMessage sometimes), so it always goes with an image.
+- These tags need full addresses (`https://shravanlad.com/...`), not relative ones, because the app reading them isn't on our site.
+
 ## Link previews
 - Screenshots are taken ahead of time with an automated browser and served from our own site, so visitors' browsing isn't sent to a screenshot service and the security policy stays strict.
 - Pop-ups and cookie banners spoil screenshots; the capture script clicks "accept/close" buttons and removes layers named like pop-ups. Removing every fixed element was too blunt (it wiped GitHub's profile column).
