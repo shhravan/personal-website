@@ -15,7 +15,7 @@ Keep it simple: a site that is easy to read, explain and maintain.
 - **Staging:** Cloudflare Pages deploys the working branch (`claude/personal-website-workflow-pjo7rz`) to `staging.shravanlad.com`, plus a preview link per pull request. `_headers` marks staging `noindex` (GitHub Pages ignores that file). Check changes there before merging to `main`.
 - **Fonts:** Google Fonts.
 - **Link previews:** `node scripts/capture_previews.cjs` (Playwright + Pillow) re-takes the hover screenshots into `images/previews/` and rewrites `index.json`. Run it when links change.
-- **Share previews:** every page carries Open Graph and Twitter tags (`og:title`, `og:description`, `og:url`, `og:image`, `og:video`, `twitter:card`) with full `https://shravanlad.com/...` addresses; files in `images/og/`. A new page needs the same block. The Substack sync rewrites them for each post.
+- **Share previews:** every page carries Open Graph and Twitter tags (`og:title`, `og:description`, `og:url`, `og:image`, `twitter:card`) with full `https://shravanlad.com/...` addresses; files in `images/og/`. A new page needs the same block. The Substack sync rewrites them for each post.
 - **Music:** self-hosted MP3s in `audio/`, played with the browser's built-in audio player. Keep files at 128 kbps or less with tags stripped (`ffmpeg -map_metadata -1`).
 
 ## Folder layout

@@ -160,7 +160,6 @@ A wall switch drawn in SVG: a plate with four screws, a slot and a lever, with a
 **Role:** identity and the link home, top center.
 श्रवण लाड over SHRAVAN LAD, drawn from `images/logo.png` used as a CSS mask filled with `--ink`, so it flips with the theme. Same height as the switch (2.4rem; 2.67vw on wide screens).
 
-**Light rays:** only while the mouse moves, rays fade in behind the mark and stream toward the cursor, as if a light behind the mark sat on the far side; about a second after the mouse stops they fade away (gone within ~2.5 s). Nothing shows at rest. In dark mode the rays are light; in light mode the same shapes in ink read as a soft shadow. Drawn on a small canvas behind the mark (`theme.js`) by stacking 40 progressively larger, fainter copies of its shape, with time-based easing so it is equally smooth on every screen. Not shown on touch screens or for reduced motion.
 
 ### Top Bar Strip
 **Role:** keeps the corners readable while scrolling.
@@ -229,7 +228,7 @@ The list is titles at 1.15rem with the date underneath in grey. A post has a 1.9
 ---
 
 ## Share Previews
-When a page is shared (iMessage, Slack, Discord, LinkedIn, X), apps show `images/og/home.jpg` (1200×630: the home page with the record dial open on "Control Room", rays around the name mark, the shoreline), and apps that support video play `images/og/home-loop.mp4`, a ~10 s silent loop of the home page (photos changing, the cursor drifting past the name mark, the dial opening, a click ripple). Each page has its own title, description and address; synced blog posts use the post's title and subtitle.
+When a page is shared (iMessage, Slack, Discord, LinkedIn, X), apps show `images/og/home.jpg` (1200×630: the home page with the record dial open on "Control Room", rays around the name mark, the shoreline). (A video loop is planned once a smooth recording exists.). Each page has its own title, description and address; synced blog posts use the post's title and subtitle.
 
 ## Do's and Don'ts
 
