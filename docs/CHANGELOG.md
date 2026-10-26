@@ -15,6 +15,11 @@ be returned to how it looked.
 
 ---
 
+## Substack sync: log retries
+- **Before:** `fadcbd0`
+- **Changed:** when Substack says "slow down" (HTTP 429) or "busy" (503), the job log now says which address and how long it waits, so a slow or failed run explains itself.
+- **Files:** `scripts/substack_sync.py`, tests.
+
 ## Substack sync hardening
 - **Before:** `25b1295`
 - **Changed:** the sync now keeps its own monthly schedule switched on (GitHub disables idle scheduled jobs after 60 days, which would have silently stopped it before your first post), uses current versions of GitHub's checkout and Python steps (the old ones run on a retiring Node 20), and has a `--limit` option for testing. Verified end to end against a real public Substack: posts, images and pages all correct.
