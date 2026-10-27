@@ -136,7 +136,7 @@
     "  vec2 outside = max(uQuiet.xy - cell, cell - uQuiet.zw);",
     "  float quiet = 1.0 - smoothstep(-1.0, 6.0, max(outside.x, outside.y));",
     "  // Outside the painting: the plain faint field, quieter behind the writing.",
-    "  float alpha = uBase * (1.0 + 1.5 * twinkle) * (1.0 - 0.65 * quiet);",
+    "  float alpha = uBase * (1.0 + 1.5 * twinkle) * (1.0 - 0.85 * quiet);",
     "  vec3 tint = uColor;",
     "  vec4 tile = vec4(0.0);",
     "",
