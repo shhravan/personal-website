@@ -260,12 +260,25 @@
       document.body.appendChild(sheet);
       var rec = sheet.querySelector(".sheet-record"), now = sheet.querySelector(".sheet-now"), row = sheet.querySelector(".sheet-row");
 
+      var locked = false, lockY = 0;
       function setOpen(on) {
         sheet.classList.toggle("open", on);
         root.classList.toggle("sheet-open", on);
         sheet.setAttribute("aria-hidden", on ? "false" : "true");
         player.setAttribute("aria-expanded", on ? "true" : "false");
         sheet.style.transform = "";
+        // Lock the page in place while the sheet is open (the reliable way on iPhone), and put it
+        // back exactly where it was when the sheet closes.
+        if (on && !locked) {
+          lockY = window.scrollY; locked = true;
+          document.body.style.top = -lockY + "px";
+          root.classList.add("sheet-lock");
+        } else if (!on && locked) {
+          locked = false;
+          root.classList.remove("sheet-lock");
+          document.body.style.top = "";
+          window.scrollTo(0, lockY);
+        }
         if (on) {
           var sel = row.querySelector(".sel");
           if (sel) row.scrollLeft = sel.offsetLeft - (row.clientWidth - sel.offsetWidth) / 2;
@@ -318,21 +331,31 @@
       document.addEventListener("keydown", function (e) { if (e.key === "Escape" && sheet.classList.contains("open")) { setOpen(false); player.focus(); } });
 
       // Drag the sheet down to close it (from anywhere but the cover row, which scrolls sideways).
-      var y0 = null, dy = 0;
+      // Drag the sheet down to close it. iPhone Safari reloads the page if a downward drag reaches
+      // the page, so while the sheet is open every vertical drag is kept here: the page underneath
+      // is locked in place, and only sideways swipes on the cover row are left to scroll.
+      var x0 = 0, y0 = null, dy = 0, axis = "";
       sheet.addEventListener("touchstart", function (e) {
-        if (e.target.closest(".sheet-row")) return;
-        y0 = e.touches[0].clientY; dy = 0; sheet.classList.add("dragging");
+        x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dy = 0; axis = "";
       }, { passive: true });
-      sheet.addEventListener("touchmove", function (e) {
+      document.addEventListener("touchmove", function (e) {
+        if (!sheet.classList.contains("open")) return;
+        if (!sheet.contains(e.target)) { e.preventDefault(); return; }   // the dimmed page above
         if (y0 === null) return;
-        e.preventDefault();   // stop the browser's pull-to-refresh from reloading the page
-        dy = Math.max(0, e.touches[0].clientY - y0);
+        var mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+        if (!axis && (Math.abs(mx) > 6 || Math.abs(my) > 6)) {
+          axis = Math.abs(mx) > Math.abs(my) && e.target.closest(".sheet-row") ? "x" : "y";
+          if (axis === "y") sheet.classList.add("dragging");
+        }
+        if (axis === "x") return;   // the cover row scrolls sideways on its own
+        e.preventDefault();
+        dy = Math.max(0, my);
         sheet.style.transform = "translateY(" + dy + "px)";
       }, { passive: false });
       sheet.addEventListener("touchend", function () {
         if (y0 === null) return;
         y0 = null; sheet.classList.remove("dragging");
-        if (dy > 70) setOpen(false); else sheet.style.transform = "";
+        if (axis === "y" && dy > 70) setOpen(false); else sheet.style.transform = "";
       });
     }
 
