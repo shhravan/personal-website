@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Work: hovering a name shows its preview too
+- **Before:** `8d89616`
+- **Changed:** on the work page, pointing at an organisation's name or role shows the same website preview card as pointing at its logo (only for entries whose logo links to a site). Clicking the name still opens and closes the entry.
+- **Files:** `theme.js`, cache numbers on every page.
+- **To revert:** restore those files from `8d89616`.
+
 ## Phone record: cancel the swipe from its very first move
 - **Before:** `5d350c8`
 - **Changed:** the sheet now blocks the page's own scroll from the very first finger movement (it used to wait about 6px, by which point iPhone had already started pull-to-refresh). The pinned page also gets `touch-action: none` and `overscroll-behavior: none` while the sheet is open.
