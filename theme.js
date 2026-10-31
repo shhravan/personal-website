@@ -42,10 +42,11 @@
     '</svg>';
 
   // The little "on" / "off" label uses a pixel font (Silkscreen). Every page has this script,
-  // so it loads the font here once, asking for only the three letters it needs (O, N, F).
+  // so it loads the font here once. The whole alphabet: section labels, the record readout and
+  // the phone sheet use it too.
   var pixel = document.createElement("link");
   pixel.rel = "stylesheet";
-  pixel.href = "https://fonts.googleapis.com/css2?family=Silkscreen&text=ONFonf&display=swap";
+  pixel.href = "https://fonts.googleapis.com/css2?family=Silkscreen&display=swap";
   document.head.appendChild(pixel);
 
   document.addEventListener("DOMContentLoaded", function () {
