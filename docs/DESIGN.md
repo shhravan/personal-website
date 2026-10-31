@@ -342,4 +342,7 @@ body {
 ```
 
 ### Record on phones
-Phones and tablets get a bottom sheet instead of the desktop deck: the same vinyl (cream label, sheen) and now-playing type, plus a swipeable row of covers. The playing cover lifts with an ink rim and the others dim, like the desktop dial.
+Phones and tablets get a bottom sheet instead of the desktop deck: the now-playing card in the deck's type and a swipeable row of covers (no second vinyl: the corner record is the player). It slides away 5 seconds after a song is picked, or after the last touch. The playing cover lifts with an ink rim and the others dim, like the desktop dial.
+
+### Work page: the ledger
+No boxed panels on the work page: sections are divided by thin rules, with the section name in small caps (Silkscreen) in a 10rem left margin on desktop and above the section on phones. The column is wider there (up to 62vw).

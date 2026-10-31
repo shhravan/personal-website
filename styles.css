@@ -747,15 +747,6 @@ main.col h2 { font-size: 1.375rem; }
 .sheet.dragging { transition: none; }
 .sheet-grab { width: 2.5rem; height: 4px; margin: 0 auto 0.9rem; border-radius: 2px; background: color-mix(in srgb, var(--ink) 22%, transparent); }
 .sheet-top { display: flex; align-items: center; gap: 1.1rem; padding: 0 1.4rem; }
-.sheet-record {
-  position: relative; flex: none; width: 6.5rem; height: 6.5rem; padding: 0; border: 0; border-radius: 50%;
-  background: none; cursor: pointer; box-shadow: 0 8px 18px rgba(0, 0, 0, .3), 0 2px 5px rgba(0, 0, 0, .25);
-}
-.sheet-record:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
-.sheet.playing .deck-disc { animation-play-state: running; }
-.sheet.playing .deck-sheen { animation: shimmer 1.8s ease-in-out infinite; }
-:root[data-theme="dark"] .sheet-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 8px 18px rgba(0, 0, 0, .3); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sheet-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 8px 18px rgba(0, 0, 0, .3); } }
 .sheet-now { min-width: 0; }
 .sheet-now .k { font-family: "Silkscreen", monospace; font-size: 8px; letter-spacing: .26em; color: var(--soft); }
 .sheet-now .t { font-size: 1.45rem; line-height: 1.1; margin-top: 5px; color: var(--ink); }
@@ -780,7 +771,6 @@ main.col h2 { font-size: 1.375rem; }
 .sheet-cover:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .sheet-hint { text-align: center; font-family: "Silkscreen", monospace; font-size: 8px; letter-spacing: .26em; color: var(--soft); text-transform: uppercase; }
 @media (min-width: 40rem) { .sheet { left: 50%; right: auto; width: 34rem; margin-left: -17rem; } }
-@media (prefers-reduced-motion: reduce) { .sheet, .sheet-scrim { transition: none; } .sheet.playing .deck-sheen { animation: none; } }
 /* Dragging the sheet must not scroll or pull-to-refresh the page underneath. */
 .sheet { overscroll-behavior: contain; touch-action: none; }
 .sheet-row { touch-action: pan-x; }
@@ -796,3 +786,24 @@ main.col h2 { font-size: 1.375rem; }
 /* iPhone: no pull-to-refresh or rubber-band on the page itself while the sheet is open. */
 .sheet-lock, .sheet-lock body { overscroll-behavior: none; touch-action: none; }
 .sheet-lock .sheet-row { touch-action: pan-x; }
+@media (prefers-reduced-motion: reduce) { .sheet, .sheet-scrim { transition: none; } }
+
+/* ---- work page: the ledger (W5) ----
+   No boxes: each section is set off by a thin rule, with its name in small caps in a left margin
+   on wider screens (above the section on phones). The column is wider so rows breathe. */
+.ledger .panel {
+  background: none; border: 0; border-radius: 0;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  padding: 1.3rem 0 0.4rem; margin-bottom: 0.4rem !important;
+}
+.ledger .panel > h2 {
+  font-family: "Silkscreen", monospace; font-weight: 400; font-size: 0.62em;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--soft); margin: 0 0 0.9rem;
+}
+.ledger .banner.touch { margin-top: 1.2rem; }
+@media (min-width: 48rem) {
+  body:has(main.ledger) main.ledger { width: clamp(25rem, 62vw, 62rem); }
+  .ledger .panel { display: grid; grid-template-columns: 10rem 1fr; column-gap: 2rem; padding-top: 1.5rem; }
+  .ledger .panel > h2 { grid-column: 1; grid-row: 1 / span 40; margin-top: 0.55rem; }
+  .ledger .panel > :not(h2) { grid-column: 2; }
+}

@@ -251,17 +251,17 @@
       sheet.innerHTML =
         '<div class="sheet-grab" aria-hidden="true"></div>' +
         '<div class="sheet-top">' +
-          '<button class="sheet-record" type="button" aria-label="play"><span class="deck-disc"><span class="deck-label"><i></i></span></span><span class="deck-sheen"></span></button>' +
           '<div class="sheet-now" aria-live="polite"><div class="k">SIDE A · 15 SONGS</div><div class="t">all over the place</div><div class="a">pick a record below</div></div>' +
         '</div>' +
         '<div class="sheet-row">' + covers + '</div>' +
-        '<div class="sheet-hint">swipe · tap a cover to play</div>';
+        '<div class="sheet-hint">swipe · tap a cover to play · tap again to pause</div>';
       document.body.appendChild(scrim);
       document.body.appendChild(sheet);
-      var rec = sheet.querySelector(".sheet-record"), now = sheet.querySelector(".sheet-now"), row = sheet.querySelector(".sheet-row");
+      var now = sheet.querySelector(".sheet-now"), row = sheet.querySelector(".sheet-row");
 
       var locked = false, lockY = 0;
       function setOpen(on) {
+        if (!on) { clearTimeout(autoClose); autoClose = 0; }
         sheet.classList.toggle("open", on);
         root.classList.toggle("sheet-open", on);
         sheet.setAttribute("aria-hidden", on ? "false" : "true");
@@ -282,7 +282,7 @@
         if (on) {
           var sel = row.querySelector(".sel");
           if (sel) row.scrollLeft = sel.offsetLeft - (row.clientWidth - sel.offsetWidth) / 2;
-          rec.focus({ preventScroll: true });
+          (sel || row.querySelector(".sheet-cover")).focus({ preventScroll: true });
         }
       }
       toggleSheet = function () { setOpen(!sheet.classList.contains("open")); };
@@ -298,18 +298,30 @@
       sheetPlaying = function (on) {
         sheet.classList.toggle("playing", on);
         player.setAttribute("aria-pressed", on ? "true" : "false");   // the small record spins too
-        rec.setAttribute("aria-label", on ? "pause" : "play");
         if (deckSong >= 0) now.querySelector(".k").textContent = (on ? "NOW PLAYING" : "PAUSED") + " · " + String(deckSong + 1).padStart(2, "0") + " / " + TRACKS.length;
       };
-      rec.addEventListener("click", function () {
+      function togglePlay() {
         if (deckSong < 0) { playTrack(nextShuffled()); return; }   // nothing chosen yet: shuffle
         var on = !sheet.classList.contains("playing");
         sheetPlaying(on);
         if (on) audio.play().catch(function () { sheetPlaying(false); }); else audio.pause();
-      });
+      }
+      // Once a song is picked, the sheet slides away by itself after 5 seconds, so the page is
+      // back. Touching or swiping the sheet restarts the wait. Tap the small record to reopen it.
+      var autoClose = 0;
+      function closeLater() {
+        clearTimeout(autoClose);
+        autoClose = setTimeout(function () { if (sheet.classList.contains("open")) setOpen(false); }, 5000);
+      }
+      sheet.addEventListener("touchstart", function () { if (autoClose) closeLater(); }, { passive: true });
+      row.addEventListener("scroll", function () { if (autoClose) closeLater(); }, { passive: true });
+      // Tap a cover to play it; tap the one that's playing to pause or resume.
       row.addEventListener("click", function (e) {
         var b = e.target.closest(".sheet-cover");
-        if (b) playTrack(+b.getAttribute("data-i"));
+        if (!b) return;
+        var i = +b.getAttribute("data-i");
+        if (i === deckSong) togglePlay(); else playTrack(i);
+        closeLater();
       });
       scrim.addEventListener("click", function () { setOpen(false); });
       // With the sheet closed, a small play/pause key beside the record (as on desktop), shown once
@@ -320,7 +332,7 @@
       key.setAttribute("aria-label", "play");
       key.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">' +
         '<path class="i-play" d="M7.2 5.6 L14.6 10 L7.2 14.4 Z"/><g class="i-pause"><rect x="6.4" y="5.6" width="2.6" height="8.8" rx=".6"/><rect x="11" y="5.6" width="2.6" height="8.8" rx=".6"/></g></svg>';
-      key.addEventListener("click", function () { rec.click(); });
+      key.addEventListener("click", togglePlay);
       document.body.appendChild(key);
       var setKey = sheetPlaying;
       sheetPlaying = function (on) {

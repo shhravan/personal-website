@@ -4,6 +4,14 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Work page ledger (W5); phone record sheet tidies itself away
+- **Before:** `b5cd625`
+- **Changed:**
+  - Work: the boxes are gone. Each section is set off by a thin rule with its name in small caps in a left margin (above the section on phones), and the column is wider on desktop. Content and features are unchanged.
+  - Phone record sheet: no big vinyl in the sheet any more (the small record in the corner is the player). Tap a cover to play it, tap the playing one to pause. Once a song is picked the sheet slides down by itself after 5 seconds; touching or swiping it restarts the wait. Tap the small record to bring it back.
+- **Files:** `work/index.html`, `theme.js`, `styles.css`, cache numbers on every page, DESIGN.
+- **To revert:** restore those from `b5cd625`.
+
 ## Work: Cornell seal back on Honors, more link previews
 - **Before:** `ecc37a3`
 - **Changed:** the Cornell seal shows on each Honors row again (it was shown once, under Education). New hover preview for AM/NS India (`amns.in`, taken by hand past its video and pop-up); the other previews were retaken fresh. Still no preview for the Aditya Mittal page, Forbes and Cornell Information Science (they block automated browsers) or social sites.
