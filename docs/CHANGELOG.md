@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Pixel font for every label
+- **Before:** `1dfc041`
+- **Changed:** the Silkscreen pixel font was only loaded for the letters O, N and F (the light switch), so other small-caps labels mixed fonts (only the N was pixelated). The whole font now loads, so About, Experience, Education, Honors, the record readout and the phone sheet labels are all in the pixel font. Section labels are a touch bigger.
+- **Files:** `theme.js`, `styles.css`, cache numbers on every page.
+- **To revert:** restore those from `1dfc041`.
+
 ## Faded area covers only the writing
 - **Before:** `be1eb7e`
 - **Changed:** the softer letters behind the page now start at the first line ("← home") as well as ending at the last, so the area around the name mark at the top and the water at the bottom are both at full strength.
