@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Phone record: cancel the swipe from its very first move
+- **Before:** `5d350c8`
+- **Changed:** the sheet now blocks the page's own scroll from the very first finger movement (it used to wait about 6px, by which point iPhone had already started pull-to-refresh). The pinned page also gets `touch-action: none` and `overscroll-behavior: none` while the sheet is open.
+- **Files:** `theme.js`, `styles.css`, cache numbers on every page.
+- **To revert:** restore those files from `5d350c8`.
+
 ## Phone record: swiping down really stops reloading on iPhone
 - **Before:** `3afb142`
 - **Changed:** while the record sheet is open the page underneath is pinned in place, and every downward drag (including on the cover row and the dimmed page) is kept by the sheet, so iPhone Safari's pull-to-refresh can't fire. Sideways swipes on the covers still scroll. Closing puts the page back where it was.
