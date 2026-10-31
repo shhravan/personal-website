@@ -6,8 +6,9 @@
 const { chromium } = require(process.env.PLAYWRIGHT || "playwright");
 const fs = require("fs"), path = require("path"), { execFileSync, spawn } = require("child_process");
 const ROOT = path.join(__dirname, ".."), OUT = path.join(ROOT, "images", "previews");
-// No preview for: social sites (login walls), font servers, and amns.in (a video hero that screenshots black).
-const SKIP = /(^|\.)(linkedin\.com|x\.com|twitter\.com|instagram\.com|forbes\.com|youtube\.com|substack\.com|googleapis\.com|gstatic\.com|amns\.in)$/;
+// No preview for: social sites (login walls), font servers and forbes.com (blocks automated browsers).
+// amns.in opens on a video and a pop-up, so its preview was taken by hand (scrolled past both) and is kept.
+const SKIP = /(^|\.)(linkedin\.com|x\.com|twitter\.com|instagram\.com|forbes\.com|amns\.in|youtube\.com|substack\.com|googleapis\.com|gstatic\.com)$/;
 // Pages that are already clean; clicking their "close" buttons would change the layout.
 const NO_CLEANUP = /(^|\.)github\.com$/;
 const PAGES = ["index.html", "work/index.html", "projects/index.html", "blog/index.html", "photography/index.html", "rabbit-hole/index.html"];

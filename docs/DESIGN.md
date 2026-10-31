@@ -213,7 +213,7 @@ A soft box (ink 4% into the page color, 9% hairline border, 0.6rem corners). Hol
 
 ### Role Row
 **Role:** one job, school or award.
-A 2.5rem logo tile (each organization's logo shows once per page: later Cornell rows keep an empty space instead of repeating the seal; 0.55rem corners; it grows 6% on hover when it links out), the name in Garamond 500, the title in small grey, and dates right-aligned in tabular figures. Rows with details expand on click (`<details>`), showing notes indented to line up under the name.
+A 2.5rem logo tile (the Cornell seal repeats on each Education and Honors row; 0.55rem corners; it grows 6% on hover when it links out), the name in Garamond 500, the title in small grey, and dates right-aligned in tabular figures. Rows with details expand on click (`<details>`), showing notes indented to line up under the name.
 
 ### Project Card
 **Role:** one project.
