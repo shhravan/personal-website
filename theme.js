@@ -597,14 +597,16 @@
         frame = current ? requestAnimationFrame(step) : 0;
         if (!current) last = 0;
       }
-      function show(a, e) {
+      // el: what the pointer is on (the link itself, or a work entry's name, which borrows its logo's link).
+      function show(a, e, el) {
         var n = nameFor(a);
         if (!n) return;
-        current = a;
+        el = el || a;
+        current = el;
         img.src = BASE + "images/previews/" + n + ".webp";
         place(e); pos.x = target.x; pos.y = target.y; tilt = 0;   // appear at the cursor, then follow
         clearTimeout(showTimer);
-        showTimer = setTimeout(function () { if (current === a) card.classList.add("show"); }, 120);
+        showTimer = setTimeout(function () { if (current === el) card.classList.add("show"); }, 120);
         if (!frame) frame = requestAnimationFrame(step);
       }
       function hide() {
@@ -614,14 +616,21 @@
       }
       document.addEventListener("pointerover", function (e) {
         if (e.pointerType !== "mouse") return;
-        var a = e.target.closest && e.target.closest("a[href]");
-        if (!a || a === current || a.classList.contains("logo")) return;   // the name mark just goes home
-        if (have) { show(a, e); return; }
+        var a = e.target.closest && e.target.closest("a[href]"), el = a;
+        // Work page: the organisation's name and role show the same preview as its logo.
+        if (!a && e.target.closest) {
+          el = e.target.closest(".role-text");
+          var row = el && el.parentNode;
+          a = row && row.querySelector(".logo-link");
+          if (!a) return;
+        }
+        if (!a || el === current || a.classList.contains("logo")) return;   // the name mark just goes home
+        if (have) { show(a, e, el); return; }
         if (have === null) {
           have = false;   // loading
           fetch(BASE + "images/previews/index.json").then(function (r) { return r.ok ? r.json() : []; })
             .catch(function () { return []; })
-            .then(function (list) { have = list; if (a.matches(":hover")) show(a, e); });
+            .then(function (list) { have = list; if (el.matches(":hover")) show(a, e, el); });
         }
       });
       document.addEventListener("pointerout", function (e) {
