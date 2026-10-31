@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Breathing room on inner pages
+- **Before:** `b236a5a`
+- **Changed:** inner pages (work, projects, blog, photography, rabbit holes) have more space under the top bar before "← home", and enough space at the bottom that the last line always ends above the water instead of running into it.
+- **Files:** `styles.css`, cache numbers on every page.
+- **To revert:** restore those from `b236a5a`.
+
 ## Work page ledger (W5); phone record sheet tidies itself away
 - **Before:** `b5cd625`
 - **Changed:**
