@@ -723,3 +723,61 @@ main.col h2 { font-size: 1.375rem; }
 .role-title, .card-text { font-size: 0.8em; }
 .role-note { font-size: 0.82em; }
 .dates, .posts .date { font-size: 0.72em; }
+
+/* ---- the record sheet (phones and tablets, built by theme.js) ----
+   The desktop deck's parts (the vinyl, label, sheen and now-playing card) in a sheet that slides up
+   from the bottom, with a row of covers to swipe. */
+.sheet-scrim {
+  position: fixed; inset: 0; z-index: 13; background: rgba(20, 18, 14, .28);
+  opacity: 0; pointer-events: none; transition: opacity .35s ease;
+}
+.sheet-open .sheet-scrim { opacity: 1; pointer-events: auto; }
+.sheet {
+  position: fixed; z-index: 14; left: 0; right: 0; bottom: 0;
+  padding: 0.6rem 0 calc(1.1rem + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: 1.1rem 1.1rem 0 0;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, .18);
+  transform: translateY(105%); visibility: hidden;
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), visibility 0s .45s;
+}
+.sheet.open { transform: none; visibility: visible; transition: transform .45s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+.sheet.dragging { transition: none; }
+.sheet-grab { width: 2.5rem; height: 4px; margin: 0 auto 0.9rem; border-radius: 2px; background: color-mix(in srgb, var(--ink) 22%, transparent); }
+.sheet-top { display: flex; align-items: center; gap: 1.1rem; padding: 0 1.4rem; }
+.sheet-record {
+  position: relative; flex: none; width: 6.5rem; height: 6.5rem; padding: 0; border: 0; border-radius: 50%;
+  background: none; cursor: pointer; box-shadow: 0 8px 18px rgba(0, 0, 0, .3), 0 2px 5px rgba(0, 0, 0, .25);
+}
+.sheet-record:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.sheet.playing .deck-disc { animation-play-state: running; }
+.sheet.playing .deck-sheen { animation: shimmer 1.8s ease-in-out infinite; }
+:root[data-theme="dark"] .sheet-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 8px 18px rgba(0, 0, 0, .3); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sheet-record { box-shadow: 0 0 0 1.5px rgba(163, 158, 146, .55), 0 8px 18px rgba(0, 0, 0, .3); } }
+.sheet-now { min-width: 0; }
+.sheet-now .k { font-family: "Silkscreen", monospace; font-size: 8px; letter-spacing: .26em; color: var(--soft); }
+.sheet-now .t { font-size: 1.45rem; line-height: 1.1; margin-top: 5px; color: var(--ink); }
+.sheet-now .a { font-size: 1rem; font-style: italic; color: var(--soft); margin-top: 2px; }
+.sheet-row {
+  display: flex; gap: 0.75rem; overflow-x: auto; padding: 1.3rem 1.4rem 0.9rem;
+  scroll-snap-type: x mandatory; scroll-padding: 0 1.4rem; scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.sheet-row::-webkit-scrollbar { display: none; }
+.sheet-cover {
+  flex: none; width: 5.25rem; height: 5.25rem; padding: 0; border: 0; border-radius: 0.3rem; background: none;
+  scroll-snap-align: start; cursor: pointer; transition: transform .25s ease;
+}
+.sheet-cover img {
+  display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0.3rem;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent), 0 4px 10px rgba(0, 0, 0, .18);
+  transition: filter .3s ease;
+}
+.sheet.has-now .sheet-cover:not(.sel) img { filter: brightness(.7) saturate(.8); }   /* like the desktop dial */
+.sheet-cover.sel { transform: translateY(-4px); }
+.sheet-cover.sel img { box-shadow: 0 0 0 2px var(--ink), 0 8px 16px rgba(0, 0, 0, .25); }
+.sheet-cover:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.sheet-hint { text-align: center; font-family: "Silkscreen", monospace; font-size: 8px; letter-spacing: .26em; color: var(--soft); text-transform: uppercase; }
+@media (min-width: 40rem) { .sheet { left: 50%; right: auto; width: 34rem; margin-left: -17rem; } }
+@media (prefers-reduced-motion: reduce) { .sheet, .sheet-scrim { transition: none; } .sheet.playing .deck-sheen { animation: none; } }

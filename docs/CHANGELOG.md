@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Record sheet on phones
+- **Before:** `6a162ec`
+- **Changed:** on phones and tablets, tapping the small record now opens a sheet from the bottom (it used to play a random song). The sheet has the same vinyl and cream label as the desktop deck, a now-playing card, and a row of all 15 covers to swipe. Tap a cover to play it; tap the record to pause or play. Close by swiping down, tapping above the sheet, tapping the small record or pressing Escape. Desktop is unchanged.
+- **Files:** `theme.js`, `styles.css`, cache numbers on every page, docs.
+- **To revert:** restore `theme.js`, `styles.css` and the pages from `6a162ec`.
+
 ## How to revert
 - **Undo one change (recommended):** open its PR on GitHub and click **Revert** at the bottom.
   GitHub makes a new PR that undoes exactly that change; merge it and the site updates in about a
