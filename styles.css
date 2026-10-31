@@ -789,3 +789,7 @@ main.col h2 { font-size: 1.375rem; }
 .sheet-toggle { top: 1.05rem; right: 4.35rem; width: 28px; height: 28px; z-index: 10; }
 .sheet-toggle::before { content: ""; position: absolute; inset: -9px; }
 .deck-played.sheet-open .sheet-toggle { opacity: 0; pointer-events: none; }
+/* While the phone record sheet is open the page is pinned (theme.js saves and restores the scroll). */
+.sheet-lock body { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; }
+.sheet-lock { overflow: hidden; }
+.sheet-row { touch-action: pan-x; overscroll-behavior: contain; }
