@@ -195,7 +195,7 @@
       return bag.pop();
     }
     // The little play/pause key appears only once sound has actually started.
-    audio.addEventListener("playing", function () { if (deck) root.classList.add("deck-played"); });
+    audio.addEventListener("playing", function () { if (deck || sheet) root.classList.add("deck-played"); });
     // When a song ends, shuffle on to the next one.
     audio.addEventListener("ended", function () { playTrack(nextShuffled()); });
     function playTrack(i) {
@@ -299,6 +299,22 @@
         if (b) playTrack(+b.getAttribute("data-i"));
       });
       scrim.addEventListener("click", function () { setOpen(false); });
+      // With the sheet closed, a small play/pause key beside the record (as on desktop), shown once
+      // a song has actually started, so pausing doesn't need the sheet.
+      var key = document.createElement("button");
+      key.className = "deck-toggle sheet-toggle";
+      key.type = "button";
+      key.setAttribute("aria-label", "play");
+      key.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">' +
+        '<path class="i-play" d="M7.2 5.6 L14.6 10 L7.2 14.4 Z"/><g class="i-pause"><rect x="6.4" y="5.6" width="2.6" height="8.8" rx=".6"/><rect x="11" y="5.6" width="2.6" height="8.8" rx=".6"/></g></svg>';
+      key.addEventListener("click", function () { rec.click(); });
+      document.body.appendChild(key);
+      var setKey = sheetPlaying;
+      sheetPlaying = function (on) {
+        setKey(on);
+        key.setAttribute("aria-pressed", on ? "true" : "false");
+        key.setAttribute("aria-label", on ? "pause" : "play");
+      };
       document.addEventListener("keydown", function (e) { if (e.key === "Escape" && sheet.classList.contains("open")) { setOpen(false); player.focus(); } });
 
       // Drag the sheet down to close it (from anywhere but the cover row, which scrolls sideways).
@@ -309,9 +325,10 @@
       }, { passive: true });
       sheet.addEventListener("touchmove", function (e) {
         if (y0 === null) return;
+        e.preventDefault();   // stop the browser's pull-to-refresh from reloading the page
         dy = Math.max(0, e.touches[0].clientY - y0);
         sheet.style.transform = "translateY(" + dy + "px)";
-      }, { passive: true });
+      }, { passive: false });
       sheet.addEventListener("touchend", function () {
         if (y0 === null) return;
         y0 = null; sheet.classList.remove("dragging");
