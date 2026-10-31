@@ -340,3 +340,6 @@ body {
   color: var(--ink);
 }
 ```
+
+### Record on phones
+Phones and tablets get a bottom sheet instead of the desktop deck: the same vinyl (cream label, sheen) and now-playing type, plus a swipeable row of covers. The playing cover lifts with an ink rim and the others dim, like the desktop dial.

@@ -155,14 +155,8 @@
     document.body.insertBefore(player, document.body.firstChild);
 
     var deckSong = -1;   // which song from TRACKS is loaded (-1: none yet)
-    // Phones and tablets: tap the record to play a random song, tap again to pause.
-    player.addEventListener("click", function () {
-      var playing = player.getAttribute("aria-pressed") === "true";
-      player.setAttribute("aria-pressed", playing ? "false" : "true");   // CSS swings the needle
-      if (playing) { audio.pause(); return; }
-      if (deckSong < 0) playTrack(nextShuffled());
-      else audio.play().catch(function () {});
-    });
+    // Phones and tablets: tap the small record to open the record sheet (built below).
+    player.addEventListener("click", function () { if (sheet) toggleSheet(); });
 
     // ---- the record deck (desktop only) ----
     // On computers with a mouse, the small record is swapped for a big, realistic one in the top
@@ -208,10 +202,12 @@
       bag = bag.filter(function (x) { return x !== i; });
       if (deck) { markNow(i); announce(i); }
       deckSong = i;
+      if (sheet) sheetShow(i);
       var t = TRACKS[i];
       audio.src = fileOf(t) + (t.start ? "#t=" + t.start : "");   // #t= starts the file partway in
-      audio.play().catch(function () { if (deck) setPlaying(false); });
+      audio.play().catch(function () { if (deck) setPlaying(false); if (sheet) sheetPlaying(false); });
       if (deck) setPlaying(true);
+      if (sheet) sheetPlaying(true);
     }
     // The needle swings onto the outer groove, then creeps inward as the song plays, like a real
     // tonearm. Paused, it lifts back to its rest.
@@ -231,6 +227,96 @@
         moveNeedle(-3, 1.1, "cubic-bezier(.3,.7,.2,1)");
         driftTimer = setTimeout(function () { moveNeedle(10, 240, "linear"); }, 1150);
       } else moveNeedle(-24, 1, "cubic-bezier(.3,.7,.2,1)");
+    }
+
+    // ---- the record sheet (phones and tablets) ----
+    // The desktop deck doesn't fit a phone, so the same record and covers live in a sheet that
+    // slides up from the bottom: the big vinyl with its cream label, the now-playing card in the
+    // deck's type, and a row of covers to swipe. Tap a cover to play it; tap the record to pause or
+    // play. Swipe the sheet down, tap the page above it, or tap the small record to close.
+    var sheet = null, sheetShow = function () {}, sheetPlaying = function () {}, toggleSheet = function () {};
+    if (!deckMode) buildSheet();
+    function buildSheet() {
+      var covers = TRACKS.map(function (t, i) {
+        return '<button class="sheet-cover" type="button" data-i="' + i + '" aria-label="play ' + t.title + ' by ' + t.artist + '">' +
+          '<img src="' + BASE + 'images/covers/' + t.cover + '.webp" alt="" width="84" height="84" loading="lazy" decoding="async"></button>';
+      }).join("");
+      var scrim = document.createElement("div");
+      scrim.className = "sheet-scrim";
+      sheet = document.createElement("div");
+      sheet.className = "sheet";
+      sheet.setAttribute("role", "dialog");
+      sheet.setAttribute("aria-label", "record player");
+      sheet.setAttribute("aria-hidden", "true");
+      sheet.innerHTML =
+        '<div class="sheet-grab" aria-hidden="true"></div>' +
+        '<div class="sheet-top">' +
+          '<button class="sheet-record" type="button" aria-label="play"><span class="deck-disc"><span class="deck-label"><i></i></span></span><span class="deck-sheen"></span></button>' +
+          '<div class="sheet-now" aria-live="polite"><div class="k">SIDE A · 15 SONGS</div><div class="t">all over the place</div><div class="a">pick a record below</div></div>' +
+        '</div>' +
+        '<div class="sheet-row">' + covers + '</div>' +
+        '<div class="sheet-hint">swipe · tap a cover to play</div>';
+      document.body.appendChild(scrim);
+      document.body.appendChild(sheet);
+      var rec = sheet.querySelector(".sheet-record"), now = sheet.querySelector(".sheet-now"), row = sheet.querySelector(".sheet-row");
+
+      function setOpen(on) {
+        sheet.classList.toggle("open", on);
+        root.classList.toggle("sheet-open", on);
+        sheet.setAttribute("aria-hidden", on ? "false" : "true");
+        player.setAttribute("aria-expanded", on ? "true" : "false");
+        sheet.style.transform = "";
+        if (on) {
+          var sel = row.querySelector(".sel");
+          if (sel) row.scrollLeft = sel.offsetLeft - (row.clientWidth - sel.offsetWidth) / 2;
+          rec.focus({ preventScroll: true });
+        }
+      }
+      toggleSheet = function () { setOpen(!sheet.classList.contains("open")); };
+      player.setAttribute("aria-label", "record player: choose a song");
+      player.setAttribute("aria-expanded", "false");
+
+      sheetShow = function (i) {
+        row.querySelectorAll(".sheet-cover").forEach(function (b) { b.classList.toggle("sel", +b.getAttribute("data-i") === i); });
+        sheet.classList.add("has-now");
+        now.querySelector(".t").textContent = TRACKS[i].title;
+        now.querySelector(".a").textContent = "by " + TRACKS[i].artist;
+      };
+      sheetPlaying = function (on) {
+        sheet.classList.toggle("playing", on);
+        player.setAttribute("aria-pressed", on ? "true" : "false");   // the small record spins too
+        rec.setAttribute("aria-label", on ? "pause" : "play");
+        if (deckSong >= 0) now.querySelector(".k").textContent = (on ? "NOW PLAYING" : "PAUSED") + " · " + String(deckSong + 1).padStart(2, "0") + " / " + TRACKS.length;
+      };
+      rec.addEventListener("click", function () {
+        if (deckSong < 0) { playTrack(nextShuffled()); return; }   // nothing chosen yet: shuffle
+        var on = !sheet.classList.contains("playing");
+        sheetPlaying(on);
+        if (on) audio.play().catch(function () { sheetPlaying(false); }); else audio.pause();
+      });
+      row.addEventListener("click", function (e) {
+        var b = e.target.closest(".sheet-cover");
+        if (b) playTrack(+b.getAttribute("data-i"));
+      });
+      scrim.addEventListener("click", function () { setOpen(false); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && sheet.classList.contains("open")) { setOpen(false); player.focus(); } });
+
+      // Drag the sheet down to close it (from anywhere but the cover row, which scrolls sideways).
+      var y0 = null, dy = 0;
+      sheet.addEventListener("touchstart", function (e) {
+        if (e.target.closest(".sheet-row")) return;
+        y0 = e.touches[0].clientY; dy = 0; sheet.classList.add("dragging");
+      }, { passive: true });
+      sheet.addEventListener("touchmove", function (e) {
+        if (y0 === null) return;
+        dy = Math.max(0, e.touches[0].clientY - y0);
+        sheet.style.transform = "translateY(" + dy + "px)";
+      }, { passive: true });
+      sheet.addEventListener("touchend", function () {
+        if (y0 === null) return;
+        y0 = null; sheet.classList.remove("dragging");
+        if (dy > 70) setOpen(false); else sheet.style.transform = "";
+      });
     }
 
     if (deckMode) buildDeck();
