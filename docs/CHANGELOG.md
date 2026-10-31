@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Water no longer faded under the page column
+- **Before:** `7976a4b`
+- **Changed:** the softer area behind the text now ends at the last line of writing instead of the column's bottom padding, so the water at the bottom is the same strength all the way across (it used to look washed out in a band under the column).
+- **Files:** `field.js`, cache numbers on every page.
+- **To revert:** restore those from `7976a4b`.
+
 ## Breathing room on inner pages
 - **Before:** `b236a5a`
 - **Changed:** inner pages (work, projects, blog, photography, rabbit holes) have more space under the top bar before "← home", and enough space at the bottom that the last line always ends above the water instead of running into it.
