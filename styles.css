@@ -781,3 +781,11 @@ main.col h2 { font-size: 1.375rem; }
 .sheet-hint { text-align: center; font-family: "Silkscreen", monospace; font-size: 8px; letter-spacing: .26em; color: var(--soft); text-transform: uppercase; }
 @media (min-width: 40rem) { .sheet { left: 50%; right: auto; width: 34rem; margin-left: -17rem; } }
 @media (prefers-reduced-motion: reduce) { .sheet, .sheet-scrim { transition: none; } .sheet.playing .deck-sheen { animation: none; } }
+/* Dragging the sheet must not scroll or pull-to-refresh the page underneath. */
+.sheet { overscroll-behavior: contain; touch-action: none; }
+.sheet-row { touch-action: pan-x; }
+.sheet-open, .sheet-open body { overscroll-behavior-y: none; }
+/* The phone play/pause key: just left of the small record, with a finger-sized tap area. */
+.sheet-toggle { top: 1.05rem; right: 4.35rem; width: 28px; height: 28px; z-index: 10; }
+.sheet-toggle::before { content: ""; position: absolute; inset: -9px; }
+.deck-played.sheet-open .sheet-toggle { opacity: 0; pointer-events: none; }

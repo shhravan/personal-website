@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Phone record: play key, and swiping down no longer reloads
+- **Before:** `8cb0752`
+- **Changed:** dragging the record sheet down closes it instead of triggering the browser's pull-to-refresh. Once a song is playing, a small play/pause key sits just left of the small record (like the desktop one), so pausing doesn't need the sheet.
+- **Files:** `theme.js`, `styles.css`, cache numbers on every page.
+- **To revert:** restore those files from `8cb0752`.
+
 ## Record sheet on phones
 - **Before:** `6a162ec`
 - **Changed:** on phones and tablets, tapping the small record now opens a sheet from the bottom (it used to play a random song). The sheet has the same vinyl and cream label as the desktop deck, a now-playing card, and a row of all 15 covers to swipe. Tap a cover to play it; tap the record to pause or play. Close by swiping down, tapping above the sheet, tapping the small record or pressing Escape. Desktop is unchanged.
