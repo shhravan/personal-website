@@ -18,7 +18,7 @@ Values below come from `styles.css`. Where the CSS uses `color-mix()`, the recip
 |---|---|---|---|
 | Cream | `#f3ecdc` | `--bg` | Page background; the record label and dark-mode turntable echo it |
 | Ink | `#1a1a1a` | `--ink` | Body text, headings, links, name mark, icon strokes |
-| Soft | `#6b6b6b` | `--soft` | Secondary text: intro, dates, captions, role titles, labels |
+| Soft | `#57544e` | `--soft` | Secondary text: dates, captions, role titles, labels, "soon" sections |
 | Link | `#2563eb` | `--link` | Keyboard focus outlines only |
 | Link hover | `#1e40af` | `--link-hover` | Hover color on icons, the switch label and role names |
 | Photo well | `#e9e5da` | `--photo-bg` | Behind the hero photo while it loads |
@@ -32,7 +32,7 @@ Values below come from `styles.css`. Where the CSS uses `color-mix()`, the recip
 |---|---|---|---|
 | Night | `#161512` | `--bg` | Page background, a warm near-black rather than pure black |
 | Bone | `#ece8de` | `--ink` | Body text and headings |
-| Soft | `#a39e92` | `--soft` | Secondary text; also the thin rim around the record |
+| Soft | `#c2bdb1` | `--soft` | Secondary text |
 | Link | `#7aa2ff` | `--link` | Focus outlines |
 | Link hover | `#a9c1ff` | `--link-hover` | Hover color |
 | Photo well | `#25231f` | `--photo-bg` | Behind the hero photo |
@@ -67,7 +67,7 @@ The one text face: headings, body, links, dates, the deck readout. A classic boo
 - **Fallbacks:** Noto Serif Devanagari (fills in only the Devanagari letters), Georgia, serif
 - **Weights:** 400 (body), 500 (page titles, role names, card titles), 700 (section headings, emphasis)
 - **Styles:** italic for subtitles, artists and the sign-off
-- **Base size:** 1.15rem (about 18.4px) on desktop, 1.02rem on phones
+- **Base size:** about 17px on screen everywhere (inside the column: 1.33rem on wide screens, where the column is zoomed to 80%; 1.06rem on phones)
 - **Line height:** 1.5 (1.6 on phones, 1.7 in blog posts)
 - **Numerals:** `tabular-nums` for dates so they line up
 
@@ -81,21 +81,19 @@ A pixel font used only for tiny hardware-style labels: the switch's ON/OFF, the 
 Ten fonts the sign-off cycles through every 1.5 s, each loaded only for the letters of that one word: Instrument Serif (italic), Gloock, Bodoni Moda (italic), Italiana, Young Serif, Fraunces (italic, light, opsz 144), Unbounded (300), Jacquard 12, Doto (700), Pixelify Sans. Each must look clearly different from the last and must draw lowercase.
 
 ### Type Scale
+Three clearly different steps, so a page scans at a glance: **page titles about 40px, section headings about 22px, body about 17px** (sizes as seen on screen). Small text is set in em, so it follows the body size.
 
-| Role | Family | Weight | Size | Line height | Letter spacing |
+| Role | Family | Weight | On-screen size | Line height | Letter spacing |
 |---|---|---|---|---|---|
-| Post title | EB Garamond | 500 | 1.9rem | 1.15 | — |
-| Banner title | EB Garamond | 500 | 1.7rem | 1.5 | — |
-| Page title | EB Garamond | 500 | 1.6rem | 1.5 | — |
-| Get-in-touch title | EB Garamond | 500 | 1.4rem | 1.5 | — |
-| Section heading | EB Garamond | 700 | 1.25rem | 1.5 | — |
-| Body | EB Garamond | 400 | 1.15rem | 1.5 | — |
+| Page / banner / post title | EB Garamond | 500 | ~40px (34px on phones) | 1.1 | — |
+| Section heading | EB Garamond | 700 | ~22px | 1.5 | — |
+| Body | EB Garamond | 400 | ~17px | 1.5 | — |
 | Post body | EB Garamond | 400 | 1.12rem | 1.7 | — |
-| Post subtitle | EB Garamond italic | 400 | 1.15rem | 1.5 | — |
 | Sign-off | EB Garamond / display set | 400 | 1.08rem | 1.5 | — |
-| Role title / card text | EB Garamond | 400 | 0.9–0.92rem | 1.3 | — |
-| Dates, meta | EB Garamond | 400 | 0.82–0.85rem | 1.5 | — |
-| Label ("explore") | EB Garamond | 400 | 0.78rem uppercase | 1.2rem | 0.14em |
+| Role title / card text | EB Garamond | 400 | 0.8em | 1.3 | — |
+| Role notes | EB Garamond | 400 | 0.82em | 1.5 | — |
+| Dates, meta | EB Garamond | 400 | 0.72em | 1.5 | — |
+| Label ("explore") | EB Garamond | 400 | 0.68em uppercase | 1.2rem | 0.14em |
 | Deck readout title | EB Garamond | 400 | 30px | 1.1 | — |
 | Deck readout artist | EB Garamond italic | 400 | 18px | 1.5 | — |
 | Hardware label | Silkscreen | 400 | 8–10px uppercase | 1 | 0.08–0.28em |
@@ -195,7 +193,7 @@ A 1.9:1 frame (4:3 on phones) with 0.4rem corners. It swaps instantly every 1.5s
 
 ### Section Links and Profile Icons
 **Role:** home navigation.
-A small uppercase "explore" label above a plain list: work, projects, blog, photography, random rabbit holes. Profile icons (GitHub, LinkedIn, X, YouTube Music; 1.3rem, in `--soft`) are stacked on the right, spread to the height of the list, with their right edge on the photo's edge.
+A small uppercase "explore" label above a plain list: work, projects, blog, photography, random rabbit holes. List links are not underlined (underlines are only for links inside sentences); pointing at one draws a short line in front of it. Sections with nothing in them yet are shown in grey with a small "SOON" and are not links. Profile icons (GitHub, LinkedIn, X, YouTube Music; 1.3rem, in `--soft`) sit in one row under the list.
 
 ### Sign-off
 **Role:** a closing line on every page.
@@ -215,7 +213,7 @@ A soft box (ink 4% into the page color, 9% hairline border, 0.6rem corners). Hol
 
 ### Role Row
 **Role:** one job, school or award.
-A 2.5rem logo tile (0.55rem corners; it grows 6% on hover when it links out), the name in Garamond 500, the title in small grey, and dates right-aligned in tabular figures. Rows with details expand on click (`<details>`), showing notes indented to line up under the name.
+A 2.5rem logo tile (each organization's logo shows once per page: later Cornell rows keep an empty space instead of repeating the seal; 0.55rem corners; it grows 6% on hover when it links out), the name in Garamond 500, the title in small grey, and dates right-aligned in tabular figures. Rows with details expand on click (`<details>`), showing notes indented to line up under the name.
 
 ### Project Card
 **Role:** one project.
@@ -288,7 +286,7 @@ At the bottom of each page, a shoreline seen from above: cream foam at the edge,
 | Hero swap | every 1.5s, instant | — |
 | Sign-off font | every 1.5s | — |
 | Switch lever | 0.18s | ease |
-| Link underline fade | 0.2s | ease |
+| Link underline fade, list-link hover line | 0.2s | ease |
 | Top bar strip | 0.25s | ease |
 | Record spin | 1.8s per turn | linear |
 | Tonearm swing (small record) | 0.6s | ease |
@@ -304,7 +302,7 @@ All of it stops under `prefers-reduced-motion`.
 ---
 
 ## Page Notes
-- **Home:** hero photo, intro ("student at cornell, intellectually curious about things as they come." / "i take cool photos, have a genre-bending music taste, play few instruments. this is the one place to get to know me."), links and icons, sign-off.
+- **Home:** hero photo, section links, profile icons, sign-off. No intro text (removed ahead of a home page redesign).
 - **Work:** water banner, then panels for About, Work Experience, Education and Honors, then a "Get in touch" banner ("Just reach out on X or email me at …", with the address assembled by script).
 - **Projects:** water banner ("Projects", "Things I'm building."), then cards. One "Coming Soon" card for now.
 - **Blog:** synced from Substack; list and post pages as described above.
@@ -321,7 +319,7 @@ All of it stops under `prefers-reduced-motion`.
   /* light (cream) */
   --bg: #f3ecdc;
   --ink: #1a1a1a;
-  --soft: #6b6b6b;
+  --soft: #57544e;
   --link: #2563eb;
   --link-hover: #1e40af;
   --photo-bg: #e9e5da;
@@ -329,7 +327,7 @@ All of it stops under `prefers-reduced-motion`.
 :root[data-theme="dark"] {
   --bg: #161512;
   --ink: #ece8de;
-  --soft: #a39e92;
+  --soft: #c2bdb1;
   --link: #7aa2ff;
   --link-hover: #a9c1ff;
   --photo-bg: #25231f;

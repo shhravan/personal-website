@@ -8,6 +8,7 @@ Shravan Lad, who is learning web development through this project and wants to *
 
 - Explain jargon the first time it appears, in plain English.
 - Balance learning and shipping. Don't dump big blocks of code without explaining them.
+- **For any UI or design work, give professional design advice** the way an industry veteran would: ambitious, with strong opinions that are widely agreed upon in the field, and that communicate taste. Then recommend one option.
 - **Don't make big decisions without asking.** Taste matters a lot here. Offer a recommendation, then let Shravan choose.
 - Use they/them if you ever need a pronoun for Shravan and they haven't said otherwise.
 

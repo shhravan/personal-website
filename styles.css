@@ -4,7 +4,7 @@
 :root {
   --bg: #f3ecdc;          /* creamy background */
   --ink: #1a1a1a;         /* near-black text */
-  --soft: #6b6b6b;        /* gray for secondary text */
+  --soft: #57544e;        /* gray for secondary text (dark enough to read easily on cream) */
   --link: #2563eb;        /* blue links */
   --link-hover: #1e40af;  /* darker blue when you point at one */
   --photo-bg: #e9e5da;    /* shown behind a photo while it loads */
@@ -21,7 +21,7 @@
   :root:not([data-theme="light"]) {
     --bg: #161512;
     --ink: #ece8de;
-    --soft: #a39e92;
+    --soft: #c2bdb1;
     --link: #7aa2ff;
     --link-hover: #a9c1ff;
     --photo-bg: #25231f;
@@ -33,7 +33,7 @@
 :root[data-theme="dark"] {
   --bg: #161512;
   --ink: #ece8de;
-  --soft: #a39e92;
+  --soft: #c2bdb1;
   --link: #7aa2ff;
   --link-hover: #a9c1ff;
   --photo-bg: #25231f;
@@ -102,26 +102,21 @@ a:hover { text-decoration-color: color-mix(in srgb, var(--ink) 35%, transparent)
 nav ul { list-style: none; margin: 0; padding: 0; }   /* no bullet points */
 nav li { margin: 0.05rem 0; }
 
-/* ---- link list + profile icons, side by side ----
-   The link list sits on the left. The profile icons are stacked in a vertical column on the
-   right, with their right edge exactly on the right edge of the photo. */
-.links {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  margin-top: 1.2rem;
+/* ---- section links, then the profile icons in one row underneath ---- */
+.links { margin-top: 1.2rem; }
+/* Links in a list aren't underlined (underlines are for links inside sentences). Pointing at
+   one draws a short line in front of it. */
+nav a { text-decoration: none; }
+nav:not(.social) a::before {
+  content: ""; display: inline-block; vertical-align: middle;
+  width: 0; height: 1px; margin-right: 0; background: currentColor;
+  transition: width 0.2s ease, margin-right 0.2s ease;
 }
-.links nav:first-child { flex: 1; }
-.social ul {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;   /* spreads the icons from the top link to the bottom link */
-  align-items: flex-end;
-  height: calc(100% - 1.5rem);      /* 1.5rem = the height of the "explore" label above the links */
-  margin: 1.5rem -0.4rem 0 0;       /* -0.4rem cancels the tap padding so the icon, not the padding, meets the edge */
-}
-.social { display: flex; }
-.social ul { flex: 1; }
+nav:not(.social) a:hover::before, nav:not(.social) a:focus-visible::before { width: 0.8em; margin-right: 0.4em; }
+/* sections with nothing in them yet: listed, not linked */
+.soon { color: var(--soft); }
+.soon span { font-size: 0.62em; letter-spacing: 0.14em; text-transform: uppercase; margin-left: 0.35em; opacity: 0.75; }
+.social ul { display: flex; gap: 0.5rem; margin: 1rem 0 0 -0.4rem; }   /* -0.4rem: the first icon, not its tap padding, lines up with the text */
 .social-link {
   display: block;
   padding: 0.4rem;
@@ -204,7 +199,8 @@ nav li { margin: 0.05rem 0; }
 /* ---- section pages (about, work, ...) ----
    Same column, top bar, letter field and sign-off as home, just without the photo. */
 .page h1 { font-size: 1.6rem; font-weight: 500; margin: 0 0 1rem; }
-.page .back { display: inline-block; margin-bottom: 1.5rem; }
+.page .back { display: inline-block; margin-bottom: 1.5rem; text-decoration: none; }
+.page .back:hover { color: var(--soft); }
 .page .lede { color: var(--soft); }
 a.logo { display: block; }   /* the name mark is a link home */
 
@@ -709,3 +705,21 @@ body::before {
 .link-preview.show { opacity: 1; transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--tilt, 0deg)) scale(1); }
 .link-preview img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
 @media (prefers-reduced-motion: reduce) { .link-preview { transition: opacity .15s; } }
+
+/* ---- type scale ----
+   Three clearly different sizes, as they look on screen: page titles about 40px, section
+   headings about 22px, body text about 17px. On wider screens the column is shown at 80%
+   (zoom: 0.8 above), so the numbers there are the on-screen size divided by 0.8.
+   Smaller text (role titles, dates, notes) is in em, so it follows the body size. */
+main.col { font-size: 1.06rem; }
+main.col h1 { font-size: 2.1rem; line-height: 1.1; }
+main.col h2 { font-size: 1.375rem; }
+@media (min-width: 48rem) {
+  main.col { font-size: 1.33rem; }
+  main.col h1 { font-size: 3.125rem; }
+  main.col h2 { font-size: 1.72rem; }
+}
+.label { font-size: 0.68em; }
+.role-title, .card-text { font-size: 0.8em; }
+.role-note { font-size: 0.82em; }
+.dates, .posts .date { font-size: 0.72em; }

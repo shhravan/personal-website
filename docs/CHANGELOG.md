@@ -15,6 +15,16 @@ be returned to how it looked.
 
 ---
 
+## Type scale, cleaner links, quieter background
+- **Before:** `632be69`
+- **Changed:**
+  - Clear sizes on every page: titles ~40px, section headings ~22px, body ~17px (was ~15px). Grey text is brighter, and the letter field is quieter behind the text.
+  - List links (home sections, "← home") have no underline; pointing at one draws a short line in front of it. Links inside sentences keep their underline.
+  - Home: the intro text is gone; projects, blog, photography and random rabbit holes show "soon" and aren't links yet; profile icons sit in one row under the list.
+  - Work: the Cornell seal shows once (Honors rows keep an empty space instead); the Essar note is one line.
+- **Files:** `styles.css`, `field.js`, `index.html`, `work/index.html`, cache numbers on every page, docs (`CLAUDE.md` now asks for design advice on UI work).
+- **To bring the intro back:** see `index.html` at `632be69`.
+
 ## Light rays and share video removed
 - **Before:** `29a02f2`
 - **Changed:** the light rays around the name mark are gone (the name stays still; the shoreline and record deck carry the motion). Shared links no longer offer the video loop; they still show the `home.jpg` picture.

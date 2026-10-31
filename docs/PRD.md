@@ -11,7 +11,7 @@ A short home page that links out; each section is its own page.
 
 | Page | Contents |
 |---|---|
-| **home** | top bar (theme switch, name mark, record player), rotating hero photo, short intro, section links, profile icons, Instagram line |
+| **home** | top bar (theme switch, name mark, record player), rotating hero photo, section links (empty sections marked "soon", not linked), profile icons, Instagram line |
 | **work** | about, work experience, education, honors, and a "get in touch" banner |
 | **projects** | things Shravan is building, as cards |
 | **blog** | posts synced from Substack: a list of titles and dates, one page per post |

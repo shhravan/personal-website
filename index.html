@@ -18,7 +18,7 @@
   <meta property="og:image" content="https://shravanlad.com/images/og/home.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="shravan lad's home page: a photo, a short intro and a record player with album covers">
+  <meta property="og:image:alt" content="shravan lad's home page: a photo, a list of sections and a record player with album covers">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://shravanlad.com/images/og/home.jpg">
 
@@ -29,7 +29,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400&text=%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4%E0%A4%85%E0%A4%86%E0%A4%87%E0%A4%89%E0%A4%8F%E0%A4%93%E0%A4%95%E0%A4%96%E0%A4%97%E0%A4%98%E0%A4%9A%E0%A4%9B%E0%A4%9C%E0%A4%9D%E0%A4%9F%E0%A4%A0%E0%A4%A1%E0%A4%A2%E0%A4%A4%E0%A4%A5%E0%A4%A6%E0%A4%A7%E0%A4%A8%E0%A4%AA%E0%A4%AB%E0%A4%AC%E0%A4%AD%E0%A4%AE%E0%A4%AF%E0%A4%B0%E0%A4%B2%E0%A4%B5%E0%A4%B6%E0%A4%B8%E0%A4%B9&display=swap" rel="stylesheet">
   <!-- A handful of display fonts, only for the letters of "opticsbyshrvn" (its font keeps changing, see script.js). -->
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Gloock&family=Bodoni+Moda:ital@1&family=Italiana&family=Young+Serif&family=Fraunces:ital,opsz,wght@1,144,300&family=Unbounded:wght@300&family=Jacquard+12&family=Doto:wght@700&family=Pixelify+Sans&text=opticsbyshrvn&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=54">
+  <link rel="stylesheet" href="styles.css?v=55">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%232d5a46%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2722%27 text-anchor=%27middle%27 fill=%27%23f8f6f0%27 font-family=%27Georgia,serif%27%3Es%3C/text%3E%3C/svg%3E">
   <!-- Runs right away (before the page paints) so the right light/dark theme is used with no flash. -->
   <script src="theme.js?v=39"></script>
@@ -48,23 +48,18 @@
     </div>
 
 
-    <!-- Intro, in Shravan's own words. -->
-    <section class="intro">
-      <p>student at cornell, intellectually curious about things as they come.</p>
-      <p>i take cool photos, have a genre-bending music taste, play few instruments. this is the one place to get to know me.</p>
-    </section>
-
-    <!-- Links on the left; profile icons stacked on the right, lined up with the photo's right edge.
+    <!-- The sections, then the profile icons in one row underneath. Sections with nothing in
+         them yet are listed but not linked ("soon"); link them once they have content.
          Icons are from the open-source Simple Icons set (CC0). -->
     <div class="links">
       <nav aria-label="main">
         <p class="label">explore</p>
         <ul>
           <li><a href="work/">work</a></li>
-          <li><a href="projects/">projects</a></li>
-          <li><a href="blog/">blog</a></li>
-          <li><a href="photography/">photography</a></li>
-          <li><a href="rabbit-hole/">random rabbit holes</a></li>
+          <li class="soon">projects <span>soon</span></li>
+          <li class="soon">blog <span>soon</span></li>
+          <li class="soon">photography <span>soon</span></li>
+          <li class="soon">random rabbit holes <span>soon</span></li>
         </ul>
       </nav>
       <nav class="social" aria-label="profiles">
@@ -82,7 +77,7 @@
 
   </main>
   <!-- The faint field of letters behind the page (hover dissolves it, clicks send a ripple). -->
-  <script src="field.js?v=19"></script>
+  <script src="field.js?v=20"></script>
   <script src="script.js?v=20"></script>
 </body>
 </html>
