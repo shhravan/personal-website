@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Work: Cornell seal back on Honors, more link previews
+- **Before:** `ecc37a3`
+- **Changed:** the Cornell seal shows on each Honors row again (it was shown once, under Education). New hover preview for AM/NS India (`amns.in`, taken by hand past its video and pop-up); the other previews were retaken fresh. Still no preview for the Aditya Mittal page, Forbes and Cornell Information Science (they block automated browsers) or social sites.
+- **Files:** `work/index.html`, `images/previews/`, `scripts/capture_previews.cjs`, cache numbers on every page.
+- **To revert:** restore those from `ecc37a3`.
+
 ## Work: hovering a name shows its preview too
 - **Before:** `8d89616`
 - **Changed:** on the work page, pointing at an organisation's name or role shows the same website preview card as pointing at its logo (only for entries whose logo links to a site). Clicking the name still opens and closes the entry.
