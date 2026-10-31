@@ -793,3 +793,6 @@ main.col h2 { font-size: 1.375rem; }
 .sheet-lock body { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; }
 .sheet-lock { overflow: hidden; }
 .sheet-row { touch-action: pan-x; overscroll-behavior: contain; }
+/* iPhone: no pull-to-refresh or rubber-band on the page itself while the sheet is open. */
+.sheet-lock, .sheet-lock body { overscroll-behavior: none; touch-action: none; }
+.sheet-lock .sheet-row { touch-action: pan-x; }

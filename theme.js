@@ -341,9 +341,11 @@
       document.addEventListener("touchmove", function (e) {
         if (!sheet.classList.contains("open")) return;
         if (!sheet.contains(e.target)) { e.preventDefault(); return; }   // the dimmed page above
-        if (y0 === null) return;
+        if (y0 === null) { e.preventDefault(); return; }
         var mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
-        if (!axis && (Math.abs(mx) > 6 || Math.abs(my) > 6)) {
+        // Decide on the very first move: iPhone ignores preventDefault once its own scroll (and
+        // pull-to-refresh) has started, so there's no waiting for a few pixels first.
+        if (!axis) {
           axis = Math.abs(mx) > Math.abs(my) && e.target.closest(".sheet-row") ? "x" : "y";
           if (axis === "y") sheet.classList.add("dragging");
         }
