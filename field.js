@@ -365,7 +365,10 @@
     var main = document.querySelector("main");
     if (!main) return;
     var r = main.getBoundingClientRect();
-    var L = r.left, T = r.top, R = r.right, B = r.bottom;
+    // The faded area ends where the writing ends, not at the column's bottom padding (which
+    // leaves room for the water), so the water below stays at full strength.
+    var last = main.lastElementChild;
+    var L = r.left, T = r.top, R = r.right, B = last ? Math.min(r.bottom, last.getBoundingClientRect().bottom) : r.bottom;
     // The home column uses CSS zoom (0.8). Chrome reports its position as drawn on screen, but
     // Safari reports it at full size, which put the faded box in the wrong place. The column is
     // centered, so if scaling by the zoom brings its middle onto the window's middle, scale it.
