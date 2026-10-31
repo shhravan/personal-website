@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Faded area covers only the writing
+- **Before:** `be1eb7e`
+- **Changed:** the softer letters behind the page now start at the first line ("← home") as well as ending at the last, so the area around the name mark at the top and the water at the bottom are both at full strength.
+- **Files:** `field.js`, cache numbers on every page.
+- **To revert:** restore those from `be1eb7e`.
+
 ## Water no longer faded under the page column
 - **Before:** `7976a4b`
 - **Changed:** the softer area behind the text now ends at the last line of writing instead of the column's bottom padding, so the water at the bottom is the same strength all the way across (it used to look washed out in a band under the column).
