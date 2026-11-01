@@ -191,7 +191,7 @@ function startFilm(canvas) {
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(Hh * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     phone = W < 700;
-    sf = phone ? Math.min(0.46, W / 850) : Math.min(0.95, W / 1550);   // strip scale on screen
+    sf = phone ? Math.min(0.46, W / 850) : Math.min(0.95, W / 1550, Hh / 1250);   // strip scale; short windows get a smaller strip so it clears the links
   }
   resize();
   window.addEventListener("resize", resize);
