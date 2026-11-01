@@ -860,3 +860,10 @@ nav.topnav a:hover { color: var(--soft); }
   .film-bottom .social ul { gap: 0.9rem; }
   .film-bottom .foot { margin-top: 0; line-height: 1.25; }
 }
+
+/* ---- section links stay put at the top while scrolling ----
+   Fixed like the switch, name mark and record, and the frosted strip behind the top bar grows to
+   sit behind them too, so text scrolling underneath never shows through. */
+nav.topnav { position: fixed; z-index: 10; }
+body::before { height: 8.2rem !important; -webkit-mask: linear-gradient(to bottom, #000 82%, transparent) !important; mask: linear-gradient(to bottom, #000 82%, transparent) !important; }
+@media (max-width: 47.99rem) { body::before { height: 7.6rem !important; } }
