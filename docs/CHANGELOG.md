@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Home page: the film strip
+- **Before:** `793a3fd` (also kept whole on the branch `backup/site-before-film-strip`)
+- **Changed:** the home page is now a cover. The sections run along the top in pixel type; a roll of film with the photos waves across the middle and glides to the next frame every 1.5 seconds (faster while music plays), with the middle frame in colour; the profile icons and opticsbyshrvn sit centred at the bottom above the water. Drag, swipe, tap, click or use the arrow keys to move it. The intro list and the single rotating photo are gone, and the letters behind the home page are no longer faded.
+- **Files:** `index.html`, `script.js`, `styles.css`, `field.js`, cache numbers on every page, PRD, DESIGN, TECH_RULES.
+- **To switch back to the old site:** restore everything from `backup/site-before-film-strip` (or `793a3fd`), e.g. `git checkout backup/site-before-film-strip -- .` on a new branch, then open a PR.
+
 ## Pixel font for every label
 - **Before:** `1dfc041`
 - **Changed:** the Silkscreen pixel font was only loaded for the letters O, N and F (the light switch), so other small-caps labels mixed fonts (only the N was pixelated). The whole font now loads, so About, Experience, Education, Honors, the record readout and the phone sheet labels are all in the pixel font. Section labels are a touch bigger.

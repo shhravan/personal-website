@@ -364,6 +364,7 @@
   function updateQuiet() {
     var main = document.querySelector("main");
     if (!main) return;
+    // The home page film strip is a picture, not reading, so the letters stay at full strength there.
     var r = main.getBoundingClientRect();
     // The faded area covers only the writing: from its first line to its last, not the column's
     // padding, so the name mark above and the water below stay at full strength.
@@ -377,7 +378,9 @@
     var z = parseFloat(getComputedStyle(main).zoom) || 1;
     var mid = window.innerWidth / 2, c = (L + R) / 2;
     if (z !== 1 && Math.abs(c * z - mid) < Math.abs(c - mid)) { L *= z; T *= z; R *= z; B *= z; }
-    gl.uniform4f(U.uQuiet, (L - 12) / CELL_W, (T - 12) / CELL_H, (R + 12) / CELL_W, (B + 12) / CELL_H);
+    // The home page film strip is a picture, not reading, so the letters stay at full strength there.
+    if (main.classList.contains("film-home")) gl.uniform4f(U.uQuiet, -99, -99, -98, -98);
+    else gl.uniform4f(U.uQuiet, (L - 12) / CELL_W, (T - 12) / CELL_H, (R + 12) / CELL_W, (B + 12) / CELL_H);
     // The water sits at the bottom of the page, not the window: on a long page it stays out of
     // sight below and rolls into view as you scroll to the end.
     var bottom = Math.max(window.innerHeight, document.documentElement.scrollHeight - window.scrollY);

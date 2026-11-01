@@ -29,7 +29,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400&text=%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4%E0%A4%85%E0%A4%86%E0%A4%87%E0%A4%89%E0%A4%8F%E0%A4%93%E0%A4%95%E0%A4%96%E0%A4%97%E0%A4%98%E0%A4%9A%E0%A4%9B%E0%A4%9C%E0%A4%9D%E0%A4%9F%E0%A4%A0%E0%A4%A1%E0%A4%A2%E0%A4%A4%E0%A4%A5%E0%A4%A6%E0%A4%A7%E0%A4%A8%E0%A4%AA%E0%A4%AB%E0%A4%AC%E0%A4%AD%E0%A4%AE%E0%A4%AF%E0%A4%B0%E0%A4%B2%E0%A4%B5%E0%A4%B6%E0%A4%B8%E0%A4%B9&display=swap" rel="stylesheet">
   <!-- A handful of display fonts, only for the letters of "opticsbyshrvn" (its font keeps changing, see script.js). -->
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Gloock&family=Bodoni+Moda:ital@1&family=Italiana&family=Young+Serif&family=Fraunces:ital,opsz,wght@1,144,300&family=Unbounded:wght@300&family=Jacquard+12&family=Doto:wght@700&family=Pixelify+Sans&text=opticsbyshrvn&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=62">
+  <link rel="stylesheet" href="styles.css?v=64">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%232d5a46%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2722%27 text-anchor=%27middle%27 fill=%27%23f8f6f0%27 font-family=%27Georgia,serif%27%3Es%3C/text%3E%3C/svg%3E">
   <!-- Runs right away (before the page paints) so the right light/dark theme is used with no flash. -->
   <script src="theme.js?v=47"></script>
@@ -38,30 +38,30 @@
   <!-- Name mark at the top center, level with the light switch. Drawn as a mask filled with the
        text color, so it turns light in dark mode automatically. It links home from every page. -->
   <a class="logo" href="./" aria-label="श्रवण लाड · Shravan Lad, home"></a>
-  <main class="col home">
+  <main class="col home film-home">
 
+    <!-- The sections, along the top. Sections with nothing in them yet are listed but not linked
+         ("soon"); link them once they have content. -->
+    <nav class="topnav" aria-label="main">
+      <a href="work/">work</a>
+      <span class="soon">projects</span>
+      <span class="soon">blog</span>
+      <span class="soon">photography</span>
+      <span class="soon">rabbit holes</span>
+    </nav>
 
-    <!-- Hero image. script.js swaps the picture every 1.5 seconds (instantly, no fade, shuffled so none repeats until all have shown), and also when you click anything on the page.
-         The <img> below is what shows if JavaScript is off. -->
-    <div class="hero" role="button" tabindex="0" aria-label="show another photo">
-      <img id="hero-img" src="images/hero/classroom.webp" alt="a photo from shravan's collection">
+    <!-- The film strip: a roll of photos drawn by script.js that waves across the page and moves
+         to the next frame every 1.5 seconds. The middle frame is in colour, the rest black and white.
+         Drag or swipe it, tap a frame, or press Enter or the arrow keys while it's focused.
+         The <img> shows if JavaScript is off. -->
+    <div class="film">
+      <canvas id="film" tabindex="0" role="img" aria-label="a roll of photos from shravan's collection"></canvas>
+      <noscript><img class="film-still" src="images/hero/classroom.webp" alt="a photo from shravan's collection"></noscript>
     </div>
 
-
-    <!-- The sections, then the profile icons in one row underneath. Sections with nothing in
-         them yet are listed but not linked ("soon"); link them once they have content.
+    <!-- Profile icons, then the last line, centred at the bottom.
          Icons are from the open-source Simple Icons set (CC0). -->
-    <div class="links">
-      <nav aria-label="main">
-        <p class="label">explore</p>
-        <ul>
-          <li><a href="work/">work</a></li>
-          <li class="soon">projects <span>soon</span></li>
-          <li class="soon">blog <span>soon</span></li>
-          <li class="soon">photography <span>soon</span></li>
-          <li class="soon">random rabbit holes <span>soon</span></li>
-        </ul>
-      </nav>
+    <div class="film-bottom">
       <nav class="social" aria-label="profiles">
         <ul>
           <li><a class="social-link" href="https://github.com/shhravan" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a></li>
@@ -70,14 +70,12 @@
           <li><a class="social-link" href="https://music.youtube.com/@itshravanlad" aria-label="YouTube Music"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm0 19.104c-3.924 0-7.104-3.18-7.104-7.104S8.076 4.896 12 4.896s7.104 3.18 7.104 7.104-3.18 7.104-7.104 7.104zm0-13.332c-3.432 0-6.228 2.796-6.228 6.228S8.568 18.228 12 18.228s6.228-2.796 6.228-6.228S15.432 5.772 12 5.772zM9.684 15.54V8.46L15.816 12l-6.132 3.54z"/></svg></a></li>
         </ul>
       </nav>
+      <p class="foot"><span class="optics"><a href="https://www.instagram.com/opticsbyshrvn/"><em>opticsbyshrvn</em><svg class="arrow" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3.5 8.5 L8.5 3.5 M4.5 3.5 H8.5 V7.5"/></svg></a><span class="reveal" aria-hidden="true">for if you have taste</span></span></p>
     </div>
-
-    <!-- Last line, centered. -->
-    <p class="foot"><span class="optics"><a href="https://www.instagram.com/opticsbyshrvn/"><em>opticsbyshrvn</em><svg class="arrow" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3.5 8.5 L8.5 3.5 M4.5 3.5 H8.5 V7.5"/></svg></a><span class="reveal" aria-hidden="true">for if you have taste</span></span></p>
 
   </main>
   <!-- The faint field of letters behind the page (hover dissolves it, clicks send a ripple). -->
-  <script src="field.js?v=22"></script>
-  <script src="script.js?v=20"></script>
+  <script src="field.js?v=23"></script>
+  <script src="script.js?v=21"></script>
 </body>
 </html>

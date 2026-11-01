@@ -97,3 +97,9 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - A custom domain needs two halves: DNS records at the registrar saying "this name lives at GitHub" (four A records plus a `www` CNAME), and a `CNAME` file in the repo telling GitHub Pages which name is ours.
 - Multiple A records for the same name are intentional: they give redundancy across GitHub's servers.
 - Safari reports a zoomed element's position at full size, while Chrome reports it as drawn. field.js detects which one it got (the column is centered, so the right answer has its middle on the window's middle) before fading the letters behind the content.
+
+## The film strip
+- A flat picture can look bent without any 3D library: draw it as many thin vertical slices, and move and tilt each slice to follow a curve (here a slow sine wave). Shading the slices that "turn away" sells the depth.
+- Paint expensive things once and reuse them. Each film frame (photo, sprocket holes, numbers) is drawn once into its own small canvas, in colour and in black and white; every animation frame just copies slices of those.
+- Anything that moves on its own needs manners: pause while someone is pointing at it, stop when the tab is hidden, and stay still for people who turn on "reduce motion".
+- Before a big redesign, keep the old version on its own branch (`backup/site-before-film-strip`) so switching back is one restore, not an archaeology project.

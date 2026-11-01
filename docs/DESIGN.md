@@ -187,13 +187,14 @@ A small frosted card under the record (right-aligned, max 260px): a Silkscreen "
 **Role:** quick control without opening the dial.
 A 26px round button just left of the turntable, with an inset shadow like a pressed key. It appears only after a song has actually played, springing in from 60% scale, and hides while the dial is open.
 
-### Hero Photo
-**Role:** the home page's personality moment.
-A 1.9:1 frame (4:3 on phones) with 0.4rem corners. It swaps instantly every 1.5s from a shuffled set of 27 images, never repeating until all have shown. Each image is framed by hand with a focal point and zoom. Clicking empty space skips ahead.
+### Film Strip (home hero)
+**Role:** the home page's personality moment; the page is a cover, not reading.
+A roll of 35mm-style film drawn on a `<canvas>` (`script.js`, no libraries): each frame is a photo in black film with cream sprocket holes, small gold frame numbers and a faint "LAD 400" edge marking. It runs edge to edge across the middle of the screen in a gentle wave that slowly drifts, and darkens slightly where it turns away (a faked 3D twist). Every 1.5s it glides (0.55s, ease out) to the next frame and holds; while a song is playing it moves a little faster (1.1s). The middle frame is in colour, the rest black and white, fading as they move. The 27 photos are shuffled once per visit and loop; each is framed with its `FOCUS` point and zoom. Drag or swipe to move it (it settles on the nearest frame), tap a frame to bring it to the middle, tap the middle one or click anywhere else for the next; Enter, Space and the arrow keys work while it's focused. It pauses while the mouse is on it, stops when the tab is hidden, and holds still for reduced motion (it still moves when you ask it to). The letter field is not faded on the home page.
+Adapted from the idea of a moving film-strip hero (Holmchrome, a Framer template); the drawing, markings, behaviour and look are our own.
 
-### Section Links and Profile Icons
+### Top Navigation and Profile Icons (home)
 **Role:** home navigation.
-A small uppercase "explore" label above a plain list: work, projects, blog, photography, random rabbit holes. List links are not underlined (underlines are only for links inside sentences); pointing at one draws a short line in front of it. Sections with nothing in them yet are shown in grey with a small "SOON" and are not links. Profile icons (GitHub, LinkedIn, X, YouTube Music; 1.3rem, in `--soft`) sit in one row under the list.
+The sections in one centred row under the top bar, in Silkscreen (13px, 10px-ish on phones, all on one line): work, projects, blog, photography, rabbit holes. Sections with nothing in them yet are grey and not links; links underline on hover. Profile icons (GitHub, LinkedIn, X, YouTube Music; 1.3rem, in `--soft`) sit centred in one row near the bottom, just above the water, with the sign-off right under them.
 
 ### Sign-off
 **Role:** a closing line on every page.
