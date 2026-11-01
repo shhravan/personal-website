@@ -66,8 +66,8 @@ const FOCUS = {
 
 // How fast the film strip rolls: seconds for one frame to pass the middle. While a song is
 // playing it rolls a little faster.
-const FRAME_SECONDS = 1.6;
-const FRAME_SECONDS_MUSIC = 1.2;
+const FRAME_SECONDS = 3;
+const FRAME_SECONDS_MUSIC = 2.4;
 
 // Where the site's files live, from this script's own address. Photo addresses are built from it
 // rather than being relative to the page, because during a page swap the address bar moves to the
@@ -101,8 +101,7 @@ const OPTICS_FONTS = [
 // ---- the film strip ----
 // A roll of film drawn on a <canvas>: each frame is a photo with black film around it, sprocket
 // holes along both edges and small gold frame numbers, like a real negative strip. The roll waves
-// gently across the page and keeps rolling steadily, one frame every FRAME_SECONDS. The frame in
-// the middle is in colour; the rest are black and white, fading as they move in and out.
+// gently across the page and keeps rolling steadily, one frame every FRAME_SECONDS.
 // It's drawn as many thin vertical slices, each placed and tilted along the wave, which is what
 // makes the flat strip look bent. No libraries.
 // Drag it, or swipe it to fling it (it spins fast, then slows back to its normal roll); tap a frame
@@ -122,12 +121,11 @@ function startFilm(canvas) {
   }
   const N = order.length, LEN = N * FW;
 
-  // Each frame is painted once into its own small canvas (colour and black-and-white versions),
-  // as soon as its photo has downloaded. Photos load a few at a time, nearest first.
+  // Each frame is painted once into its own small canvas as soon as its photo has downloaded. Photos load a few at a time, nearest first.
   const frames = order.map(() => null);
   const loading = new Set();
   function paintFrame(k, img) {
-    const make = (gray) => {
+    const make = () => {
       const c = document.createElement("canvas");
       c.width = FW; c.height = H;
       const f = c.getContext("2d");
@@ -142,7 +140,6 @@ function startFilm(canvas) {
         const x = 6 + ((FW - 12) - w) * fx / 100, y = EDGE + (PH - h) * fy / 100;
         f.save();
         f.beginPath(); f.rect(6, EDGE, FW - 12, PH); f.clip();
-        if (gray) f.filter = "grayscale(1) contrast(1.04)";
         f.drawImage(img, x, y, w, h);
         f.restore();
       }
@@ -161,7 +158,7 @@ function startFilm(canvas) {
       f.fillText("LAD 400", FW - 110, 12);
       return c;
     };
-    frames[k] = { col: make(false), gry: make(true), ready: !!img };
+    frames[k] = { col: make(), ready: !!img };
   }
   function need(k) {
     k = ((k % N) + N) % N;
@@ -210,7 +207,7 @@ function startFilm(canvas) {
       pos = seek.from + (seek.to - seek.from) * (1 - Math.pow(1 - u, 3));   // ease out
       if (u >= 1) seek = null;
     } else if (!dragging) {
-      vel = cruise() + (vel - cruise()) * Math.exp(-dt * 1.8);         // a fling slows back to the cruise
+      vel = cruise() + (vel - cruise()) * Math.exp(-dt * 2.6);         // a fling slows back to the cruise
       pos += vel * dt;
     }
     if (Math.floor(pos + 0.5) !== shown) { shown = Math.floor(pos + 0.5); nextFont(); }   // the sign-off's font changes with each frame
@@ -229,11 +226,9 @@ function startFilm(canvas) {
       const lx = sx - f * FW;
       const y = cy + A * Math.sin(x * k + ph), ang = Math.atan(A * k * Math.cos(x * k + ph));
       const tw = Math.cos(x * k * 0.8 - ph * 1.3), sc = sf * (0.9 + 0.1 * tw);   // narrows as it turns away
-      const lit = Math.max(0, 1 - Math.abs(f + 0.5 - (pos + 0.5)) * 1.6);      // colour near the middle
       ctx.save();
       ctx.translate(x, y); ctx.rotate(ang); ctx.scale(1, sc);
-      ctx.drawImage(fr.gry, lx, 0, step / sf + 1, H, 0, -H / 2, step + 1, H);
-      if (lit > 0) { ctx.globalAlpha = lit; ctx.drawImage(fr.col, lx, 0, step / sf + 1, H, 0, -H / 2, step + 1, H); ctx.globalAlpha = 1; }
+      ctx.drawImage(fr.col, lx, 0, step / sf + 1, H, 0, -H / 2, step + 1, H);
       const shade = 0.22 * (0.5 - 0.5 * tw);                          // light falls off where it turns
       if (shade > 0.01) { ctx.fillStyle = "rgba(0,0,0," + shade.toFixed(3) + ")"; ctx.fillRect(0, -H / 2, step + 1, H); }
       ctx.restore();
@@ -264,10 +259,10 @@ function startFilm(canvas) {
   canvas.addEventListener("pointerup", (e) => {
     if (!dragging) return;
     dragging = false;
-    if (moved > 6) {                                   // a swipe: keep its speed, up to 8 frames a second
+    if (moved > 6) {                                   // a swipe: keep some of its speed, up to 4 frames a second
       const a = samples[0], b = samples[samples.length - 1], secs = (b[0] - a[0]) / 1000;
-      const v = secs > 0 && performance.now() - b[0] < 120 ? (b[1] - a[1]) / secs : 0;
-      vel = Math.max(-8, Math.min(8, v));
+      const v = secs > 0 && performance.now() - b[0] < 120 ? (b[1] - a[1]) / secs * 0.6 : 0;
+      vel = Math.max(-4, Math.min(4, v));
     } else {
       const tapped = Math.floor(pos + 0.5 + (e.clientX - canvas.getBoundingClientRect().left - W / 2) / (FW * sf));
       if (tapped === Math.floor(pos + 0.5)) next(); else seekTo(tapped);

@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Film strip rolls slower, all in colour
+- **Before:** `461b621`
+- **Changed:** every frame is in colour (no black-and-white frames), and the steady roll is about half as fast (one frame every 3 seconds, 2.4 with music), and swipes fling it less far and settle sooner.
+- **Files:** `script.js`, cache numbers on every page, DESIGN.
+- **To revert:** restore those from `461b621`.
+
 ## Film strip rolls; sections and icons on every page
 - **Before:** `2247415`
 - **Changed:** the film strip now rolls steadily instead of jumping frame to frame, and a swipe flings it (fast, then easing back to its normal roll). The section links along the top and the profile icons above opticsbyshrvn now appear on every page, not just home. The links are just words (no line in front, no underline). No link previews on the home page. Inner pages start a little lower to make room for the links.
