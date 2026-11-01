@@ -456,11 +456,20 @@
       // (for example down to the start/stop key) doesn't pop the dial open.
       var openTimer = 0;
       function hoverIn() {
+        if (awayGuard) return;
         stayOpen();
         if (!rearm) return;
         if (deck.classList.contains("open")) { showNow(); return; }
         openTimer = setTimeout(function () { deck.classList.add("open"); showNow(); }, 220);
       }
+      // Leaving the site (another tab or app) closes the dial. The browser never tells us the pointer
+      // left in that case, and on return it can report the pointer as "entering" the record without
+      // any movement, so the dial only reopens after the pointer has actually moved.
+      var awayGuard = false;
+      function goneAway() { clearTimeout(openTimer); clearTimeout(closeTimer); deck.classList.remove("open", "hovering"); rearm = true; awayGuard = true; }
+      window.addEventListener("blur", goneAway);
+      document.addEventListener("visibilitychange", function () { if (document.hidden) goneAway(); });
+      window.addEventListener("pointermove", function () { awayGuard = false; }, { passive: true });
       // The whole turntable (record and base) opens the dial.
       var base = deck.querySelector(".deck-plinth");
       [rec, base].forEach(function (el) {
