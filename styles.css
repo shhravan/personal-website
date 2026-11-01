@@ -821,6 +821,9 @@ main.page .back { margin-bottom: 2rem; }
 }
 
 /* ---- section links (top) and profile icons (bottom) on every page, added by theme.js ---- */
+/* Inner pages start at the top (not centred in the window), so the gap under the links is the
+   same on every page, short or long. */
+body:has(main.page) { align-items: flex-start; }
 main .social ul { justify-content: center; margin: 2.2rem 0 0; }
 main .social + .foot { margin-top: 0.7rem; }
 @media (min-width: 48rem) { body:has(main.page) main.page { padding-top: 10rem; } }
@@ -852,7 +855,7 @@ nav.topnav a:hover { color: var(--soft); }
 .film-bottom .social ul { justify-content: center; margin: 0; }
 .film-bottom .foot { margin: 1.1rem 0 0; }
 @media (max-width: 47.99rem) {
-  .topnav { top: 4.6rem; gap: 0.85rem; font-size: 9px; letter-spacing: 0.1em; white-space: nowrap; }
+  .topnav { top: 4.7rem; gap: 0.95rem; font-size: 10.5px; letter-spacing: 0.05em; white-space: nowrap; }
   .film-bottom { bottom: calc(17vh + 0.4rem); }
   .film-bottom .social ul { gap: 0.9rem; }
   .film-bottom .foot { margin-top: 0; line-height: 1.25; }

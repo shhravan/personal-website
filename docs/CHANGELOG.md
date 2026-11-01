@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Trackpad swipes, even nav spacing, smoother on phones
+- **Before:** `f973ad9`
+- **Changed:** a two-finger trackpad swipe (or mouse wheel) on the home page moves the film strip with the swipe's own speed and glide, then it eases back to its normal roll. Inner pages now start at the top, so the gap under the section links is the same on every page. The links are a little bigger on phones. The film strip draws less per frame on phones, so it moves more smoothly.
+- **Files:** `script.js`, `styles.css`, cache numbers on every page.
+- **To revert:** restore those from `f973ad9`.
+
 ## Film strip rolls slower, all in colour
 - **Before:** `461b621`
 - **Changed:** every frame is in colour (no black-and-white frames), and the steady roll is about half as fast (one frame every 3 seconds, 2.4 with music), and swipes fling it less far and settle sooner.
