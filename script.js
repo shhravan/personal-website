@@ -219,7 +219,7 @@ function startFilm(canvas) {
     for (let f = Math.floor(start / FW) - 1; f <= Math.floor((start + 2 * view) / FW) + 2; f++) need(f);
 
     ctx.clearRect(0, 0, W, Hh);
-    const step = 2;
+    const step = phone ? 3 : 2;                                       // wider slices on phones: less work per frame
     for (let x = -30; x < W + 30; x += step) {
       const sx = start + x / sf, f = Math.floor(sx / FW), fr = frames[((f % N) + N) % N];
       if (!fr) continue;
@@ -230,7 +230,7 @@ function startFilm(canvas) {
       ctx.translate(x, y); ctx.rotate(ang); ctx.scale(1, sc);
       ctx.drawImage(fr.col, lx, 0, step / sf + 1, H, 0, -H / 2, step + 1, H);
       const shade = 0.22 * (0.5 - 0.5 * tw);                          // light falls off where it turns
-      if (shade > 0.01) { ctx.fillStyle = "rgba(0,0,0," + shade.toFixed(3) + ")"; ctx.fillRect(0, -H / 2, step + 1, H); }
+      if (!phone && shade > 0.01) { ctx.fillStyle = "rgba(0,0,0," + shade.toFixed(3) + ")"; ctx.fillRect(0, -H / 2, step + 1, H); }
       ctx.restore();
     }
     if (!document.hidden && (!reduceMotion || dragging || seek || Math.abs(vel) > 0.01)) raf = requestAnimationFrame(draw);
@@ -270,6 +270,24 @@ function startFilm(canvas) {
     wake();
   });
   canvas.addEventListener("pointercancel", () => { dragging = false; vel = cruise(); });
+
+  // Trackpad (two-finger swipe) and mouse wheel: the roll follows the swipe, including the
+  // trackpad's own glide afterwards, then eases back to its normal roll. The home page doesn't
+  // scroll, so up/down swipes move it too.
+  let lastWheel = 0;
+  function onWheel(e) {
+    const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    const px = e.deltaMode === 1 ? d * 16 : d;                         // lines to pixels
+    const step = px / (FW * sf);
+    const now = performance.now(), secs = Math.max(0.008, (now - lastWheel) / 1000);
+    lastWheel = now;
+    e.preventDefault();
+    seek = null;
+    pos += step;
+    vel = Math.max(-4, Math.min(4, secs < 0.1 ? step / secs : cruise()));
+    wake();
+  }
+  canvas.addEventListener("wheel", onWheel, { passive: false });
   canvas.style.touchAction = "pan-y";   // vertical swipes still scroll the page
 
   // Clicking anywhere else on the home page moves to the next frame (links and buttons excepted).
