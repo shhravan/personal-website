@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Projects page (P7) with a live GitHub graph
+- **Before:** `56008b1`
+- **Changed:** the projects page uses the work page's ledger layout. An "Activity" section shows the last year of GitHub contributions as squares in the site's ink colour (five strengths, works in light and dark), with the total and a link to github.com/shhravan. Below it, each project is a row that opens to show problem / built / result / links. A nightly GitHub job (`.github/workflows/github-contributions.yml`, 03:23 UTC) refreshes `data/github.json`. Project wording is placeholder where marked.
+- **Files:** `projects/index.html`, `script.js`, `styles.css`, `scripts/github_contributions.py`, `.github/workflows/github-contributions.yml`, `data/github.json`, cache numbers on every page, DESIGN, TECH_RULES.
+- **To revert:** restore the page, script and styles from `56008b1`; delete the workflow, script and `data/`.
+
 ## Record dial no longer pops open when you come back
 - **Before:** `3cee5fa`
 - **Changed:** leaving the site (switching tab or app) closes the desktop record dial, and on return it only opens once you actually move the pointer onto the record.
