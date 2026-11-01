@@ -1,4 +1,4 @@
-// Hero image rotation.
+// The home page film strip.
 // Each photo exists in images/hero/ in two sizes: NAME.webp (1200px wide, laptops and sharp screens)
 // and NAME-700.webp (700px wide, phones). To add a photo, add both files and its name below.
 const PHOTOS = [
@@ -31,7 +31,7 @@ const PHOTOS = [
   "cornell-1930",
 ];
 
-// How each photo is framed in the wide frame: [x, y, zoom].
+// How each photo is framed in its film frame: [x, y, zoom].
 //  x and y: the point of the photo to keep in view, as a percentage (50, 50 is the middle).
 //  zoom: 1 shows the whole width; 1.3 zooms in 30% around that point.
 const FOCUS = {
@@ -64,29 +64,20 @@ const FOCUS = {
   "cornell-1930": [55, 35, 1],
 };
 
-// How long each photo stays (seconds). Set both the same for a steady pace.
-const MIN_SECONDS = 1.5;
-const MAX_SECONDS = 1.5;
+// How long each frame holds in the middle before the roll moves on (seconds), and how long the
+// move takes. While a song is playing the roll moves a little faster.
+const HOLD_SECONDS = 1.5;
+const HOLD_SECONDS_MUSIC = 1.1;
+const GLIDE_SECONDS = 0.55;
 
 // Where the site's files live, from this script's own address. Photo addresses are built from it
 // rather than being relative to the page, because during a page swap the address bar moves to the
 // new page a moment before the home page's photo timer stops.
 const SITE = new URL(".", (document.currentScript && document.currentScript.src) || location.href).href;
 
-// Pick the smaller file when the frame is small enough (phones), the larger one otherwise.
+// Phones get the smaller files.
 function photoUrl(name) {
-  const frame = document.querySelector(".hero");
-  const pixels = (frame ? frame.clientWidth : 500) * (window.devicePixelRatio || 1);
-  return SITE + "images/hero/" + name + (pixels <= 700 ? "-700" : "") + ".webp";
-}
-
-// Show a photo in the frame, using its framing from the FOCUS list.
-function applyPhoto(img, name) {
-  const [x, y, zoom] = FOCUS[name] || [50, 50, 1];
-  img.style.objectPosition = x + "% " + y + "%";   // which part of the photo stays in view
-  img.style.transformOrigin = x + "% " + y + "%";  // zoom in toward that same point
-  img.style.transform = zoom > 1 ? "scale(" + zoom + ")" : "";
-  img.src = photoUrl(name);
+  return SITE + "images/hero/" + name + (window.innerWidth < 700 ? "-700" : "") + ".webp";
 }
 
 // The site swaps pages in place (theme.js) so the music keeps playing, which means this file
@@ -107,6 +98,191 @@ const OPTICS_FONTS = [
   ["'Jacquard 12', serif", "normal", 400],
   ["'Doto', monospace", "normal", 700], ["'Pixelify Sans', sans-serif", "normal", 400],
 ];
+
+// ---- the film strip ----
+// A roll of film drawn on a <canvas>: each frame is a photo with black film around it, sprocket
+// holes along both edges and small gold frame numbers, like a real negative strip. The roll waves
+// gently across the page, and every HOLD_SECONDS it glides to the next frame. The frame in the
+// middle is in colour; the rest are black and white, fading as they move in and out.
+// It's drawn as many thin vertical slices, each placed and tilted along the wave, which is what
+// makes the flat strip look bent. No libraries.
+// Drag or swipe to move it; tap a frame to bring it to the middle; tap the middle one (or click
+// anywhere else on the page) for the next. It pauses while the pointer is on it, stops when the
+// tab is hidden, and holds still for people who ask their device to reduce motion.
+function startFilm(canvas) {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const FW = 600, PH = 400, EDGE = 58, H = PH + 2 * EDGE;   // one frame, in strip pixels
+  const ctx = canvas.getContext("2d");
+
+  // The order: the photos shuffled once, then the roll loops through them.
+  const order = PHOTOS.slice();
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  const N = order.length, LEN = N * FW;
+
+  // Each frame is painted once into its own small canvas (colour and black-and-white versions),
+  // as soon as its photo has downloaded. Photos load a few at a time, nearest first.
+  const frames = order.map(() => null);
+  const loading = new Set();
+  function paintFrame(k, img) {
+    const make = (gray) => {
+      const c = document.createElement("canvas");
+      c.width = FW; c.height = H;
+      const f = c.getContext("2d");
+      const base = f.createLinearGradient(0, 0, 0, H);   // film base, a little lighter at the edges
+      base.addColorStop(0, "#3a3834"); base.addColorStop(0.08, "#24221f");
+      base.addColorStop(0.92, "#24221f"); base.addColorStop(1, "#3a3834");
+      f.fillStyle = base; f.fillRect(0, 0, FW, H);
+      if (img) {
+        const [fx, fy, zoom] = FOCUS[order[k]] || [50, 50, 1];
+        const s = Math.max((FW - 12) / img.width, PH / img.height) * zoom;
+        const w = img.width * s, h = img.height * s;
+        const x = 6 + ((FW - 12) - w) * fx / 100, y = EDGE + (PH - h) * fy / 100;
+        f.save();
+        f.beginPath(); f.rect(6, EDGE, FW - 12, PH); f.clip();
+        if (gray) f.filter = "grayscale(1) contrast(1.04)";
+        f.drawImage(img, x, y, w, h);
+        f.restore();
+      }
+      f.fillStyle = "rgba(0,0,0,.35)"; f.fillRect(0, EDGE, 6, PH);   // the gap between frames
+      f.fillStyle = "#ece6d8";                                       // sprocket holes
+      for (let hx = 16; hx < FW - 20; hx += 40) {
+        f.beginPath(); f.roundRect(hx, 16, 24, 27, 5); f.fill();
+        f.beginPath(); f.roundRect(hx, H - 43, 24, 27, 5); f.fill();
+      }
+      f.font = "13px Silkscreen, monospace";
+      f.fillStyle = "rgba(230,182,64,.9)";                           // frame numbers, like real film
+      f.fillText(String(k + 1), 20, H - 4);
+      f.fillText((k + 1) + "A", FW / 2 - 10, H - 4);
+      f.font = "12px Silkscreen, monospace";
+      f.fillStyle = "rgba(236,230,216,.45)";
+      f.fillText("LAD 400", FW - 110, 12);
+      return c;
+    };
+    frames[k] = { col: make(false), gry: make(true), ready: !!img };
+  }
+  function need(k) {
+    k = ((k % N) + N) % N;
+    if (!frames[k]) paintFrame(k, null);         // plain film until the photo arrives
+    if (frames[k].ready || loading.has(k)) return;
+    loading.add(k);
+    const img = new Image();
+    img.onload = () => { paintFrame(k, img); loading.delete(k); };
+    img.onerror = () => loading.delete(k);
+    img.src = photoUrl(order[k]);
+  }
+
+  // Where the roll is, in frames (2.0 means frame 2 is in the middle).
+  let pos = 0, from = 0, to = 0, glideStart = 0, holdUntil = 0;
+  let dragging = false, dragX = 0, dragPos = 0, moved = 0, hovering = false;
+  function playing() { return !!document.querySelector(".vinyl[aria-pressed='true'], .deck.playing"); }
+  function goTo(target, now) {
+    from = pos; to = target; glideStart = now;
+    holdUntil = now + (GLIDE_SECONDS + (playing() ? HOLD_SECONDS_MUSIC : HOLD_SECONDS)) * 1000;
+    nextFont();
+  }
+  function next() { const now = performance.now(); goTo(Math.round(to) + 1, now); }
+
+  let W = 0, Hh = 0, sf = 1, phone = false;
+  function resize() {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = canvas.clientWidth; Hh = canvas.clientHeight;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(Hh * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    phone = W < 700;
+    sf = phone ? Math.min(0.46, W / 850) : Math.min(0.95, W / 1550);   // strip scale on screen
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  let raf = 0;
+  const t0 = performance.now();
+  function draw(now) {
+    raf = 0;
+    if (!dragging) {
+      const u = Math.min(1, (now - glideStart) / (GLIDE_SECONDS * 1000));
+      pos = from + (to - from) * (1 - Math.pow(1 - u, 3));             // ease out
+      if (!reduceMotion && !hovering && now >= holdUntil) goTo(Math.round(to) + 1, now);
+    }
+    const t = reduceMotion ? 0 : (now - t0) / 1000;
+    const cy = Hh * (phone ? 0.47 : 0.5), A = Hh * (phone ? 0.03 : 0.06);
+    const k = Math.PI * 2 / (W * (phone ? 2.2 : 1.5)), ph = t * 0.35;
+    const view = (W / 2) / sf;                                          // half the screen, in strip pixels
+    const start = pos * FW + FW / 2 - view;                             // strip pixel at the left edge
+    for (let f = Math.floor(start / FW) - 1; f <= Math.floor((start + 2 * view) / FW) + 2; f++) need(f);
+
+    ctx.clearRect(0, 0, W, Hh);
+    const step = 2;
+    for (let x = -30; x < W + 30; x += step) {
+      const sx = start + x / sf, f = Math.floor(sx / FW), fr = frames[((f % N) + N) % N];
+      if (!fr) continue;
+      const lx = sx - f * FW;
+      const y = cy + A * Math.sin(x * k + ph), ang = Math.atan(A * k * Math.cos(x * k + ph));
+      const tw = Math.cos(x * k * 0.8 - ph * 1.3), sc = sf * (0.9 + 0.1 * tw);   // narrows as it turns away
+      const lit = Math.max(0, 1 - Math.abs(f + 0.5 - (pos + 0.5)) * 1.6);      // colour near the middle
+      ctx.save();
+      ctx.translate(x, y); ctx.rotate(ang); ctx.scale(1, sc);
+      ctx.drawImage(fr.gry, lx, 0, step / sf + 1, H, 0, -H / 2, step + 1, H);
+      if (lit > 0) { ctx.globalAlpha = lit; ctx.drawImage(fr.col, lx, 0, step / sf + 1, H, 0, -H / 2, step + 1, H); ctx.globalAlpha = 1; }
+      const shade = 0.22 * (0.5 - 0.5 * tw);                          // light falls off where it turns
+      if (shade > 0.01) { ctx.fillStyle = "rgba(0,0,0," + shade.toFixed(3) + ")"; ctx.fillRect(0, -H / 2, step + 1, H); }
+      ctx.restore();
+    }
+    if (!document.hidden && (!reduceMotion || dragging || now - glideStart < GLIDE_SECONDS * 1000 + 50)) raf = requestAnimationFrame(draw);
+  }
+  function wake() { if (!raf) raf = requestAnimationFrame(draw); }
+  glideStart = performance.now(); holdUntil = glideStart + HOLD_SECONDS * 1000;
+  wake();
+  const onVisible = () => { if (!document.hidden) { holdUntil = performance.now() + HOLD_SECONDS * 1000; wake(); } };
+  document.addEventListener("visibilitychange", onVisible);
+
+  // Pointer: drag or swipe to move the roll; a tap (no drag) picks a frame.
+  canvas.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hovering = true; });
+  canvas.addEventListener("pointerleave", () => { hovering = false; holdUntil = performance.now() + 600; });
+  canvas.addEventListener("pointerdown", (e) => {
+    dragging = true; moved = 0; dragX = e.clientX; dragPos = pos;
+    canvas.setPointerCapture(e.pointerId); wake();
+  });
+  canvas.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    moved = Math.max(moved, Math.abs(e.clientX - dragX));
+    pos = dragPos - (e.clientX - dragX) / (FW * sf);
+  });
+  canvas.addEventListener("pointerup", (e) => {
+    if (!dragging) return;
+    dragging = false;
+    const now = performance.now();
+    if (moved > 6) { from = to = pos; goTo(Math.round(pos), now); }    // settle on the nearest frame
+    else {
+      const tapped = Math.floor(pos + 0.5 + (e.clientX - canvas.getBoundingClientRect().left - W / 2) / (FW * sf));
+      goTo(tapped === Math.round(pos) ? Math.round(pos) + 1 : tapped, now);
+    }
+    wake();
+  });
+  canvas.addEventListener("pointercancel", () => { dragging = false; goTo(Math.round(pos), performance.now()); });
+  canvas.style.touchAction = "pan-y";   // vertical swipes still scroll the page
+
+  // Clicking anywhere else on the home page moves to the next frame (links and buttons excepted).
+  function onClick(e) {
+    if (e.target === canvas || e.target.closest("a, button")) return;
+    if (String(window.getSelection())) return;
+    next(); wake();
+  }
+  document.addEventListener("click", onClick);
+  canvas.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") { e.preventDefault(); next(); wake(); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); goTo(Math.round(to) - 1, performance.now()); wake(); }
+  });
+
+  return () => {
+    cancelAnimationFrame(raf); raf = -1;
+    window.removeEventListener("resize", resize);
+    document.removeEventListener("click", onClick);
+    document.removeEventListener("visibilitychange", onVisible);
+  };
+}
 
 function initPage() {
   if (stopHero) { stopHero(); stopHero = null; }
@@ -129,98 +305,12 @@ function initPage() {
       lastFont = fontDeck.shift();
       [optics.style.fontFamily, optics.style.fontStyle, optics.style.fontWeight] = OPTICS_FONTS[lastFont];
     };
-    // On the home page the photo swaps call nextFont(), so photo and font change together.
+    // On the home page each move of the film strip calls nextFont(), so they change together.
     // Pages without the photo run their own 2-second timer.
-    if (!document.getElementById("hero-img")) fontTimer = setInterval(nextFont, 1500);
+    if (!document.getElementById("film")) fontTimer = setInterval(nextFont, 1500);
   }
-  const img = document.getElementById("hero-img");
-
-  if (img && PHOTOS.length > 1) {
-    // Respect people who ask their device to reduce motion: no automatic rotating.
-    // (Clicking still changes the photo, because that is the visitor's own choice.)
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // ---- random, with no repeats until every photo has shown ----
-    // Shuffle the whole list like a deck of cards and deal it out. Only when the deck runs out
-    // is it reshuffled, so every photo appears once before any photo appears twice. The new
-    // deck is checked so its first photo is never the one that just showed.
-    function shuffle(list) {
-      for (let i = list.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [list[i], list[j]] = [list[j], list[i]];   // swap two items
-      }
-      return list;
-    }
-
-    let deck = shuffle(PHOTOS.slice());
-    let current = deck.shift();       // the photo showing now
-    applyPhoto(img, current);
-
-    function nextName() {
-      if (deck.length === 0) {
-        deck = shuffle(PHOTOS.slice());
-        if (deck[0] === current) deck.push(deck.shift());   // no repeat across the reshuffle
-      }
-      return deck.shift();
-    }
-
-    // Quietly download the next two photos so each swap is instant.
-    function preloadAhead() {
-      if (deck.length < 2) return;   // they are fetched as soon as the new deck exists
-      deck.slice(0, 2).forEach((name) => { new Image().src = photoUrl(name); });
-    }
-    preloadAhead();
-
-    // Show the next photo. We load it first, so the swap is instant and never blank.
-    function showNext() {
-      const next = nextName();
-      const loader = new Image();
-      loader.onload = () => {
-        applyPhoto(img, next);   // instant swap, no fade
-      nextFont();              // the font under the page changes at the same moment
-        current = next;
-        preloadAhead();
-      };
-      loader.onerror = () => {};  // if one photo fails to load, just skip it
-      loader.src = photoUrl(next);
-    }
-
-    // The automatic timer: each wait is a fresh random length between MIN and MAX.
-    let timer = null;
-    function startTimer() {
-      if (reduceMotion) return;
-      clearTimeout(timer);
-      const wait = (MIN_SECONDS + Math.random() * (MAX_SECONDS - MIN_SECONDS)) * 1000;
-      timer = setTimeout(() => { showNext(); startTimer(); }, wait);
-    }
-    startTimer();
-
-    // Jump to the next photo now, and start a new countdown.
-    function skip() {
-      showNext();
-      startTimer();
-    }
-
-    // Clicking or tapping anywhere on the home page changes the photo (field.js also sends a
-    // ripple from the same click). Links, buttons and selecting text are left alone.
-    function onClick(e) {
-      if (e.target.closest("a, button")) return;
-      if (String(window.getSelection())) return;
-      skip();
-    }
-    document.addEventListener("click", onClick);
-
-    // Keyboard: Enter or Space while the photo is focused.
-    const hero = img.parentElement;
-    hero.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();   // stop Space from scrolling the page
-        skip();
-      }
-    });
-
-    stopHero = () => { clearTimeout(timer); document.removeEventListener("click", onClick); };
-  }
+  const canvas = document.getElementById("film");
+  if (canvas && PHOTOS.length > 1) stopHero = startFilm(canvas);
 
   // Turn each email into a real clickable mailto: link.
   // The address is stored in two pieces in the HTML (data-user and data-domain) so simple

@@ -11,7 +11,7 @@ A short home page that links out; each section is its own page.
 
 | Page | Contents |
 |---|---|
-| **home** | top bar (theme switch, name mark, record player), rotating hero photo, section links (empty sections marked "soon", not linked), profile icons, Instagram line |
+| **home** | top bar (theme switch, name mark, record player), section links along the top (empty sections grey, not linked), the moving film strip of photos, profile icons and Instagram line at the bottom |
 | **work** | about, work experience, education, honors, and a "get in touch" banner |
 | **projects** | things Shravan is building, as cards |
 | **blog** | posts synced from Substack: a list of titles and dates, one page per post |
@@ -19,7 +19,7 @@ A short home page that links out; each section is its own page.
 | **random rabbit holes** | music and favorites: bands, playlists, facts |
 
 ## Core features
-1. **Rotating hero image** on the home page: shuffled, no repeats until every photo has shown, each framed by hand; clicking the page skips to the next.
+1. **Film strip hero** on the home page: a roll of film with the photos (shuffled, each framed by hand) that glides to the next frame every 1.5s; drag, tap or click to move it.
 2. **Dark mode** via a light switch in the top-left corner, remembered per visitor (dark by default).
 3. **Record player** in the top-right corner. On desktop it opens a dial of 15 album covers; music keeps playing across page changes.
 4. **Letter field** and shoreline animation behind every page.

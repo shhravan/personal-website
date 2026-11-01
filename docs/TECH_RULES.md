@@ -24,7 +24,7 @@ index.html          home page
 work/ projects/ blog/ photography/ rabbit-hole/   one folder per page, each with index.html
 styles.css          one shared stylesheet
 theme.js            theme switch, record player, in-place page swaps (in every page's <head>)
-script.js           hero rotation and email links; re-runs on each page swap
+script.js           home film strip (canvas) and email links; re-runs on each page swap
 field.js            letter field and shoreline (WebGL)
 images/             hero/, covers/, logos/, blog/
 audio/              the record player's songs (NAME.mp3, named after the cover)
