@@ -233,7 +233,7 @@ The list is titles at 1.15rem with the date underneath in grey. A post has a 1.9
 ---
 
 ## Share Previews
-When a page is shared (iMessage, Slack, Discord, LinkedIn, X), apps show `images/og/home.jpg` (1200×630: the home page with the record dial open on "Control Room", rays around the name mark, the shoreline). (A video loop is planned once a smooth recording exists.). Each page has its own title, description and address; synced blog posts use the post's title and subtitle.
+When a page is shared (iMessage, Slack, Discord, LinkedIn, X), apps show `images/og/home.jpg` (1200×630: the home page in dark mode with the film strip and shoreline), and apps that play video show `images/og/home-loop.mp4` (6.5 s loop of the strip rolling, recorded frame by frame at 30 fps). Each page has its own title, description and address; synced blog posts use the post's title and subtitle.
 
 ## Do's and Don'ts
 

@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## New share video and picture
+- **Before:** `949e792`
+- **Changed:** shared links show the new home page again: `images/og/home-loop.mp4` (1200×630, 6.5 s, steady 30 fps, silent, loops with a short fade) where apps play video, and a new `images/og/home.jpg` everywhere else. Recorded frame by frame so it's smooth; record dial closed. On short windows the film strip is now a bit smaller so it clears the section links.
+- **Files:** `images/og/`, every page's `<head>`, `script.js`, cache numbers on every page.
+- **To revert:** restore those from `949e792`.
+
 ## Projects page (P7) with a live GitHub graph
 - **Before:** `56008b1`
 - **Changed:** the projects page uses the work page's ledger layout. An "Activity" section shows the last year of GitHub contributions as squares in the site's ink colour (five strengths, works in light and dark), with the total and a link to github.com/shhravan. Below it, each project is a row that opens to show problem / built / result / links. A nightly GitHub job (`.github/workflows/github-contributions.yml`, 03:23 UTC) refreshes `data/github.json`. Project wording is placeholder where marked.
