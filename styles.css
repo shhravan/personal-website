@@ -820,6 +820,12 @@ main.page .back { margin-bottom: 2rem; }
   main.page { padding-top: 6.75rem; }
 }
 
+/* ---- section links (top) and profile icons (bottom) on every page, added by theme.js ---- */
+main .social ul { justify-content: center; margin: 2.2rem 0 0; }
+main .social + .foot { margin-top: 0.7rem; }
+@media (min-width: 48rem) { body:has(main.page) main.page { padding-top: 10rem; } }
+@media (max-width: 47.99rem) { main.page { padding-top: 7.75rem; } }
+
 /* ---- home page: the film strip ----
    The home page is a cover: sections along the top, the roll of photos across the middle (drawn
    by script.js on a <canvas>), and the profile icons and sign-off at the bottom, above the water. */
@@ -838,9 +844,9 @@ body:has(main.film-home) main.film-home {
   display: flex; justify-content: center; gap: 3rem;
   font-family: "Silkscreen", monospace; font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
 }
-.topnav a { color: var(--ink); text-decoration: none; }
-.topnav a::before { content: none; }
-.topnav a:hover, .topnav a:focus-visible { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1.5px; }
+nav.topnav a { color: var(--ink); text-decoration: none; }
+nav.topnav a::before { content: none; display: none; }   /* no line in front, no underline: just the word */
+nav.topnav a:hover { color: var(--soft); }
 .topnav .soon { color: var(--soft); }
 .film-bottom { position: absolute; z-index: 2; left: 0; right: 0; bottom: calc(11vh + 0.4rem); text-align: center; }
 .film-bottom .social ul { justify-content: center; margin: 0; }

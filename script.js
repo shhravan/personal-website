@@ -64,11 +64,10 @@ const FOCUS = {
   "cornell-1930": [55, 35, 1],
 };
 
-// How long each frame holds in the middle before the roll moves on (seconds), and how long the
-// move takes. While a song is playing the roll moves a little faster.
-const HOLD_SECONDS = 1.5;
-const HOLD_SECONDS_MUSIC = 1.1;
-const GLIDE_SECONDS = 0.55;
+// How fast the film strip rolls: seconds for one frame to pass the middle. While a song is
+// playing it rolls a little faster.
+const FRAME_SECONDS = 1.6;
+const FRAME_SECONDS_MUSIC = 1.2;
 
 // Where the site's files live, from this script's own address. Photo addresses are built from it
 // rather than being relative to the page, because during a page swap the address bar moves to the
@@ -102,13 +101,14 @@ const OPTICS_FONTS = [
 // ---- the film strip ----
 // A roll of film drawn on a <canvas>: each frame is a photo with black film around it, sprocket
 // holes along both edges and small gold frame numbers, like a real negative strip. The roll waves
-// gently across the page, and every HOLD_SECONDS it glides to the next frame. The frame in the
-// middle is in colour; the rest are black and white, fading as they move in and out.
+// gently across the page and keeps rolling steadily, one frame every FRAME_SECONDS. The frame in
+// the middle is in colour; the rest are black and white, fading as they move in and out.
 // It's drawn as many thin vertical slices, each placed and tilted along the wave, which is what
 // makes the flat strip look bent. No libraries.
-// Drag or swipe to move it; tap a frame to bring it to the middle; tap the middle one (or click
-// anywhere else on the page) for the next. It pauses while the pointer is on it, stops when the
-// tab is hidden, and holds still for people who ask their device to reduce motion.
+// Drag it, or swipe it to fling it (it spins fast, then slows back to its normal roll); tap a frame
+// to bring it to the middle; click anywhere else on the page to skip ahead. It slows right down
+// while the mouse is on it, stops when the tab is hidden, and holds still for people who ask their
+// device to reduce motion.
 function startFilm(canvas) {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const FW = 600, PH = 400, EDGE = 58, H = PH + 2 * EDGE;   // one frame, in strip pixels
@@ -174,16 +174,18 @@ function startFilm(canvas) {
     img.src = photoUrl(order[k]);
   }
 
-  // Where the roll is, in frames (2.0 means frame 2 is in the middle).
-  let pos = 0, from = 0, to = 0, glideStart = 0, holdUntil = 0;
-  let dragging = false, dragX = 0, dragPos = 0, moved = 0, hovering = false;
+  // Where the roll is, in frames (2.0 means frame 2 is in the middle), and how fast it's moving
+  // (frames per second). A "seek" is a short eased move to a chosen frame (a tap or a click).
+  let pos = 0, vel = 0, last = performance.now(), shown = 0;
+  let seek = null;                                   // { from, to, start }
+  let dragging = false, dragX = 0, dragPos = 0, moved = 0, hovering = false, samples = [];
   function playing() { return !!document.querySelector(".vinyl[aria-pressed='true'], .deck.playing"); }
-  function goTo(target, now) {
-    from = pos; to = target; glideStart = now;
-    holdUntil = now + (GLIDE_SECONDS + (playing() ? HOLD_SECONDS_MUSIC : HOLD_SECONDS)) * 1000;
-    nextFont();
+  function cruise() {                                 // the speed it settles back to
+    if (reduceMotion) return 0;
+    return (hovering ? 0.2 : 1) / (playing() ? FRAME_SECONDS_MUSIC : FRAME_SECONDS);
   }
-  function next() { const now = performance.now(); goTo(Math.round(to) + 1, now); }
+  function seekTo(target) { seek = { from: pos, to: target, start: performance.now() }; vel = cruise(); }
+  function next() { seekTo(Math.floor(pos + 0.5) + 1); }
 
   let W = 0, Hh = 0, sf = 1, phone = false;
   function resize() {
@@ -201,11 +203,17 @@ function startFilm(canvas) {
   const t0 = performance.now();
   function draw(now) {
     raf = 0;
-    if (!dragging) {
-      const u = Math.min(1, (now - glideStart) / (GLIDE_SECONDS * 1000));
-      pos = from + (to - from) * (1 - Math.pow(1 - u, 3));             // ease out
-      if (!reduceMotion && !hovering && now >= holdUntil) goTo(Math.round(to) + 1, now);
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (seek) {
+      const u = Math.min(1, (now - seek.start) / 600);
+      pos = seek.from + (seek.to - seek.from) * (1 - Math.pow(1 - u, 3));   // ease out
+      if (u >= 1) seek = null;
+    } else if (!dragging) {
+      vel = cruise() + (vel - cruise()) * Math.exp(-dt * 1.8);         // a fling slows back to the cruise
+      pos += vel * dt;
     }
+    if (Math.floor(pos + 0.5) !== shown) { shown = Math.floor(pos + 0.5); nextFont(); }   // the sign-off's font changes with each frame
     const t = reduceMotion ? 0 : (now - t0) / 1000;
     const cy = Hh * (phone ? 0.47 : 0.5), A = Hh * (phone ? 0.03 : 0.06);
     const k = Math.PI * 2 / (W * (phone ? 2.2 : 1.5)), ph = t * 0.35;
@@ -230,38 +238,43 @@ function startFilm(canvas) {
       if (shade > 0.01) { ctx.fillStyle = "rgba(0,0,0," + shade.toFixed(3) + ")"; ctx.fillRect(0, -H / 2, step + 1, H); }
       ctx.restore();
     }
-    if (!document.hidden && (!reduceMotion || dragging || now - glideStart < GLIDE_SECONDS * 1000 + 50)) raf = requestAnimationFrame(draw);
+    if (!document.hidden && (!reduceMotion || dragging || seek || Math.abs(vel) > 0.01)) raf = requestAnimationFrame(draw);
   }
-  function wake() { if (!raf) raf = requestAnimationFrame(draw); }
-  glideStart = performance.now(); holdUntil = glideStart + HOLD_SECONDS * 1000;
+  function wake() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(draw); } }
+  vel = cruise();
   wake();
-  const onVisible = () => { if (!document.hidden) { holdUntil = performance.now() + HOLD_SECONDS * 1000; wake(); } };
+  const onVisible = () => { if (!document.hidden) wake(); };
   document.addEventListener("visibilitychange", onVisible);
 
-  // Pointer: drag or swipe to move the roll; a tap (no drag) picks a frame.
+  // Pointer: drag to move the roll, let go mid-swipe to fling it; a tap (no drag) picks a frame.
   canvas.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hovering = true; });
-  canvas.addEventListener("pointerleave", () => { hovering = false; holdUntil = performance.now() + 600; });
+  canvas.addEventListener("pointerleave", () => { hovering = false; });
   canvas.addEventListener("pointerdown", (e) => {
-    dragging = true; moved = 0; dragX = e.clientX; dragPos = pos;
+    dragging = true; seek = null; moved = 0; dragX = e.clientX; dragPos = pos;
+    samples = [[performance.now(), pos]];
     canvas.setPointerCapture(e.pointerId); wake();
   });
   canvas.addEventListener("pointermove", (e) => {
     if (!dragging) return;
     moved = Math.max(moved, Math.abs(e.clientX - dragX));
     pos = dragPos - (e.clientX - dragX) / (FW * sf);
+    samples.push([performance.now(), pos]);
+    if (samples.length > 6) samples.shift();
   });
   canvas.addEventListener("pointerup", (e) => {
     if (!dragging) return;
     dragging = false;
-    const now = performance.now();
-    if (moved > 6) { from = to = pos; goTo(Math.round(pos), now); }    // settle on the nearest frame
-    else {
+    if (moved > 6) {                                   // a swipe: keep its speed, up to 8 frames a second
+      const a = samples[0], b = samples[samples.length - 1], secs = (b[0] - a[0]) / 1000;
+      const v = secs > 0 && performance.now() - b[0] < 120 ? (b[1] - a[1]) / secs : 0;
+      vel = Math.max(-8, Math.min(8, v));
+    } else {
       const tapped = Math.floor(pos + 0.5 + (e.clientX - canvas.getBoundingClientRect().left - W / 2) / (FW * sf));
-      goTo(tapped === Math.round(pos) ? Math.round(pos) + 1 : tapped, now);
+      if (tapped === Math.floor(pos + 0.5)) next(); else seekTo(tapped);
     }
     wake();
   });
-  canvas.addEventListener("pointercancel", () => { dragging = false; goTo(Math.round(pos), performance.now()); });
+  canvas.addEventListener("pointercancel", () => { dragging = false; vel = cruise(); });
   canvas.style.touchAction = "pan-y";   // vertical swipes still scroll the page
 
   // Clicking anywhere else on the home page moves to the next frame (links and buttons excepted).
@@ -273,7 +286,7 @@ function startFilm(canvas) {
   document.addEventListener("click", onClick);
   canvas.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") { e.preventDefault(); next(); wake(); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); goTo(Math.round(to) - 1, performance.now()); wake(); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); seekTo(Math.floor(pos + 0.5) - 1); wake(); }
   });
 
   return () => {
