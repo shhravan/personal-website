@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Film strip rolls; sections and icons on every page
+- **Before:** `2247415`
+- **Changed:** the film strip now rolls steadily instead of jumping frame to frame, and a swipe flings it (fast, then easing back to its normal roll). The section links along the top and the profile icons above opticsbyshrvn now appear on every page, not just home. The links are just words (no line in front, no underline). No link previews on the home page. Inner pages start a little lower to make room for the links.
+- **Files:** `script.js`, `theme.js`, `styles.css`, `index.html`, cache numbers on every page, DESIGN.
+- **To revert:** restore those from `2247415`.
+
 ## Home page: the film strip
 - **Before:** `793a3fd` (also kept whole on the branch `backup/site-before-film-strip`)
 - **Changed:** the home page is now a cover. The sections run along the top in pixel type; a roll of film with the photos waves across the middle and glides to the next frame every 1.5 seconds (faster while music plays), with the middle frame in colour; the profile icons and opticsbyshrvn sit centred at the bottom above the water. Drag, swipe, tap, click or use the arrow keys to move it. The intro list and the single rotating photo are gone, and the letters behind the home page are no longer faded.
