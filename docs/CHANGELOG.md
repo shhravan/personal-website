@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Record dial no longer pops open when you come back
+- **Before:** `3cee5fa`
+- **Changed:** leaving the site (switching tab or app) closes the desktop record dial, and on return it only opens once you actually move the pointer onto the record.
+- **Files:** `theme.js`, cache numbers on every page.
+- **To revert:** restore those from `3cee5fa`.
+
 ## Section links stay at the top
 - **Before:** `af73045`
 - **Changed:** the section links stay fixed at the top while scrolling, like the switch, name mark and record. The frosted strip behind the top bar is taller so text passes cleanly underneath.
