@@ -338,6 +338,40 @@ function initPage() {
   const canvas = document.getElementById("film");
   if (canvas && PHOTOS.length > 1) stopHero = startFilm(canvas);
 
+  // Projects page: the GitHub contribution graph, from data/github.json (refreshed nightly).
+  // One square per day, a column per week, in the site's ink at five strengths (styles.css .l0-.l4).
+  const gh = document.querySelector(".gh-graph");
+  if (gh && !gh.dataset.done) {
+    gh.dataset.done = "1";
+    fetch(SITE + "data/github.json").then((r) => r.json()).then((d) => {
+      if (!d.days || !d.days.length) return;
+      const stat = gh.querySelector(".gh-stat");
+      stat.insertBefore(document.createTextNode(d.total.toLocaleString() + " contributions in the last year · "), stat.firstChild);
+      const grid = document.createElement("div");
+      grid.className = "gh-days";
+      grid.setAttribute("role", "img");
+      grid.setAttribute("aria-label", d.total + " GitHub contributions in the last year");
+      const first = new Date(d.days[0][0] + "T00:00:00").getDay();   // pad so each column starts on Sunday
+      for (let i = 0; i < first; i++) grid.appendChild(document.createElement("i"));
+      d.days.forEach(([date, n, level]) => {
+        const c = document.createElement("i");
+        c.className = "l" + level;
+        c.title = (n === 1 ? "1 contribution" : n + " contributions") + " on " + date;
+        grid.appendChild(c);
+      });
+      const months = document.createElement("div");
+      months.className = "gh-months";
+      const start = new Date(d.days[0][0] + "T00:00:00");
+      for (let m = 0; m < 12; m++) {
+        const s = document.createElement("span");
+        s.textContent = new Date(start.getFullYear(), start.getMonth() + m + 1, 1).toLocaleString("en", { month: "short" }).toLowerCase();
+        months.appendChild(s);
+      }
+      gh.insertBefore(months, stat);
+      gh.insertBefore(grid, months);
+    }).catch(() => {});
+  }
+
   // Turn each email into a real clickable mailto: link.
   // The address is stored in two pieces in the HTML (data-user and data-domain) so simple
   // bots reading the page text don't find a complete address.

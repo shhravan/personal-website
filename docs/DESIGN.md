@@ -216,6 +216,12 @@ A soft box (ink 4% into the page color, 9% hairline border, 0.6rem corners). Hol
 **Role:** one job, school or award.
 A 2.5rem logo tile (the Cornell seal repeats on each Education and Honors row; 0.55rem corners; it grows 6% on hover when it links out), the name in Garamond 500, the title in small grey, and dates right-aligned in tabular figures. Rows with details expand on click (`<details>`), showing notes indented to line up under the name.
 
+### GitHub Activity (projects page)
+The last year of contributions as a grid of small squares (one per day, a column per week), in `--ink` at 6/22/42/66/90% strength, so it matches the paper in both themes. Month labels in Silkscreen; the total and a link to github.com/shhravan underneath. Data from `data/github.json`, refreshed nightly by a GitHub job.
+
+### Project Rows (projects page)
+Same ledger and `<details>` rows as the work page, without logos. Opened, a row shows a small definition list: PROBLEM, BUILT, RESULT, LINKS (labels in Silkscreen).
+
 ### Project Card
 **Role:** one project.
 A light card (0.6rem corners, hairline border): a title in 500 and one line of grey text.
