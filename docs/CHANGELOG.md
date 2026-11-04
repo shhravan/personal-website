@@ -7,7 +7,7 @@ be returned to how it looked.
 ## Claude Code skills available in cloud sessions
 - **Before:** `ee65289`
 - **Changed:** nothing on the site. Added 68 Claude Code skills under `.claude/skills/` so `/skill-name` works in cloud sessions, which can't see the skills on Shravan's Mac. Sources and licences are in `.claude/THIRD_PARTY_SKILLS.md`.
-- **Files:** `.claude/skills/`, `.claude/THIRD_PARTY_SKILLS.md`.
+- **Files:** `.claude/skills/`, `.claude/THIRD_PARTY_SKILLS.md`, `tests/test_site.py` (skills are not site pages).
 - **To revert:** delete those two paths.
 
 ## Film strip only stops when you tap it; no arrow on opticsbyshrvn
