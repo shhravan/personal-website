@@ -104,10 +104,9 @@ const OPTICS_FONTS = [
 // gently across the page and keeps rolling steadily, one frame every FRAME_SECONDS.
 // It's drawn as many thin vertical slices, each placed and tilted along the wave, which is what
 // makes the flat strip look bent. No libraries.
-// Drag it, or swipe it to fling it (it spins fast, then slows back to its normal roll); tap a frame
-// to bring it to the middle; click anywhere else on the page to skip ahead. It slows right down
-// while the mouse is on it, stops when the tab is hidden, and holds still for people who ask their
-// device to reduce motion.
+// It never stops on its own: only a click or tap on the strip itself stops it, and another starts it
+// again. Drag it, or swipe it to fling it (it spins fast, then slows back to its normal roll). It
+// pauses while the tab is hidden, and holds still for people who ask their device to reduce motion.
 function startFilm(canvas) {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const FW = 600, PH = 400, EDGE = 58, H = PH + 2 * EDGE;   // one frame, in strip pixels
@@ -175,11 +174,11 @@ function startFilm(canvas) {
   // (frames per second). A "seek" is a short eased move to a chosen frame (a tap or a click).
   let pos = 0, vel = 0, last = performance.now(), shown = 0;
   let seek = null;                                   // { from, to, start }
-  let dragging = false, dragX = 0, dragPos = 0, moved = 0, hovering = false, samples = [];
+  let dragging = false, dragX = 0, dragPos = 0, moved = 0, paused = false, samples = [], geo = null;
   function playing() { return !!document.querySelector(".vinyl[aria-pressed='true'], .deck.playing"); }
   function cruise() {                                 // the speed it settles back to
     if (reduceMotion) return 0;
-    return (hovering ? 0.2 : 1) / (playing() ? FRAME_SECONDS_MUSIC : FRAME_SECONDS);
+    return paused ? 0 : 1 / (playing() ? FRAME_SECONDS_MUSIC : FRAME_SECONDS);
   }
   function seekTo(target) { seek = { from: pos, to: target, start: performance.now() }; vel = cruise(); }
   function next() { seekTo(Math.floor(pos + 0.5) + 1); }
@@ -197,7 +196,7 @@ function startFilm(canvas) {
   window.addEventListener("resize", resize);
 
   let raf = 0;
-  const t0 = performance.now();
+  let waveT = 0;
   function draw(now) {
     raf = 0;
     const dt = Math.min(0.05, (now - last) / 1000);
@@ -211,9 +210,11 @@ function startFilm(canvas) {
       pos += vel * dt;
     }
     if (Math.floor(pos + 0.5) !== shown) { shown = Math.floor(pos + 0.5); nextFont(); }   // the sign-off's font changes with each frame
-    const t = reduceMotion ? 0 : (now - t0) / 1000;
+    if (!reduceMotion && !paused) waveT += dt;                          // the wave freezes too when stopped
+    const t = waveT;
     const cy = Hh * (phone ? 0.47 : 0.5), A = Hh * (phone ? 0.03 : 0.06);
     const k = Math.PI * 2 / (W * (phone ? 2.2 : 1.5)), ph = t * 0.35;
+    geo = { cy, A, k, ph };
     const view = (W / 2) / sf;                                          // half the screen, in strip pixels
     const start = pos * FW + FW / 2 - view;                             // strip pixel at the left edge
     for (let f = Math.floor(start / FW) - 1; f <= Math.floor((start + 2 * view) / FW) + 2; f++) need(f);
@@ -242,8 +243,6 @@ function startFilm(canvas) {
   document.addEventListener("visibilitychange", onVisible);
 
   // Pointer: drag to move the roll, let go mid-swipe to fling it; a tap (no drag) picks a frame.
-  canvas.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hovering = true; });
-  canvas.addEventListener("pointerleave", () => { hovering = false; });
   canvas.addEventListener("pointerdown", (e) => {
     dragging = true; seek = null; moved = 0; dragX = e.clientX; dragPos = pos;
     samples = [[performance.now(), pos]];
@@ -264,8 +263,12 @@ function startFilm(canvas) {
       const v = secs > 0 && performance.now() - b[0] < 120 ? (b[1] - a[1]) / secs * 0.6 : 0;
       vel = Math.max(-4, Math.min(4, v));
     } else {
-      const tapped = Math.floor(pos + 0.5 + (e.clientX - canvas.getBoundingClientRect().left - W / 2) / (FW * sf));
-      if (tapped === Math.floor(pos + 0.5)) next(); else seekTo(tapped);
+      // A tap on the strip itself stops it; another tap starts it again. Taps on the empty page
+      // around it do nothing.
+      const r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      if (geo && Math.abs(y - (geo.cy + geo.A * Math.sin(x * geo.k + geo.ph))) < (H / 2) * sf) {
+        paused = !paused; seek = null; vel = cruise();
+      }
     }
     wake();
   });
@@ -290,13 +293,6 @@ function startFilm(canvas) {
   canvas.addEventListener("wheel", onWheel, { passive: false });
   canvas.style.touchAction = "pan-y";   // vertical swipes still scroll the page
 
-  // Clicking anywhere else on the home page moves to the next frame (links and buttons excepted).
-  function onClick(e) {
-    if (e.target === canvas || e.target.closest("a, button")) return;
-    if (String(window.getSelection())) return;
-    next(); wake();
-  }
-  document.addEventListener("click", onClick);
   canvas.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") { e.preventDefault(); next(); wake(); }
     else if (e.key === "ArrowLeft") { e.preventDefault(); seekTo(Math.floor(pos + 0.5) - 1); wake(); }
@@ -305,7 +301,6 @@ function startFilm(canvas) {
   return () => {
     cancelAnimationFrame(raf); raf = -1;
     window.removeEventListener("resize", resize);
-    document.removeEventListener("click", onClick);
     document.removeEventListener("visibilitychange", onVisible);
   };
 }

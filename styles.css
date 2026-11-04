@@ -425,26 +425,18 @@ body::before {
 }
 .title-link { color: inherit; text-decoration: none; }   /* names that link to the organisation: no underline, underline on hover */
 .title-link:hover { text-decoration: underline; }
-/* The last line is just "opticsbyshrvn". The word stays centered on the page; the arrow hangs
-   off its right side and the note sits centered under the word, so neither pulls it off-center. */
+/* The last line is just "opticsbyshrvn". The note sits centered under the word, so it doesn't pull it off-center. */
 .foot .optics { position: relative; display: inline-block; }
 .foot .optics a { position: relative; }
-.foot .arrow {
-  position: absolute; left: 100%; top: 50%; margin-left: 0.4em;
-  width: 0.7em; height: 0.7em; transform: translateY(-45%);
-  fill: none; stroke: var(--soft); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
-  opacity: 0; transition: opacity 0.25s ease;
-}
 .foot .reveal {
   position: absolute; left: 50%; top: 100%; margin-top: 0.3rem; white-space: nowrap;
   font-size: 0.8rem; color: var(--soft); letter-spacing: 0.04em;
   opacity: 0; transform: translate(-50%, -0.2rem); transition: opacity 0.25s ease, transform 0.25s ease;
   pointer-events: none;
 }
-.foot .optics:hover .arrow, .foot .optics:focus-within .arrow { opacity: 1; }
 .foot .optics:hover .reveal, .foot .optics:focus-within .reveal { opacity: 1; transform: translate(-50%, 0); }
-/* Phones and tablets have no hover, so there the arrow and note simply stay visible. */
-@media (hover: none) { .foot .arrow { opacity: 1; } .foot .reveal { opacity: 1; transform: translate(-50%, 0); } }
+/* Phones and tablets have no hover, so there the note simply stays visible. */
+@media (hover: none) { .foot .reveal { opacity: 1; transform: translate(-50%, 0); } }
 
 /* ---- the record deck (desktop only, built by theme.js) ----
    A 660px box centred on the record, which sits near the top-right corner. The whole box scales
