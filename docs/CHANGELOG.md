@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Film strip only stops when you tap it; no arrow on opticsbyshrvn
+- **Before:** `c6d1da4`
+- **Changed:** the film strip keeps rolling under the mouse and when you click elsewhere on the page. A click or tap on the strip itself stops it (wave and all); another starts it again. Drag, swipe and trackpad still move it. The small arrow next to opticsbyshrvn is gone on every page.
+- **Files:** `script.js`, `styles.css`, every page, cache numbers.
+- **To revert:** restore those from `c6d1da4`.
+
 ## New share video and picture
 - **Before:** `949e792`
 - **Changed:** shared links show the new home page again: `images/og/home-loop.mp4` (1200×630, 6.5 s, steady 30 fps, silent, loops with a short fade) where apps play video, and a new `images/og/home.jpg` everywhere else. Recorded frame by frame so it's smooth; record dial closed. On short windows the film strip is now a bit smaller so it clears the section links.
