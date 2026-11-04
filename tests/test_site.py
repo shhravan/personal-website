@@ -26,7 +26,7 @@ def read(rel):
         return f.read()
 
 
-PAGES = sorted(f for f in tracked_files() if f.endswith(".html") and not f.startswith("docs/"))
+PAGES = sorted(f for f in tracked_files() if f.endswith(".html") and not f.startswith(("docs/", ".claude/")))
 SCRIPTS = sorted(f for f in tracked_files() if f.endswith(".js") and not f.startswith("tests/"))
 
 

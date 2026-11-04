@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Claude Code skills available in cloud sessions
+- **Before:** `ee65289`
+- **Changed:** nothing on the site. Added 68 Claude Code skills under `.claude/skills/` so `/skill-name` works in cloud sessions, which can't see the skills on Shravan's Mac. Sources and licences are in `.claude/THIRD_PARTY_SKILLS.md`.
+- **Files:** `.claude/skills/`, `.claude/THIRD_PARTY_SKILLS.md`, `tests/test_site.py` (skills are not site pages).
+- **To revert:** delete those two paths.
+
 ## Film strip only stops when you tap it; no arrow on opticsbyshrvn
 - **Before:** `c6d1da4`
 - **Changed:** the film strip keeps rolling under the mouse and when you click elsewhere on the page. A click or tap on the strip itself stops it (wave and all); another starts it again. Drag, swipe and trackpad still move it. The small arrow next to opticsbyshrvn is gone on every page.
