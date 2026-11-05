@@ -432,6 +432,9 @@ function playIntro(heroImg) {
 // that strip; ← back, Esc or the backdrop closes it, the arrows move through that roll.
 function startPhotography() {
   const tabs = [...document.querySelectorAll(".photo-tabs button")];
+  // test only: ?switch=1..6 shows the six tab designs being compared (removed before merge)
+  const sw = new URLSearchParams(location.search).get("switch");
+  if (/^[1-6]$/.test(sw || "")) document.querySelector(".photo-tabs").classList.add("sw" + sw);
   const panes = [...document.querySelectorAll(".photo-pane")];
   const box = document.querySelector(".lightbox"), big = box.querySelector("img"), cap = box.querySelector(".lb-cap");
   const stops = [];

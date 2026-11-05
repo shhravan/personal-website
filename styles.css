@@ -1092,3 +1092,45 @@ main.ledger { animation: page-in .45s cubic-bezier(.2, .8, .2, 1) both; }   /* o
   padding: 0.6rem 1rem 0.55rem; border-radius: 0.35rem;
 }
 @media (max-width: 47.99rem) { .photo-tabs button { font-size: 10px; letter-spacing: 0.16em; } }
+
+/* TEST ONLY: six designs for the photography switch, picked with ?switch=N (removed before merge) */
+.photo-tabs[class*="sw"] button { all: unset; cursor: pointer; font-family: "Silkscreen", monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--soft); position: relative; transition: color .2s, background .2s; }
+.photo-tabs[class*="sw"] button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.photo-tabs[class*="sw"] button[aria-selected="true"] { color: var(--ink); }
+/* 1 stamp: chosen filled, other outlined */
+.photo-tabs.sw1 button { padding: 0.6rem 1rem 0.55rem; border-radius: 0.35rem; border: 1.5px solid color-mix(in srgb, var(--ink) 22%, transparent); }
+.photo-tabs.sw1 button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+/* 2 segmented: one capsule, an ink thumb slides between the two */
+.photo-tabs.sw2 { position: relative; gap: 0; width: max-content; margin-left: auto; margin-right: auto; padding: 4px; border-radius: 999px; border: 1.5px solid color-mix(in srgb, var(--ink) 22%, transparent); }
+.photo-tabs.sw2::before { content: ""; position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: var(--ink); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+.photo-tabs.sw2:has(button:last-child[aria-selected="true"])::before { transform: translateX(100%); }
+.photo-tabs.sw2 button { flex: 1 1 0; text-align: center; min-width: 9.5rem; padding: 0.55rem 0; border-radius: 999px; z-index: 1; }
+.photo-tabs.sw2 button[aria-selected="true"] { color: var(--bg); }
+/* 3 index: bare pixel words with a slash, like the top links */
+.photo-tabs.sw3 { gap: 1.9rem; align-items: center; }
+.photo-tabs.sw3 button { color: color-mix(in srgb, var(--ink) 35%, transparent); font-size: 12px; }
+.photo-tabs.sw3 button:first-child::after { content: "/"; position: absolute; right: -1.3rem; color: color-mix(in srgb, var(--ink) 25%, transparent); }
+.photo-tabs.sw3 button[aria-selected="true"] { color: var(--ink); }
+.photo-tabs.sw3 button:hover { color: var(--ink); }
+/* 4 serif: big garamond words, a short ink bar under the chosen one */
+.photo-tabs.sw4 { gap: 2.2rem; }
+.photo-tabs.sw4 button { font-family: "EB Garamond", serif; font-size: 1.7rem; letter-spacing: 0; text-transform: none; font-style: italic; color: color-mix(in srgb, var(--ink) 35%, transparent); padding-bottom: 0.35rem; }
+.photo-tabs.sw4 button::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 1.6rem; height: 2px; background: var(--ink); transform: translateX(-50%) scaleX(0); transition: transform .3s; }
+.photo-tabs.sw4 button[aria-selected="true"] { color: var(--ink); }
+.photo-tabs.sw4 button[aria-selected="true"]::after { transform: translateX(-50%) scaleX(1); }
+/* 5 film leader: the chosen tab is a scrap of the same film, sprocket holes and all */
+.photo-tabs.sw5 { gap: 0.4rem; align-items: center; }
+.photo-tabs.sw5 button { padding: 0.95rem 1.1rem; }
+.photo-tabs.sw5 button[aria-selected="true"] { background: #16140f; color: #f3ecdc; border-radius: 2px;
+  background-image: radial-gradient(circle, #f3ecdc 0 2px, transparent 2.5px), radial-gradient(circle, #f3ecdc 0 2px, transparent 2.5px);
+  background-size: 9px 9px; background-repeat: repeat-x; background-position: 3px 2px, 3px calc(100% - 2px);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent); }
+/* 6 toggle: two words either side of a small hardware switch */
+.photo-tabs.sw6 { gap: 0.9rem; align-items: center; position: relative; }
+.photo-tabs.sw6 button { color: color-mix(in srgb, var(--ink) 40%, transparent); }
+.photo-tabs.sw6 button[aria-selected="true"] { color: var(--ink); }
+.photo-tabs.sw6 button:first-child { order: 0; }
+.photo-tabs.sw6::before { content: ""; order: 1; width: 2.6rem; height: 1.3rem; border-radius: 999px; border: 1.5px solid var(--ink); box-sizing: border-box;
+  background: radial-gradient(circle, var(--ink) 0 0.36rem, transparent 0.4rem) no-repeat 0 50% / 1.1rem 100%; transition: background-position .3s cubic-bezier(.2,.8,.2,1); }
+.photo-tabs.sw6:has(button:last-child[aria-selected="true"])::before { background-position: 100% 50%; }
+.photo-tabs.sw6 button:last-child { order: 2; }
