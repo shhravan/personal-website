@@ -4,6 +4,17 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Large hero with an opening sequence; photography rolls; blog list; site polish
+- **Before:** `34926a2` (the film-strip home is kept on `backup/home-film-strip`)
+- **Changed:**
+  - Home: the large hero photo is back (changing every 1.5 s), opened on the first visit by a ~5 s burst of 24 photos that shrinks into the frame; "skip" bottom right; never for reduced motion. On phones the icons and opticsbyshrvn sit low, above the water.
+  - Photography: rolls along the top; choosing one puts its photos on a calmer film strip and shows its contact sheet. Any photo (sheet or strip) opens large over a darkened page; ← back, Esc or the backdrop closes it, arrows move through the roll. Rolls and captions are placeholders.
+  - Blog: one list of everything written (title, date), notes and Substack essays together, with a side column (subscribe, and a "distilled" placeholder). Each note gets its own page; notes can hold pictures.
+  - Projects: just the shravanlad.com tile for now.
+  - Everywhere: "home / page" breadcrumb in pixel type instead of "← home"; every section in the top links goes to its page; Substack icon added; pages fade in gently on change.
+- **Files:** every page, `script.js`, `theme.js`, `styles.css`, `field.js`, `scripts/build_notes.py`, `scripts/substack_sync.py`, `tests/test_notes.py`, `.github/workflows/notes.yml`, `notes/`, docs.
+- **To revert:** restore from `34926a2`, or from `backup/home-film-strip` for the film-strip home.
+
 ## Projects gallery and a blog notebook
 - **Before:** `a651efd`
 - **Changed:**

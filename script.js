@@ -133,9 +133,10 @@ function startFilm(canvas) {
   const ctx = canvas.getContext("2d");
   const wave = parseFloat(canvas.dataset.wave || "1");   // how wavy: 1 is the full wave, smaller is calmer
 
-  // The order: the photos shuffled once, then the roll loops through them.
-  const order = PHOTOS.slice();
-  for (let i = order.length - 1; i > 0; i--) {
+  // The order: the roll's own photos if the page lists them (data-photos), otherwise every photo,
+  // shuffled once. The roll loops through them.
+  const order = canvas.dataset.photos ? canvas.dataset.photos.split(",") : PHOTOS.slice();
+  if (!canvas.dataset.photos) for (let i = order.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
@@ -284,11 +285,12 @@ function startFilm(canvas) {
       const v = secs > 0 && performance.now() - b[0] < 120 ? (b[1] - a[1]) / secs * 0.6 : 0;
       vel = Math.max(-4, Math.min(4, v));
     } else {
-      // A tap on the strip itself stops it; another tap starts it again. Taps on the empty page
-      // around it do nothing.
+      // A tap on a frame tells the page which photo it was (the photography page opens it large).
+      // Taps on the empty page around the strip do nothing.
       const r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
       if (geo && Math.abs(y - (geo.cy + geo.A * Math.sin(x * geo.k + geo.ph))) < (H / 2) * sf) {
-        paused = !paused; seek = null; vel = cruise();
+        const f = Math.floor(pos + 0.5 + (x - W / 2) / (FW * sf));
+        canvas.dispatchEvent(new CustomEvent("frametap", { detail: order[((f % N) + N) % N] }));
       }
     }
     wake();
@@ -396,6 +398,55 @@ function playIntro(heroImg) {
   });
 }
 
+// ---- the photography page ----
+// Each roll is a button along the top; choosing one puts its photos on the film strip and shows
+// its contact sheet. A photo (from the sheet or a tap on the strip) opens large in a <dialog> over
+// a darkened page: ← back (or Esc) closes it, the side arrows and arrow keys move through the roll.
+function startPhotography(canvas) {
+  const tabs = [...document.querySelectorAll(".rolls button")];
+  const sheets = [...document.querySelectorAll(".sheet-set")];
+  const box = document.querySelector(".lightbox"), big = box.querySelector("img"), cap = box.querySelector(".lb-cap");
+  let stop = () => {}, frames = [], at = 0;
+  function show(k) {
+    at = (k + frames.length) % frames.length;
+    const f = frames[at];
+    big.src = f.querySelector("img").src.replace("-700.webp", ".webp");
+    big.alt = f.dataset.caption;
+    cap.textContent = f.dataset.caption + " · " + f.querySelector("span").textContent;
+  }
+  function open(name) {
+    const k = frames.findIndex((f) => f.dataset.name === name);
+    if (k < 0) return;
+    show(k);
+    if (!box.open) box.showModal();
+  }
+  function choose(i) {
+    tabs.forEach((t, k) => t.setAttribute("aria-selected", k === i ? "true" : "false"));
+    sheets.forEach((s, k) => { s.hidden = k !== i; });
+    frames = [...sheets[i].querySelectorAll(".frame")];
+    stop();
+    // A fresh canvas for each roll, so the old roll's touch and wheel handlers go with the old one.
+    const fresh = canvas.cloneNode(false);
+    canvas.replaceWith(fresh);
+    canvas = fresh;
+    canvas.dataset.photos = frames.map((f) => f.dataset.name).join(",");
+    canvas.addEventListener("frametap", (e) => open(e.detail));
+    stop = startFilm(canvas);
+  }
+  tabs.forEach((t, i) => t.addEventListener("click", () => choose(i)));
+  sheets.forEach((s) => s.addEventListener("click", (e) => { const f = e.target.closest(".frame"); if (f) open(f.dataset.name); }));
+  box.querySelector(".lb-back").addEventListener("click", () => box.close());
+  box.querySelector(".lb-prev").addEventListener("click", () => show(at - 1));
+  box.querySelector(".lb-next").addEventListener("click", () => show(at + 1));
+  box.addEventListener("click", (e) => { if (e.target === box) box.close(); });   // a click on the dark backdrop
+  box.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") show(at - 1);
+    if (e.key === "ArrowRight") show(at + 1);
+  });
+  choose(0);
+  return () => { stop(); if (box.open) box.close(); };
+}
+
 function initPage() {
   if (stopHero) { stopHero(); stopHero = null; }
   clearInterval(fontTimer);
@@ -422,7 +473,8 @@ function initPage() {
     if (!document.getElementById("hero-img") && !document.getElementById("film")) fontTimer = setInterval(nextFont, 1500);
   }
   const canvas = document.getElementById("film");
-  if (canvas && PHOTOS.length > 1) stopHero = startFilm(canvas);
+  if (canvas && document.querySelector(".rolls")) stopHero = startPhotography(canvas);
+  else if (canvas && PHOTOS.length > 1) stopHero = startFilm(canvas);
   const img = document.getElementById("hero-img");
 
   if (img && PHOTOS.length > 1) {
@@ -545,6 +597,10 @@ function initPage() {
       gh.append(grid, months);
     }).catch(() => {});
   }
+
+  // Blog: notes and essays come from two scripts; show them as one list, newest first.
+  const entries = document.querySelector(".entries");
+  if (entries) [...entries.querySelectorAll("li[data-date]")].sort((a, b) => b.dataset.date.localeCompare(a.dataset.date)).forEach((li) => entries.appendChild(li));
 
   // Turn each email into a real clickable mailto: link.
   // The address is stored in two pieces in the HTML (data-user and data-domain) so simple

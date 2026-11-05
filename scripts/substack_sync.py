@@ -366,7 +366,7 @@ def render(posts, dry_run):
         page += f"""<body>
   <a class="logo" href="../../" aria-label="श्रवण लाड · Shravan Lad, home"></a>
   <main class="col page post">
-    <a class="back" href="../">← blog</a>
+    <p class="crumb"><a href="../../">home</a> / <a href="../">blog</a></p>
     <article>
       <h1>{title}</h1>
       {f'<p class="post-sub">{html.escape(p["subtitle"])}</p>' if p["subtitle"] else ''}
@@ -377,15 +377,15 @@ def render(posts, dry_run):
     </article>
 
 """ + re.sub(r'(href|src)="\.\./', r'\1="../../', foot)
-        rows.append(f'      <li><a href="{p["slug"]}/">{title}</a><span class="date">{html.escape(date)}</span></li>')
+        rows.append(f'      <li data-date="{p["date"]}"><a href="{p["slug"]}/"><b>{title}</b><span class="date">{html.escape(date)}</span></a></li>')
         if not dry_run:
             os.makedirs(os.path.join(BLOG, p["slug"]), exist_ok=True)
             with open(os.path.join(BLOG, p["slug"], "index.html"), "w", encoding="utf-8") as f:
                 f.write(page)
 
-    listing = "\n".join(rows) if rows else '      <li class="empty">first post coming soon.</li>'
-    new_index = re.sub(r"(<!-- POSTS:START -->\n).*?(\n\s*<!-- POSTS:END -->)",
-                       lambda m: m.group(1) + listing + m.group(2), index, flags=re.S)
+    listing = "\n".join(rows)
+    new_index = re.sub(r"(<!-- POSTS:START -->).*?(\n\s*<!-- POSTS:END -->)",
+                       lambda m: m.group(1) + ("\n" + listing if listing else "") + m.group(2), index, flags=re.S)
     if not dry_run and new_index != index:
         with open(index_path, "w", encoding="utf-8") as f:
             f.write(new_index)
