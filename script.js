@@ -64,6 +64,10 @@ const FOCUS = {
   "cornell-1930": [55, 35, 1],
 };
 
+// How long each hero photo stays (seconds). Set both the same for a steady pace.
+const MIN_SECONDS = 1.5;
+const MAX_SECONDS = 1.5;
+
 // How fast the film strip rolls: seconds for one frame to pass the middle. While a song is
 // playing it rolls a little faster.
 const FRAME_SECONDS = 3;
@@ -74,9 +78,25 @@ const FRAME_SECONDS_MUSIC = 2.4;
 // new page a moment before the home page's photo timer stops.
 const SITE = new URL(".", (document.currentScript && document.currentScript.src) || location.href).href;
 
-// Phones get the smaller files.
-function photoUrl(name) {
+// The film strip: phones get the smaller files.
+function filmUrl(name) {
   return SITE + "images/hero/" + name + (window.innerWidth < 700 ? "-700" : "") + ".webp";
+}
+
+// Pick the smaller file when the frame is small enough (phones), the larger one otherwise.
+function photoUrl(name) {
+  const frame = document.querySelector(".hero");
+  const pixels = (frame ? frame.clientWidth : 500) * (window.devicePixelRatio || 1);
+  return SITE + "images/hero/" + name + (pixels <= 700 ? "-700" : "") + ".webp";
+}
+
+// Show a photo in the frame, using its framing from the FOCUS list.
+function applyPhoto(img, name) {
+  const [x, y, zoom] = FOCUS[name] || [50, 50, 1];
+  img.style.objectPosition = x + "% " + y + "%";   // which part of the photo stays in view
+  img.style.transformOrigin = x + "% " + y + "%";  // zoom in toward that same point
+  img.style.transform = zoom > 1 ? "scale(" + zoom + ")" : "";
+  img.src = photoUrl(name);
 }
 
 // The site swaps pages in place (theme.js) so the music keeps playing, which means this file
@@ -111,6 +131,7 @@ function startFilm(canvas) {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const FW = 600, PH = 400, EDGE = 58, H = PH + 2 * EDGE;   // one frame, in strip pixels
   const ctx = canvas.getContext("2d");
+  const wave = parseFloat(canvas.dataset.wave || "1");   // how wavy: 1 is the full wave, smaller is calmer
 
   // The order: the photos shuffled once, then the roll loops through them.
   const order = PHOTOS.slice();
@@ -167,7 +188,7 @@ function startFilm(canvas) {
     const img = new Image();
     img.onload = () => { paintFrame(k, img); loading.delete(k); };
     img.onerror = () => loading.delete(k);
-    img.src = photoUrl(order[k]);
+    img.src = filmUrl(order[k]);
   }
 
   // Where the roll is, in frames (2.0 means frame 2 is in the middle), and how fast it's moving
@@ -190,7 +211,7 @@ function startFilm(canvas) {
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(Hh * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     phone = W < 700;
-    sf = phone ? Math.min(0.46, W / 850) : Math.min(0.95, W / 1550, Hh / 1250);   // strip scale; short windows get a smaller strip so it clears the links
+    sf = phone ? Math.min(0.46, W / 850) : Math.min(0.95, W / 1550, Hh / (canvas.dataset.wave ? 640 : 1250));   // strip scale; short windows get a smaller strip so it clears the links
   }
   resize();
   window.addEventListener("resize", resize);
@@ -212,7 +233,7 @@ function startFilm(canvas) {
     if (Math.floor(pos + 0.5) !== shown) { shown = Math.floor(pos + 0.5); nextFont(); }   // the sign-off's font changes with each frame
     if (!reduceMotion && !paused) waveT += dt;                          // the wave freezes too when stopped
     const t = waveT;
-    const cy = Hh * (phone ? 0.47 : 0.5), A = Hh * (phone ? 0.03 : 0.06);
+    const cy = Hh * (phone ? 0.47 : 0.5), A = Hh * (phone ? 0.03 : 0.06) * wave;
     const k = Math.PI * 2 / (W * (phone ? 2.2 : 1.5)), ph = t * 0.35;
     geo = { cy, A, k, ph };
     const view = (W / 2) / sf;                                          // half the screen, in strip pixels
@@ -305,6 +326,76 @@ function startFilm(canvas) {
   };
 }
 
+// ---- the opening sequence (home page, first visit in a session) ----
+// The site opens on a burst of the hero photos, full screen, changing faster and faster; then the
+// last one shrinks down into the hero frame and the rest of the page fades in. About 5 seconds.
+// "skip" (bottom right) ends it straight away. It plays once per visit, and never for people who
+// ask their device to reduce motion.
+// ms each photo shows: 24 photos, each a little quicker than the last (about 4.6 s), then the
+// settle; roughly 5 seconds before the page appears.
+const INTRO_STEPS = [320, 305, 290, 277, 264, 251, 239, 228, 217, 207, 197, 188, 179, 170, 162, 155, 147, 140, 134, 127, 121, 116, 110, 105];
+function playIntro(heroImg) {
+  const root = document.documentElement;
+  let seen = false;
+  try { seen = sessionStorage.getItem("intro-seen") === "1"; sessionStorage.setItem("intro-seen", "1"); } catch (e) {}
+  if (seen || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  root.classList.add("intro-on");
+  const stage = document.createElement("div");
+  stage.className = "intro-stage";
+  const pic = document.createElement("img");
+  pic.alt = "";
+  const skip = document.createElement("button");
+  skip.type = "button";
+  skip.className = "intro-skip";
+  skip.textContent = "skip";
+  stage.append(pic, skip);
+  document.body.appendChild(stage);
+
+  // The photos for the burst, shuffled; each is downloaded first so nothing flashes blank.
+  const names = PHOTOS.slice().sort(() => Math.random() - 0.5).slice(0, INTRO_STEPS.length);
+  const ready = names.map((n) => new Promise((ok) => {
+    const im = new Image(); im.onload = () => ok(im.src); im.onerror = () => ok(null); im.src = photoUrl(n);
+  }));
+  let done = false, timer = 0;
+  function finish(fast) {
+    if (done) return;
+    done = true;
+    clearTimeout(timer);
+    if (fast) { stage.remove(); root.classList.remove("intro-on"); return; }
+    // Shrink the full-screen photo onto the hero frame, then hand over to the real hero.
+    pic.src = heroImg.src;
+    const to = heroImg.parentElement.getBoundingClientRect();
+    const sx = to.width / innerWidth, sy = to.height / innerHeight;
+    stage.classList.add("settling");
+    pic.style.transformOrigin = "0 0";
+    pic.style.transform = "translate(" + to.left + "px," + to.top + "px) scale(" + sx + "," + sy + ")";
+    setTimeout(() => {
+      root.classList.remove("intro-on");
+      stage.classList.add("gone");
+      setTimeout(() => stage.remove(), 500);
+    }, 750);
+  }
+  skip.addEventListener("click", () => finish(true));
+  // Start as soon as the first photo is in; each step shows the next photo that has arrived.
+  const loaded = [];
+  ready.forEach((r) => r.then((src) => { if (src) loaded.push(src); }));
+  // Timed by the clock, not by counting timers, so a slow device skips photos instead of running long.
+  const ends = INTRO_STEPS.map((_, k) => INTRO_STEPS.slice(0, k + 1).reduce((x, y) => x + y, 0));
+  ready[0].then(() => {
+    const t0 = performance.now();
+    let shown = -1;
+    (function tick() {
+      if (done) return;
+      const t = performance.now() - t0;
+      if (t >= ends[ends.length - 1]) return finish(false);
+      const k = ends.findIndex((e) => t < e);
+      if (k !== shown && loaded.length) { shown = k; pic.src = loaded[k % loaded.length]; }
+      requestAnimationFrame(tick);
+    })();
+  });
+}
+
 function initPage() {
   if (stopHero) { stopHero(); stopHero = null; }
   clearInterval(fontTimer);
@@ -328,10 +419,99 @@ function initPage() {
     };
     // On the home page each move of the film strip calls nextFont(), so they change together.
     // Pages without the photo run their own 2-second timer.
-    if (!document.getElementById("film")) fontTimer = setInterval(nextFont, 1500);
+    if (!document.getElementById("hero-img") && !document.getElementById("film")) fontTimer = setInterval(nextFont, 1500);
   }
   const canvas = document.getElementById("film");
   if (canvas && PHOTOS.length > 1) stopHero = startFilm(canvas);
+  const img = document.getElementById("hero-img");
+
+  if (img && PHOTOS.length > 1) {
+    // Respect people who ask their device to reduce motion: no automatic rotating.
+    // (Clicking still changes the photo, because that is the visitor's own choice.)
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // ---- random, with no repeats until every photo has shown ----
+    // Shuffle the whole list like a deck of cards and deal it out. Only when the deck runs out
+    // is it reshuffled, so every photo appears once before any photo appears twice. The new
+    // deck is checked so its first photo is never the one that just showed.
+    function shuffle(list) {
+      for (let i = list.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [list[i], list[j]] = [list[j], list[i]];   // swap two items
+      }
+      return list;
+    }
+
+    let deck = shuffle(PHOTOS.slice());
+    let current = deck.shift();       // the photo showing now
+    applyPhoto(img, current);
+
+    function nextName() {
+      if (deck.length === 0) {
+        deck = shuffle(PHOTOS.slice());
+        if (deck[0] === current) deck.push(deck.shift());   // no repeat across the reshuffle
+      }
+      return deck.shift();
+    }
+
+    // Quietly download the next two photos so each swap is instant.
+    function preloadAhead() {
+      if (deck.length < 2) return;   // they are fetched as soon as the new deck exists
+      deck.slice(0, 2).forEach((name) => { new Image().src = photoUrl(name); });
+    }
+    preloadAhead();
+
+    // Show the next photo. We load it first, so the swap is instant and never blank.
+    function showNext() {
+      const next = nextName();
+      const loader = new Image();
+      loader.onload = () => {
+        applyPhoto(img, next);   // instant swap, no fade
+      nextFont();              // the font under the page changes at the same moment
+        current = next;
+        preloadAhead();
+      };
+      loader.onerror = () => {};  // if one photo fails to load, just skip it
+      loader.src = photoUrl(next);
+    }
+
+    // The automatic timer: each wait is a fresh random length between MIN and MAX.
+    let timer = null;
+    function startTimer() {
+      if (reduceMotion) return;
+      clearTimeout(timer);
+      const wait = (MIN_SECONDS + Math.random() * (MAX_SECONDS - MIN_SECONDS)) * 1000;
+      timer = setTimeout(() => { showNext(); startTimer(); }, wait);
+    }
+    startTimer();
+
+    // Jump to the next photo now, and start a new countdown.
+    function skip() {
+      showNext();
+      startTimer();
+    }
+
+    // Clicking or tapping anywhere on the home page changes the photo (field.js also sends a
+    // ripple from the same click). Links, buttons and selecting text are left alone.
+    function onClick(e) {
+      if (e.target.closest("a, button")) return;
+      if (String(window.getSelection())) return;
+      skip();
+    }
+    document.addEventListener("click", onClick);
+
+    // Keyboard: Enter or Space while the photo is focused.
+    const hero = img.parentElement;
+    hero.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();   // stop Space from scrolling the page
+        skip();
+      }
+    });
+
+    stopHero = () => { clearTimeout(timer); document.removeEventListener("click", onClick); };
+  }
+  if (img && document.querySelector("main.hero-home")) playIntro(img);
 
   // Projects page: the GitHub contribution graph, from data/github.json (refreshed nightly).
   // One square per day, a column per week, in the site's ink at five strengths (styles.css .l0-.l4).
