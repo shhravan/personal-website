@@ -665,7 +665,7 @@
       }
       document.addEventListener("pointerover", function (e) {
         if (e.pointerType !== "mouse") return;
-        if (document.querySelector("main.film-home")) return;   // the home page is a cover: no previews
+        if (!document.querySelector("main.ledger")) return;   // link previews only on the work page
         var a = e.target.closest && e.target.closest("a[href]"), el = a;
         // Work page: the organisation's name and role show the same preview as its logo.
         if (!a && e.target.closest) {

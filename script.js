@@ -328,6 +328,7 @@ function startFilm(canvas) {
   // scroll, so up/down swipes move it too.
   let lastWheel = 0;
   function onWheel(e) {
+    if (fit && Math.abs(e.deltaY) >= Math.abs(e.deltaX)) return;   // gallery strips: up/down scrolls the page as usual
     const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
     const px = e.deltaMode === 1 ? d * 16 : d;                         // lines to pixels
     const step = px / (FW * sf);
@@ -609,7 +610,7 @@ function initPage() {
     fetch(SITE + "data/github.json").then((r) => r.json()).then((d) => {
       if (!d.days || !d.days.length) return;
       const stat = gh.querySelector(".gh-stat");
-      stat.insertBefore(document.createTextNode(d.total.toLocaleString() + " contributions in the last year · "), stat.firstChild);
+      stat.insertBefore(document.createTextNode(d.total.toLocaleString() + " contributions in the last year"), stat.firstChild);
       const grid = document.createElement("div");
       grid.className = "gh-days";
       grid.setAttribute("role", "img");

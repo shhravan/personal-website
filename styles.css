@@ -1068,3 +1068,18 @@ main.ledger { animation: page-in .45s cubic-bezier(.2, .8, .2, 1) both; }   /* o
 .photo-pane[hidden] { display: none; }
 /* main.col is drawn at 80% on wider screens; this undoes it so the strips run the full window width */
 @media (min-width: 48rem) { .photo-pane { width: 125vw; margin-left: calc(50% - 62.5vw); } }
+.gh-stat { display: flex; align-items: center; gap: 0.5rem; }
+.gh-icon { display: inline-flex; line-height: 0; color: var(--soft); text-decoration: none; }
+.gh-icon svg { width: 1.6em; height: 1.6em; fill: currentColor; }
+.gh-icon:hover { color: var(--ink); }
+
+/* photography tabs: two buttons, the chosen one filled in ink */
+.photo-tabs { gap: 0.6rem; }
+.photo-tabs button {
+  font-size: 1.05rem; padding: 0.5rem 1.1rem; border-radius: 0.55rem; color: var(--soft);
+  border: 1.5px solid color-mix(in srgb, var(--ink) 22%, transparent); transition: background .2s, color .2s, border-color .2s;
+}
+.photo-tabs button:hover { color: var(--ink); border-color: color-mix(in srgb, var(--ink) 45%, transparent); }
+.photo-tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.photo-tabs button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (max-width: 47.99rem) { .photo-tabs button { font-size: 0.95rem; } }
