@@ -137,7 +137,7 @@ class ScriptTests(unittest.TestCase):
 
     def test_saved_theme_is_whitelisted(self):
         src = read("theme.js")
-        self.assertRegex(src, r'saved === "light" \? "light" : "dark"')   # localStorage can't inject anything
+        self.assertRegex(src, r'if \(saved === "light" \|\| saved === "dark"\) root.setAttribute\("data-theme", saved\)')   # localStorage can't inject anything
 
     def test_share_previews(self):
         # every page tells iMessage/Slack/X what to show when it is shared, with files that exist

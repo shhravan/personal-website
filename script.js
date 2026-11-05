@@ -132,6 +132,11 @@ function startFilm(canvas) {
   const FW = 600, PH = 400, EDGE = 58, H = PH + 2 * EDGE;   // one frame, in strip pixels
   const ctx = canvas.getContext("2d");
   const wave = parseFloat(canvas.dataset.wave || "1");   // how wavy: 1 is the full wave, smaller is calmer
+  // Gallery strips (photography page): data-fit = frames across the width (the strip sizes its own
+  // height), data-dir = -1 to roll the other way, data-label = the roll's name on the film edge,
+  // data-leader = "title|small line" for a blank leader frame with the title before the photos.
+  const fit = parseFloat(canvas.dataset.fit || "0"), dir = parseFloat(canvas.dataset.dir || "1");
+  const label = canvas.dataset.label || "LAD 400";
 
   // The order: the roll's own photos if the page lists them (data-photos), otherwise every photo,
   // shuffled once. The roll loops through them.
@@ -140,6 +145,7 @@ function startFilm(canvas) {
     const j = Math.floor(Math.random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
+  if (canvas.dataset.leader) order.unshift("__leader");
   const N = order.length, LEN = N * FW;
 
   // Each frame is painted once into its own small canvas as soon as its photo has downloaded. Photos load a few at a time, nearest first.
@@ -154,7 +160,12 @@ function startFilm(canvas) {
       base.addColorStop(0, "#3a3834"); base.addColorStop(0.08, "#24221f");
       base.addColorStop(0.92, "#24221f"); base.addColorStop(1, "#3a3834");
       f.fillStyle = base; f.fillRect(0, 0, FW, H);
-      if (img) {
+      if (order[k] === "__leader") {                              // the leader: the title, printed large
+        const [title, sub] = canvas.dataset.leader.split("|");
+        f.fillStyle = "#ece6d8"; f.font = "500 58px 'EB Garamond', Georgia, serif";
+        f.fillText(title, 40, EDGE + PH / 2 + 10, FW - 80);
+        if (sub) { f.font = "16px Silkscreen, monospace"; f.fillStyle = "rgba(236,230,216,.6)"; f.fillText(sub.toUpperCase(), 42, EDGE + PH / 2 + 56, FW - 80); }
+      } else if (img) {
         const [fx, fy, zoom] = FOCUS[order[k]] || [50, 50, 1];
         const s = Math.max((FW - 12) / img.width, PH / img.height) * zoom;
         const w = img.width * s, h = img.height * s;
@@ -176,7 +187,7 @@ function startFilm(canvas) {
       f.fillText((k + 1) + "A", FW / 2 - 10, H - 4);
       f.font = "12px Silkscreen, monospace";
       f.fillStyle = "rgba(236,230,216,.45)";
-      f.fillText("LAD 400", FW - 110, 12);
+      f.textAlign = "right"; f.fillText(label.toUpperCase(), FW - 20, 12); f.textAlign = "left";
       return c;
     };
     frames[k] = { col: make(), ready: !!img };
@@ -184,7 +195,7 @@ function startFilm(canvas) {
   function need(k) {
     k = ((k % N) + N) % N;
     if (!frames[k]) paintFrame(k, null);         // plain film until the photo arrives
-    if (frames[k].ready || loading.has(k)) return;
+    if (frames[k].ready || loading.has(k) || order[k] === "__leader") return;
     loading.add(k);
     const img = new Image();
     img.onload = () => { paintFrame(k, img); loading.delete(k); };
@@ -196,11 +207,11 @@ function startFilm(canvas) {
   // (frames per second). A "seek" is a short eased move to a chosen frame (a tap or a click).
   let pos = 0, vel = 0, last = performance.now(), shown = 0;
   let seek = null;                                   // { from, to, start }
-  let dragging = false, dragX = 0, dragPos = 0, moved = 0, paused = false, samples = [], geo = null;
+  let dragging = false, dragX = 0, dragPos = 0, moved = 0, paused = false, hover = false, samples = [], geo = null;
   function playing() { return !!document.querySelector(".vinyl[aria-pressed='true'], .deck.playing"); }
   function cruise() {                                 // the speed it settles back to
     if (reduceMotion) return 0;
-    return paused ? 0 : 1 / (playing() ? FRAME_SECONDS_MUSIC : FRAME_SECONDS);
+    return paused || hover ? 0 : dir / (playing() ? FRAME_SECONDS_MUSIC : FRAME_SECONDS) / (fit ? 3 : 1);
   }
   function seekTo(target) { seek = { from: pos, to: target, start: performance.now() }; vel = cruise(); }
   function next() { seekTo(Math.floor(pos + 0.5) + 1); }
@@ -212,6 +223,14 @@ function startFilm(canvas) {
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(Hh * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     phone = W < 700;
+    if (fit) {                                    // gallery strip: as many frames across as asked, and as tall as that makes it
+      sf = W / ((phone ? Math.max(2, fit - 3) : fit) * FW);
+      Hh = Math.ceil(H * sf) + 4;
+      canvas.style.height = Hh + "px";
+      canvas.height = Math.round(Hh * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return;
+    }
     sf = phone ? Math.min(0.46, W / 850) : Math.min(0.95, W / 1550, Hh / (canvas.dataset.wave ? 640 : 1250));   // strip scale; short windows get a smaller strip so it clears the links
   }
   resize();
@@ -231,7 +250,7 @@ function startFilm(canvas) {
       vel = cruise() + (vel - cruise()) * Math.exp(-dt * 2.6);         // a fling slows back to the cruise
       pos += vel * dt;
     }
-    if (Math.floor(pos + 0.5) !== shown) { shown = Math.floor(pos + 0.5); nextFont(); }   // the sign-off's font changes with each frame
+    if (Math.floor(pos + 0.5) !== shown) { shown = Math.floor(pos + 0.5); if (!fit) nextFont(); }   // the sign-off's font changes with each frame
     if (!reduceMotion && !paused) waveT += dt;                          // the wave freezes too when stopped
     const t = waveT;
     const cy = Hh * (phone ? 0.47 : 0.5), A = Hh * (phone ? 0.03 : 0.06) * wave;
@@ -248,7 +267,7 @@ function startFilm(canvas) {
       if (!fr) continue;
       const lx = sx - f * FW;
       const y = cy + A * Math.sin(x * k + ph), ang = Math.atan(A * k * Math.cos(x * k + ph));
-      const tw = Math.cos(x * k * 0.8 - ph * 1.3), sc = sf * (0.9 + 0.1 * tw);   // narrows as it turns away
+      const tw = wave ? Math.cos(x * k * 0.8 - ph * 1.3) : 1, sc = sf * (0.9 + 0.1 * tw);   // narrows as it turns away
       ctx.save();
       ctx.translate(x, y); ctx.rotate(ang); ctx.scale(1, sc);
       ctx.drawImage(fr.col, lx, 0, step / sf + 1, H, 0, -H / 2, step + 1, H);
@@ -290,6 +309,7 @@ function startFilm(canvas) {
       const r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
       if (geo && Math.abs(y - (geo.cy + geo.A * Math.sin(x * geo.k + geo.ph))) < (H / 2) * sf) {
         const f = Math.floor(pos + 0.5 + (x - W / 2) / (FW * sf));
+        if (order[((f % N) + N) % N] === "__leader") return;
         paused = true; vel = 0;   // the roll stops while the photo is open; "framedone" starts it again
         canvas.dispatchEvent(new CustomEvent("frametap", { detail: order[((f % N) + N) % N] }));
       }
@@ -298,6 +318,10 @@ function startFilm(canvas) {
   });
   canvas.addEventListener("pointercancel", () => { dragging = false; vel = cruise(); });
   canvas.addEventListener("framedone", () => { paused = false; vel = cruise(); wake(); });
+  if (fit) {                                       // gallery strips stop while the mouse is on them
+    canvas.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { hover = true; vel = 0; } });
+    canvas.addEventListener("pointerleave", () => { hover = false; vel = cruise(); wake(); });
+  }
 
   // Trackpad (two-finger swipe) and mouse wheel: the roll follows the swipe, including the
   // trackpad's own glide afterwards, then eases back to its normal roll. The home page doesn't
@@ -401,20 +425,21 @@ function playIntro(heroImg) {
 }
 
 // ---- the photography page ----
-// Each roll is a button along the top; choosing one puts its photos on the film strip and shows
-// its contact sheet. A photo (from the sheet or a tap on the strip) opens large in a <dialog> over
-// a darkened page: ← back (or Esc) closes it, the side arrows and arrow keys move through the roll.
-function startPhotography(canvas) {
-  const tabs = [...document.querySelectorAll(".rolls button")];
-  const sheets = [...document.querySelectorAll(".sheet-set")];
+// Film Gallery and Commercial are two tabs. Each roll (or project) is a straight film strip that
+// drifts sideways, alternate strips the other way. A photo tapped on a strip (or chosen from the
+// strip's list of buttons, for keyboards) opens large in a <dialog> over a darkened page and stops
+// that strip; ← back, Esc or the backdrop closes it, the arrows move through that roll.
+function startPhotography() {
+  const tabs = [...document.querySelectorAll(".photo-tabs button")];
+  const panes = [...document.querySelectorAll(".photo-pane")];
   const box = document.querySelector(".lightbox"), big = box.querySelector("img"), cap = box.querySelector(".lb-cap");
-  let stop = () => {}, frames = [], at = 0;
+  const stops = [];
+  let frames = [], at = 0, strip = null;
   function show(k) {
     at = (k + frames.length) % frames.length;
-    const f = frames[at];
-    big.src = f.querySelector("img").src.replace("-700.webp", ".webp");
-    big.alt = f.dataset.caption;
-    const d = f.dataset;
+    const d = frames[at].dataset;
+    big.src = filmUrl(d.name).replace("-700.webp", ".webp");
+    big.alt = d.caption;
     cap.innerHTML = "";
     const left = document.createElement("div"), right = document.createElement("div");
     left.innerHTML = '<span class="lb-title"></span><span class="lb-place"></span>';
@@ -425,38 +450,37 @@ function startPhotography(canvas) {
     if (d.film) { right.appendChild(document.createElement("br")); right.appendChild(document.createTextNode(d.film)); }
     cap.append(left, right);
   }
-  function open(name) {
+  function open(roll, name) {
+    frames = [...roll.querySelectorAll(".roll-list button")];
+    strip = roll.querySelector("canvas");
     const k = frames.findIndex((f) => f.dataset.name === name);
     if (k < 0) return;
     show(k);
     if (!box.open) box.showModal();
   }
-  function choose(i) {
-    tabs.forEach((t, k) => t.setAttribute("aria-selected", k === i ? "true" : "false"));
-    sheets.forEach((s, k) => { s.hidden = k !== i; });
-    frames = [...sheets[i].querySelectorAll(".frame")];
-    stop();
-    // A fresh canvas for each roll, so the old roll's touch and wheel handlers go with the old one.
-    const fresh = canvas.cloneNode(false);
-    canvas.replaceWith(fresh);
-    canvas = fresh;
-    canvas.dataset.photos = frames.map((f) => f.dataset.name).join(",");
-    canvas.addEventListener("frametap", (e) => open(e.detail));
-    stop = startFilm(canvas);
-  }
-  tabs.forEach((t, i) => t.addEventListener("click", () => choose(i)));
-  sheets.forEach((s) => s.addEventListener("click", (e) => { const f = e.target.closest(".frame"); if (f) open(f.dataset.name); }));
+  document.querySelectorAll(".roll").forEach((roll, i) => {
+    const canvas = roll.querySelector("canvas");
+    canvas.dataset.photos = [...roll.querySelectorAll(".roll-list button")].map((b) => b.dataset.name).join(",");
+    if (i % 2) canvas.dataset.dir = "-1";
+    canvas.addEventListener("frametap", (e) => open(roll, e.detail));
+    roll.querySelector(".roll-list").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) open(roll, b.dataset.name); });
+    stops.push(startFilm(canvas));
+  });
+  tabs.forEach((t, i) => t.addEventListener("click", () => {
+    tabs.forEach((x, k) => x.setAttribute("aria-selected", k === i ? "true" : "false"));
+    panes.forEach((p, k) => { p.hidden = k !== i; });
+    window.dispatchEvent(new Event("resize"));   // strips in a pane that was hidden need their size
+  }));
   box.querySelector(".lb-back").addEventListener("click", () => box.close());
-  box.addEventListener("close", () => canvas.dispatchEvent(new Event("framedone")));
+  box.addEventListener("close", () => { if (strip) strip.dispatchEvent(new Event("framedone")); });
   box.querySelector(".lb-prev").addEventListener("click", () => show(at - 1));
   box.querySelector(".lb-next").addEventListener("click", () => show(at + 1));
-  box.addEventListener("click", (e) => { if (e.target === box) box.close(); });   // a click on the dark backdrop
+  box.addEventListener("click", (e) => { if (e.target === box) box.close(); });
   box.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") show(at - 1);
     if (e.key === "ArrowRight") show(at + 1);
   });
-  choose(0);
-  return () => { stop(); if (box.open) box.close(); };
+  return () => { stops.forEach((f) => f()); if (box.open) box.close(); };
 }
 
 function initPage() {
@@ -485,7 +509,7 @@ function initPage() {
     if (!document.getElementById("hero-img") && !document.getElementById("film")) fontTimer = setInterval(nextFont, 1500);
   }
   const canvas = document.getElementById("film");
-  if (canvas && document.querySelector(".rolls")) stopHero = startPhotography(canvas);
+  if (document.querySelector(".photo-pane")) stopHero = startPhotography();
   else if (canvas && PHOTOS.length > 1) stopHero = startFilm(canvas);
   const img = document.getElementById("hero-img");
 
