@@ -219,8 +219,11 @@ A 2.5rem logo tile (the Cornell seal repeats on each Education and Honors row; 0
 ### GitHub Activity (projects page)
 The last year of contributions as a grid of small squares (one per day, a column per week), in `--ink` at 6/22/42/66/90% strength, so it matches the paper in both themes. Month labels in Silkscreen; the total and a link to github.com/shhravan underneath. Data from `data/github.json`, refreshed nightly by a GitHub job.
 
-### Project Rows (projects page)
-Same ledger and `<details>` rows as the work page, without logos. Opened, a row shows a small definition list: PROBLEM, BUILT, RESULT, LINKS (labels in Silkscreen).
+### Project Gallery (projects page)
+The full contribution graph across the column under the banner, then a two-column gallery (one on phones): a 16:10 picture with soft corners and a faint ring, then the name, the year in Silkscreen and one italic line. Projects without a picture get a plain tile with the name (and logo) set large. Tiles lift 3px on hover.
+
+### Blog Notebook
+Ledger layout with two sections: NOTEBOOK (short notes from `notes/`, date in Silkscreen in a 7.5rem margin, optional title, dashed rules between notes) and ESSAYS (Substack posts).
 
 ### Project Card
 **Role:** one project.

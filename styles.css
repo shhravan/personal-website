@@ -878,3 +878,38 @@ body::before { height: 8.2rem !important; -webkit-mask: linear-gradient(to botto
 .case { display: grid; grid-template-columns: 5.5rem 1fr; gap: 0.35rem 1rem; margin: 0.6rem 0 0.4rem; font-size: 0.92em; }
 .case dt { font-family: "Silkscreen", monospace; font-size: 0.68em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--soft); padding-top: 0.35em; }
 .case dd { margin: 0; }
+
+/* ---- projects page: the gallery ----
+   The full contribution graph across the column, then the projects as a two-column gallery of
+   pictures with a caption underneath (one column on phones). */
+@media (min-width: 48rem) { body:has(main.gallery) main.gallery { width: clamp(25rem, 62vw, 62rem); } }
+.gallery .gh { margin: 1.6rem 0 0; }
+.gallery .gh-stat { margin: 0 0 0.7rem; font-family: "Silkscreen", monospace; font-size: 0.62em; letter-spacing: 0.22em; text-transform: uppercase; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4rem 1.8rem; margin: 2.6rem 0 0; }
+.tile { display: flex; flex-direction: column; color: var(--ink); text-decoration: none; }
+.tile img, .tile-type {
+  width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 0.5rem;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent), 0 12px 28px rgba(0, 0, 0, .14);
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1);
+}
+a.tile:hover img, a.tile:hover .tile-type { transform: translateY(-3px); }
+.tile-type { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem; font-size: 1.9rem; background: color-mix(in srgb, var(--ink) 5%, var(--bg)); }
+.tile-type img { width: 3.2rem; height: 3.2rem; aspect-ratio: 1; box-shadow: none; border-radius: 0.6rem; }
+.tile-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 0.9rem; }
+.tile-row b { font-weight: 500; font-size: 1.2em; }
+.tile-year { font-family: "Silkscreen", monospace; font-size: 0.62em; letter-spacing: 0.18em; color: var(--soft); }
+.tile-line { font-style: italic; color: var(--soft); font-size: 0.95em; margin-top: 0.15rem; }
+@media (max-width: 47.99rem) { .tiles { grid-template-columns: 1fr; } }
+
+/* ---- blog: the notebook (notes from notes/, built by scripts/build_notes.py) and essays ---- */
+.notes { list-style: none; margin: 0; padding: 0; }
+.note { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; padding: 0.2rem 0 1.4rem; }
+.note + .note { border-top: 1px dashed color-mix(in srgb, var(--ink) 14%, transparent); padding-top: 1.2rem; }
+.note-date { font-family: "Silkscreen", monospace; font-size: 0.62em; letter-spacing: 0.16em; text-transform: uppercase; color: var(--soft); padding-top: 0.45em; white-space: nowrap; }
+.note-body h3 { font-size: 1.2em; font-weight: 500; margin: 0 0 0.3rem; }
+.note-body p { margin: 0 0 0.6rem; }
+.note-body p:last-child { margin-bottom: 0; }
+.notes .empty, .posts .empty { color: var(--soft); font-style: italic; }
+.notebook .posts { margin-top: 0; }
+.notebook .also { color: var(--soft); font-size: 0.9em; margin: 0.6rem 0 0; }
+@media (max-width: 47.99rem) { .note { grid-template-columns: 1fr; gap: 0.3rem; } }

@@ -362,8 +362,7 @@ function initPage() {
         s.textContent = new Date(start.getFullYear(), start.getMonth() + m + 1, 1).toLocaleString("en", { month: "short" }).toLowerCase();
         months.appendChild(s);
       }
-      gh.insertBefore(months, stat);
-      gh.insertBefore(grid, months);
+      gh.append(grid, months);
     }).catch(() => {});
   }
 
