@@ -803,7 +803,7 @@ main.col h2 { font-size: 1.375rem; }
 /* ---- inner pages: room above and below ----
    Space under the top bar before "← home", and enough at the bottom that the last line ends
    above the highest the water ever reaches (about 18% of the window plus a few rows, field.js). */
-main.page { padding-bottom: calc(25vh + 4rem) !important; }
+main.page { padding-bottom: calc(20vh + 2.5rem) !important; }
 main.page .back { margin-bottom: 2rem; }
 @media (min-width: 48rem) {
   body:has(main.page) main.page { padding-top: 7.5rem; }
@@ -818,8 +818,8 @@ main.page .back { margin-bottom: 2rem; }
 body:has(main.page) { align-items: flex-start; }
 main .social ul { justify-content: center; margin: 2.2rem 0 0; }
 main .social + .foot { margin-top: 0.7rem; }
-@media (min-width: 48rem) { body:has(main.page) main.page { padding-top: 10rem; } }
-@media (max-width: 47.99rem) { main.page { padding-top: 7.75rem; } }
+@media (min-width: 48rem) { body:has(main.page) main.page { padding-top: calc(9.1vw + 1.4rem); } }
+@media (max-width: 47.99rem) { main.page { padding-top: 7.25rem; } }
 
 /* ---- home page: the film strip ----
    The home page is a cover: sections along the top, the roll of photos across the middle (drawn
@@ -961,8 +961,8 @@ body:has(main.hero-home) main.hero-home {
 /* ---- smoother: each new page fades up gently after a page swap (theme.js swaps <main>) ---- */
 html { scroll-behavior: smooth; }
 @keyframes page-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-main.col { animation: page-in .45s cubic-bezier(.2, .8, .2, 1) both; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } main.col { animation: none; } }
+main.ledger { animation: page-in .45s cubic-bezier(.2, .8, .2, 1) both; }   /* only the work page rises in */
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } main.ledger { animation: none; } }
 
 /* ---- home on phones: icons and sign-off sit low, just above the water ---- */
 @media (max-width: 47.99rem) {
@@ -1024,3 +1024,31 @@ main.col { animation: page-in .45s cubic-bezier(.2, .8, .2, 1) both; }
 /* a single note or essay: one readable column, picture with its caption */
 .post .post-body figure { margin: 1.6rem 0; }
 .post .post-body figcaption { margin-top: 0.4rem; font-size: 0.85em; font-style: italic; color: var(--soft); text-align: right; }
+
+/* ---- section links are part of the top bar: sized in vw on wider screens, like the switch, name
+   mark and record, so zooming the browser leaves the whole bar as it is ---- */
+@media (min-width: 48rem) {
+  nav.topnav { top: 5.78vw; gap: 3.33vw; font-size: 0.9vw; }
+  body::before { height: 9.1vw !important; }
+}
+
+/* ---- tighter spacing between sections ---- */
+.crumb { margin-bottom: 1rem; }
+.ledger .panel { padding-top: 1.1rem; }
+.photos .film-inline { margin-top: 0; }
+.sheet-set h2 { margin-top: 0.2rem; }
+.tiles { margin-top: 1.8rem; }
+.gallery .gh { margin-top: 1.1rem; }
+
+/* ---- photography lightbox: the photo on a dark film card, title and details underneath ---- */
+.lightbox figure { background: #16140f; padding: 1rem 1rem 1.1rem; border-radius: 0.8rem; box-shadow: 0 30px 80px rgba(0, 0, 0, .55); max-width: min(92vw, 70rem); }
+.lightbox img { max-height: 72vh; border-radius: 0.4rem; box-shadow: none; }
+.lb-cap { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-top: 1rem; text-align: left; font: inherit; letter-spacing: 0; text-transform: none; color: #f3ecdc; }
+.lb-title { font-family: "EB Garamond", Georgia, serif; font-size: 1.7rem; line-height: 1.1; }
+.lb-place, .lb-meta { font-family: "Silkscreen", monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(243, 236, 220, .78); }
+.lb-place { display: block; margin-top: 0.55rem; }
+.lb-meta { text-align: right; line-height: 1.7; }
+.lb-back { top: calc(1rem + env(safe-area-inset-top, 0px)); left: 1rem; border: 1px solid rgba(243, 236, 220, .35) !important; border-radius: 2rem; padding: 0.5rem 0.9rem !important; background: rgba(22, 20, 15, .6) !important; }
+.lb-prev, .lb-next { width: 3rem; height: 3rem; padding: 0 !important; border-radius: 50%; background: rgba(22, 20, 15, .6) !important; font-size: 1.8rem !important; }
+.lb-prev { left: 1rem !important; } .lb-next { right: 1rem !important; }
+@media (max-width: 47.99rem) { .lightbox figure { box-sizing: border-box; max-width: calc(100vw - 1.5rem); padding: 0.7rem 0.7rem 0.9rem; } .lb-cap { flex-direction: column; align-items: flex-start; gap: 0.6rem; } .lb-meta { text-align: left; } .lb-title { font-size: 1.35rem; } .lb-prev, .lb-next { top: auto; bottom: 1.2rem; transform: none; } }
