@@ -356,12 +356,12 @@ function startFilm(canvas) {
 
 // ---- the opening sequence (home page, first visit in a session) ----
 // The site opens on a burst of the hero photos, full screen, changing faster and faster; then the
-// last one shrinks down into the hero frame and the rest of the page fades in. About 5 seconds.
+// last one shrinks down into the hero frame and the rest of the page fades in. About 2 seconds.
 // "skip" (bottom right) ends it straight away. It plays once per visit, and never for people who
 // ask their device to reduce motion.
-// ms each photo shows: 24 photos, each a little quicker than the last (about 4.6 s), then the
-// settle; roughly 5 seconds before the page appears.
-const INTRO_STEPS = [320, 305, 290, 277, 264, 251, 239, 228, 217, 207, 197, 188, 179, 170, 162, 155, 147, 140, 134, 127, 121, 116, 110, 105];
+// ms each photo shows: 16 photos, each a little quicker than the last (about 1.4 s), then the
+// settle; about 2 seconds before the page appears.
+const INTRO_STEPS = [120, 115, 109, 104, 100, 95, 91, 87, 83, 79, 76, 72, 69, 66, 63, 60];
 function playIntro(heroImg) {
   const root = document.documentElement;
   let seen = false;
