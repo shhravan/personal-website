@@ -290,12 +290,14 @@ function startFilm(canvas) {
       const r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
       if (geo && Math.abs(y - (geo.cy + geo.A * Math.sin(x * geo.k + geo.ph))) < (H / 2) * sf) {
         const f = Math.floor(pos + 0.5 + (x - W / 2) / (FW * sf));
+        paused = true; vel = 0;   // the roll stops while the photo is open; "framedone" starts it again
         canvas.dispatchEvent(new CustomEvent("frametap", { detail: order[((f % N) + N) % N] }));
       }
     }
     wake();
   });
   canvas.addEventListener("pointercancel", () => { dragging = false; vel = cruise(); });
+  canvas.addEventListener("framedone", () => { paused = false; vel = cruise(); wake(); });
 
   // Trackpad (two-finger swipe) and mouse wheel: the roll follows the swipe, including the
   // trackpad's own glide afterwards, then eases back to its normal roll. The home page doesn't
@@ -412,7 +414,16 @@ function startPhotography(canvas) {
     const f = frames[at];
     big.src = f.querySelector("img").src.replace("-700.webp", ".webp");
     big.alt = f.dataset.caption;
-    cap.textContent = f.dataset.caption + " · " + f.querySelector("span").textContent;
+    const d = f.dataset;
+    cap.innerHTML = "";
+    const left = document.createElement("div"), right = document.createElement("div");
+    left.innerHTML = '<span class="lb-title"></span><span class="lb-place"></span>';
+    left.querySelector(".lb-title").textContent = d.caption;
+    left.querySelector(".lb-place").textContent = [d.place, d.year].filter(Boolean).join(" · ");
+    right.className = "lb-meta";
+    right.textContent = "frame " + String(at + 1).padStart(2, "0") + " / " + String(frames.length).padStart(2, "0");
+    if (d.film) { right.appendChild(document.createElement("br")); right.appendChild(document.createTextNode(d.film)); }
+    cap.append(left, right);
   }
   function open(name) {
     const k = frames.findIndex((f) => f.dataset.name === name);
@@ -436,6 +447,7 @@ function startPhotography(canvas) {
   tabs.forEach((t, i) => t.addEventListener("click", () => choose(i)));
   sheets.forEach((s) => s.addEventListener("click", (e) => { const f = e.target.closest(".frame"); if (f) open(f.dataset.name); }));
   box.querySelector(".lb-back").addEventListener("click", () => box.close());
+  box.addEventListener("close", () => canvas.dispatchEvent(new Event("framedone")));
   box.querySelector(".lb-prev").addEventListener("click", () => show(at - 1));
   box.querySelector(".lb-next").addEventListener("click", () => show(at + 1));
   box.addEventListener("click", (e) => { if (e.target === box) box.close(); });   // a click on the dark backdrop

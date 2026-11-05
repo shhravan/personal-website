@@ -4,6 +4,17 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Photo viewer card, roll stops on tap, tighter spacing, nav part of the top bar, blog private
+- **Before:** `d36dde4`
+- **Changed:**
+  - Photography: tapping a photo on the rolling strip stops the strip and opens it; the strip rolls again when the photo closes. The viewer is a dark card: the photo, its title, place and year underneath, frame number and film stock on the right; rounded back and arrow buttons. Details are placeholders.
+  - Less empty space: smaller gaps under the top bar, under the breadcrumb, between sections and above the water.
+  - The section links are sized with the top bar, so zooming the browser leaves the whole bar as it is.
+  - The rise-in effect is only on the work page.
+  - Blog: grey in the links (not linked) and hidden from search engines, until it's ready.
+- **Files:** `styles.css`, `script.js`, `theme.js`, `photography/index.html`, `blog/index.html`, cache numbers.
+- **To revert:** restore those from `d36dde4`.
+
 ## Large hero with an opening sequence; photography rolls; blog list; site polish
 - **Before:** `34926a2` (the film-strip home is kept on `backup/home-film-strip`)
 - **Changed:**
