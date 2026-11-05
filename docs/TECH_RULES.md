@@ -27,6 +27,7 @@ theme.js            theme switch, record player, in-place page swaps (in every p
 script.js           home film strip (canvas) and email links; re-runs on each page swap
 field.js            letter field and shoreline (WebGL)
 images/             hero/, covers/, logos/, blog/
+notes/              blog notebook entries (YYYY-MM-DD-words.md), built into blog/index.html by scripts/build_notes.py
 data/github.json    contribution graph data, refreshed nightly by .github/workflows/github-contributions.yml
 audio/              the record player's songs (NAME.mp3, named after the cover)
 scripts/            Substack sync

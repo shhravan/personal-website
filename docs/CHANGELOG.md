@@ -4,6 +4,14 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Projects gallery and a blog notebook
+- **Before:** `a651efd`
+- **Changed:**
+  - Projects: the full GitHub contribution graph across the column under the banner, then the projects as a two-column gallery (picture, name, year, one italic line; one column on phones). New screenshot of the live site for its tile.
+  - Blog: water banner, then a **Notebook** of short notes (newest first) and **Essays** (the Substack posts). Notes are files in `notes/` (`YYYY-MM-DD-words.md`, see `notes/README.md`); a GitHub job (`.github/workflows/notes.yml`) runs `scripts/build_notes.py` when one changes. Links in notes work, including to the site's own pages. Visitors see no writing controls.
+- **Files:** `projects/index.html`, `blog/index.html`, `notes/`, `scripts/build_notes.py`, `tests/test_notes.py`, `.github/workflows/notes.yml`, `images/projects/`, `script.js`, `styles.css`, cache numbers, DESIGN, TECH_RULES.
+- **To revert:** restore those from `a651efd`; delete `notes/`, the notes script, test and workflow.
+
 ## Claude Code skills available in cloud sessions
 - **Before:** `ee65289`
 - **Changed:** nothing on the site. Added 68 Claude Code skills under `.claude/skills/` so `/skill-name` works in cloud sessions, which can't see the skills on Shravan's Mac. Sources and licences are in `.claude/THIRD_PARTY_SKILLS.md`.

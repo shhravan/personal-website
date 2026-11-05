@@ -1,0 +1,35 @@
+# Builds the notebook on the blog page (scripts/build_notes.py) whenever a note in notes/ changes.
+name: Notes
+
+on:
+  push:
+    branches: [main]
+    paths: ["notes/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # lets the job commit the updated blog page
+
+concurrency:
+  group: notes
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python3 scripts/build_notes.py
+      - name: Commit if it changed
+        run: |
+          git add blog/index.html
+          if git diff --cached --quiet; then echo "No change."; exit 0; fi
+          git config user.name "notes[bot]"
+          git config user.email "notes@users.noreply.github.com"
+          git commit -m "Blog: update notebook"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
