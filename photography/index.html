@@ -7,13 +7,13 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>photography · shravan lad</title>
-  <meta name="description" content="film photos and a few collections.">
+  <meta name="description" content="film photos, a roll at a time.">
   <!-- Link previews when the site is shared (iMessage, Slack, Discord, LinkedIn, X...): a picture,
        and a short silent loop of the home page where the app supports video. -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="shravan lad">
   <meta property="og:title" content="photography · shravan lad">
-  <meta property="og:description" content="film photos and a few collections.">
+  <meta property="og:description" content="film photos, a roll at a time.">
   <meta property="og:url" content="https://shravanlad.com/photography/">
   <meta property="og:image" content="https://shravanlad.com/images/og/home.jpg">
   <meta property="og:image:width" content="1200">
@@ -34,23 +34,77 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400&text=%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4%E0%A4%85%E0%A4%86%E0%A4%87%E0%A4%89%E0%A4%8F%E0%A4%93%E0%A4%95%E0%A4%96%E0%A4%97%E0%A4%98%E0%A4%9A%E0%A4%9B%E0%A4%9C%E0%A4%9D%E0%A4%9F%E0%A4%A0%E0%A4%A1%E0%A4%A2%E0%A4%A4%E0%A4%A5%E0%A4%A6%E0%A4%A7%E0%A4%A8%E0%A4%AA%E0%A4%AB%E0%A4%AC%E0%A4%AD%E0%A4%AE%E0%A4%AF%E0%A4%B0%E0%A4%B2%E0%A4%B5%E0%A4%B6%E0%A4%B8%E0%A4%B9&display=swap" rel="stylesheet">
   <!-- A handful of display fonts, only for the letters of "opticsbyshrvn" (its font keeps changing, see script.js). -->
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Gloock&family=Bodoni+Moda:ital@1&family=Italiana&family=Young+Serif&family=Fraunces:ital,opsz,wght@1,144,300&family=Unbounded:wght@300&family=Jacquard+12&family=Doto:wght@700&family=Pixelify+Sans&text=opticsbyshrvn&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=73">
+  <link rel="stylesheet" href="../styles.css?v=83">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%232d5a46%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2722%27 text-anchor=%27middle%27 fill=%27%23f8f6f0%27 font-family=%27Georgia,serif%27%3Es%3C/text%3E%3C/svg%3E">
   <!-- Runs right away (before the page paints) so the right light/dark theme is used with no flash. -->
-  <script src="../theme.js?v=49"></script>
+  <script src="../theme.js?v=56"></script>
 </head>
 <body>
   <!-- Same top bar, letter field and sign-off as the home page (see docs/DESIGN.md), minus the photo. -->
   <a class="logo" href="../" aria-label="श्रवण लाड · Shravan Lad, home"></a>
-  <main class="col page">
-    <a class="back" href="../">← home</a>
+  <main class="col page photos">
+    <p class="crumb"><a href="../">home</a> / <span>photography</span></p>
     <h1>photography</h1>
-    <p class="lede">film photos and a few collections.</p>
-    <p>coming soon.</p>  <!-- placeholder -->
+    <p class="lede">film photos, a roll at a time.</p>
+
+    <!-- The rolls: choose one and its photos go onto the film strip and its contact sheet shows
+         below. A photo (on the sheet, or a tap on the strip) opens large over the darkened page.
+         All of it is run by startPhotography in script.js.
+         PLACEHOLDER: the rolls, photos and captions are stand-ins until the real sets are chosen. -->
+    <nav class="rolls" role="tablist" aria-label="rolls"><button type="button" role="tab" aria-selected="true">mumbai, monsoon</button><button type="button" role="tab" aria-selected="false">home, surat</button><button type="button" role="tab" aria-selected="false">ithaca, first winter</button></nav>
+
+    <div class="film film-inline">
+      <canvas id="film" data-wave="0.4" tabindex="0" role="img" aria-label="the chosen roll of photos; tap a frame to open it"></canvas>
+    </div>
+
+    <div class="sheets">
+      <section class="sheet-set">
+        <h2>mumbai, monsoon <span>roll 01 · 2024</span></h2>
+        <div class="cs">
+          <button type="button" class="frame" data-name="tram" data-caption="tram, mumbai"><img src="../images/hero/tram-700.webp" alt="tram, mumbai" loading="lazy" width="700" height="467"><span>1 · 1a</span></button>
+          <button type="button" class="frame" data-name="classroom" data-caption="classroom"><img src="../images/hero/classroom-700.webp" alt="classroom" loading="lazy" width="700" height="467"><span>2 · 2a</span></button>
+          <button type="button" class="frame" data-name="rain" data-caption="rain"><img src="../images/hero/rain-700.webp" alt="rain" loading="lazy" width="700" height="467"><span>3 · 3a</span></button>
+          <button type="button" class="frame" data-name="crowd" data-caption="crowd"><img src="../images/hero/crowd-700.webp" alt="crowd" loading="lazy" width="700" height="467"><span>4 · 4a</span></button>
+          <button type="button" class="frame" data-name="garden-party" data-caption="garden party"><img src="../images/hero/garden-party-700.webp" alt="garden party" loading="lazy" width="700" height="467"><span>5 · 5a</span></button>
+          <button type="button" class="frame" data-name="dwarka" data-caption="dwarka"><img src="../images/hero/dwarka-700.webp" alt="dwarka" loading="lazy" width="700" height="467"><span>6 · 6a</span></button>
+          <button type="button" class="frame" data-name="wall-street" data-caption="wall street"><img src="../images/hero/wall-street-700.webp" alt="wall street" loading="lazy" width="700" height="467"><span>7 · 7a</span></button>
+          <button type="button" class="frame" data-name="esplanade-dusk" data-caption="esplanade at dusk"><img src="../images/hero/esplanade-dusk-700.webp" alt="esplanade at dusk" loading="lazy" width="700" height="467"><span>8 · 8a</span></button>
+        </div>
+      </section>
+      <section class="sheet-set" hidden>
+        <h2>home, surat <span>roll 02 · 2023</span></h2>
+        <div class="cs">
+          <button type="button" class="frame" data-name="vitthal" data-caption="vitthal"><img src="../images/hero/vitthal-700.webp" alt="vitthal" loading="lazy" width="700" height="467"><span>1 · 1a</span></button>
+          <button type="button" class="frame" data-name="shivaji" data-caption="shivaji"><img src="../images/hero/shivaji-700.webp" alt="shivaji" loading="lazy" width="700" height="467"><span>2 · 2a</span></button>
+          <button type="button" class="frame" data-name="natsamrat" data-caption="natsamrat"><img src="../images/hero/natsamrat-700.webp" alt="natsamrat" loading="lazy" width="700" height="467"><span>3 · 3a</span></button>
+          <button type="button" class="frame" data-name="partha-sarathi" data-caption="partha sarathi"><img src="../images/hero/partha-sarathi-700.webp" alt="partha sarathi" loading="lazy" width="700" height="467"><span>4 · 4a</span></button>
+          <button type="button" class="frame" data-name="tumbbad" data-caption="tumbbad"><img src="../images/hero/tumbbad-700.webp" alt="tumbbad" loading="lazy" width="700" height="467"><span>5 · 5a</span></button>
+          <button type="button" class="frame" data-name="the-choice" data-caption="the choice"><img src="../images/hero/the-choice-700.webp" alt="the choice" loading="lazy" width="700" height="467"><span>6 · 6a</span></button>
+        </div>
+      </section>
+      <section class="sheet-set" hidden>
+        <h2>ithaca, first winter <span>roll 03 · 2025</span></h2>
+        <div class="cs">
+          <button type="button" class="frame" data-name="cornell-1930" data-caption="cornell, 1930"><img src="../images/hero/cornell-1930-700.webp" alt="cornell, 1930" loading="lazy" width="700" height="467"><span>1 · 1a</span></button>
+          <button type="button" class="frame" data-name="harvey-mike" data-caption="harvey and mike"><img src="../images/hero/harvey-mike-700.webp" alt="harvey and mike" loading="lazy" width="700" height="467"><span>2 · 2a</span></button>
+          <button type="button" class="frame" data-name="stone-cold" data-caption="stone cold"><img src="../images/hero/stone-cold-700.webp" alt="stone cold" loading="lazy" width="700" height="467"><span>3 · 3a</span></button>
+          <button type="button" class="frame" data-name="oasis" data-caption="oasis"><img src="../images/hero/oasis-700.webp" alt="oasis" loading="lazy" width="700" height="467"><span>4 · 4a</span></button>
+          <button type="button" class="frame" data-name="queen" data-caption="queen"><img src="../images/hero/queen-700.webp" alt="queen" loading="lazy" width="700" height="467"><span>5 · 5a</span></button>
+          <button type="button" class="frame" data-name="shawshank" data-caption="shawshank"><img src="../images/hero/shawshank-700.webp" alt="shawshank" loading="lazy" width="700" height="467"><span>6 · 6a</span></button>
+        </div>
+      </section>
+    </div>
+
+    <dialog class="lightbox" aria-label="photo">
+      <button type="button" class="lb-back" aria-label="back">← back</button>
+      <button type="button" class="lb-prev" aria-label="previous photo">‹</button>
+      <figure><img alt=""><figcaption class="lb-cap"></figcaption></figure>
+      <button type="button" class="lb-next" aria-label="next photo">›</button>
+    </dialog>
 
     <p class="foot"><span class="optics"><a href="https://www.instagram.com/opticsbyshrvn/"><em>opticsbyshrvn</em></a><span class="reveal" aria-hidden="true">for if you have taste</span></span></p>
   </main>
-  <script src="../field.js?v=23"></script>
-  <script src="../script.js?v=33"></script>
+  <script src="../field.js?v=30"></script>
+  <script src="../script.js?v=41"></script>
 </body>
 </html>

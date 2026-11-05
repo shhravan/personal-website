@@ -1,16 +1,18 @@
-"""Builds the notebook on the blog page from the files in notes/.
+"""Builds the notes on the blog from the files in notes/: one page each, and a line in the list.
 
 Each note is a plain text file named notes/YYYY-MM-DD-anything.md. Write it on github.com or in the
 GitHub app (Add file → Create new file); when it's saved, a GitHub job runs this script and the note
-appears at the top of shravanlad.com/blog/. Visitors never see a way to write.
+gets its own page (shravanlad.com/blog/<file name>/) and a line in the blog list. Visitors never
+see a way to write.
 
 Inside a note:
-  # an optional title on the first line
+  # a title on the first line (without one, the first words are used)
+  ![a caption](/images/blog/picture.jpg) on its own line for a picture
   plain paragraphs, separated by a blank line
   [words](https://link) for a link (shravanlad.com pages too, e.g. [work](/work/))
   *italic* and **bold**
 """
-import html, os, re, sys
+import html, os, re, shutil, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NOTES = os.path.join(ROOT, "notes")
@@ -37,29 +39,65 @@ def inline(text):
 
 
 def render_note(name, text):
+    """Returns (title, date, article HTML) for one note."""
     y, m, d = NAME.match(name).groups()
     blocks = [b.strip() for b in re.split(r"\n\s*\n", text.strip()) if b.strip()]
-    title = ""
-    if blocks and blocks[0].startswith("# "):
-        title = blocks.pop(0)[2:].strip()
-    body = "".join(f"<p>{inline(' '.join(b.split()))}</p>" for b in blocks)
-    head = f"<h3>{inline(title)}</h3>" if title else ""
-    date = f"{int(d)} {MONTHS[int(m) - 1]} {y}"
-    return f'      <li class="note"><span class="note-date">{date}</span><div class="note-body">{head}{body}</div></li>'
+    title = blocks.pop(0)[2:].strip() if blocks and blocks[0].startswith("# ") else ""
+    parts = []
+    for b in blocks:
+        pic = re.fullmatch(r"!\[([^\]]*)\]\(([^)\s]+)\)", b)
+        if pic and SAFE_LINK.match(pic.group(2)):
+            cap = inline(pic.group(1))
+            parts.append(f'<figure><img src="{html.escape(pic.group(2), quote=True)}" alt="{html.escape(pic.group(1), quote=True)}">'
+                         + (f"<figcaption>{cap}</figcaption>" if cap else "") + "</figure>")
+        else:
+            parts.append(f"<p>{inline(' '.join(b.split()))}</p>")
+    if not title:
+        words = re.sub(r"[*\[\]()#!]", "", " ".join(blocks)).split()
+        title = " ".join(words[:6]) + ("…" if len(words) > 6 else "")
+    date = f"{MONTHS[int(m) - 1]} {int(d)}, {y}"
+    return title, date, "".join(parts)
 
 
 def main():
     names = sorted((n for n in os.listdir(NOTES) if NAME.match(n)), reverse=True) if os.path.isdir(NOTES) else []
-    rows = [render_note(n, open(os.path.join(NOTES, n), encoding="utf-8").read()) for n in names]
-    listing = "\n".join(rows) if rows else '      <li class="empty">the first note is on its way.</li>'
     page = open(INDEX, encoding="utf-8").read()
-    if "<!-- NOTES:START -->" not in page:
+    if "<!-- NOTES:START -->" not in page or "<body>" not in page:
         sys.exit("blog/index.html is missing its NOTES markers")
-    new = re.sub(r"(<!-- NOTES:START -->\n).*?(\n\s*<!-- NOTES:END -->)",
-                 lambda mm: mm.group(1) + listing + mm.group(2), page, flags=re.S)
+    head = re.sub(r'(href|src)="\.\./', r'\1="../../', page[:page.index("<body>")])
+    foot = re.sub(r'(href|src)="\.\./', r'\1="../../', page[page.index('    <p class="foot">'):])
+    rows, keep = [], set()
+    for n in names:
+        slug = n[:-3]
+        title, date, body = render_note(n, open(os.path.join(NOTES, n), encoding="utf-8").read())
+        t = html.escape(title)
+        rows.append(f'      <li data-date="{slug[:10]}"><a href="{slug}/"><b>{inline(title)}</b><span class="date">{date}</span></a></li>')
+        keep.add(slug)
+        out = head.replace("<title>blog · shravan lad</title>", f"<title>{t} · shravan lad</title>") + f"""<body>
+  <a class="logo" href="../../" aria-label="श्रवण लाड · Shravan Lad, home"></a>
+  <main class="col page post">
+    <p class="crumb"><a href="../../">home</a> / <a href="../">blog</a></p>
+    <article>
+      <h1>{inline(title)}</h1>
+      <p class="post-meta">{date}</p>
+      <div class="post-body">{body}</div>
+    </article>
+
+""" + foot
+        d = os.path.join(ROOT, "blog", slug)
+        os.makedirs(d, exist_ok=True)
+        open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(out)
+        open(os.path.join(d, ".from-notes"), "w").close()
+    # Notes whose file was deleted: remove their pages too.
+    for d in os.listdir(os.path.join(ROOT, "blog")):
+        full = os.path.join(ROOT, "blog", d)
+        if d not in keep and os.path.exists(os.path.join(full, ".from-notes")):
+            shutil.rmtree(full)
+    new = re.sub(r"(<!-- NOTES:START -->).*?(\n\s*<!-- NOTES:END -->)",
+                 lambda mm: mm.group(1) + "".join("\n" + r for r in rows) + mm.group(2), page, flags=re.S)
     if new != page:
         open(INDEX, "w", encoding="utf-8").write(new)
-    print(f"{len(rows)} notes on the blog page.")
+    print(f"{len(rows)} notes on the blog.")
 
 
 if __name__ == "__main__":

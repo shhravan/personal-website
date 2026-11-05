@@ -26,7 +26,7 @@ jobs:
       - run: python3 scripts/build_notes.py
       - name: Commit if it changed
         run: |
-          git add blog/index.html
+          git add blog
           if git diff --cached --quiet; then echo "No change."; exit 0; fi
           git config user.name "notes[bot]"
           git config user.email "notes@users.noreply.github.com"
