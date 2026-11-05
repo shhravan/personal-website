@@ -328,10 +328,12 @@ function startFilm(canvas) {
 
 // ---- the opening sequence (home page, first visit in a session) ----
 // The site opens on a burst of the hero photos, full screen, changing faster and faster; then the
-// last one shrinks down into the hero frame and the rest of the page fades in. About 2 seconds.
+// last one shrinks down into the hero frame and the rest of the page fades in. About 5 seconds.
 // "skip" (bottom right) ends it straight away. It plays once per visit, and never for people who
 // ask their device to reduce motion.
-const INTRO_STEPS = [260, 210, 170, 135, 110, 90, 75, 65, 58, 52, 50, 55, 70];   // ms each photo shows
+// ms each photo shows: 24 photos, each a little quicker than the last (about 4.6 s), then the
+// settle; roughly 5 seconds before the page appears.
+const INTRO_STEPS = [320, 305, 290, 277, 264, 251, 239, 228, 217, 207, 197, 188, 179, 170, 162, 155, 147, 140, 134, 127, 121, 116, 110, 105];
 function playIntro(heroImg) {
   const root = document.documentElement;
   let seen = false;
@@ -375,14 +377,21 @@ function playIntro(heroImg) {
     }, 750);
   }
   skip.addEventListener("click", () => finish(true));
-  Promise.race([Promise.all(ready), new Promise((ok) => setTimeout(ok, 2500))]).then(() => Promise.all(ready.map((r) => Promise.race([r, null])))).then((srcs) => {
-    const list = srcs.filter(Boolean);
-    let i = 0;
-    (function step() {
+  // Start as soon as the first photo is in; each step shows the next photo that has arrived.
+  const loaded = [];
+  ready.forEach((r) => r.then((src) => { if (src) loaded.push(src); }));
+  // Timed by the clock, not by counting timers, so a slow device skips photos instead of running long.
+  const ends = INTRO_STEPS.map((_, k) => INTRO_STEPS.slice(0, k + 1).reduce((x, y) => x + y, 0));
+  ready[0].then(() => {
+    const t0 = performance.now();
+    let shown = -1;
+    (function tick() {
       if (done) return;
-      if (i >= INTRO_STEPS.length || !list.length) return finish(false);
-      pic.src = list[i % list.length];
-      timer = setTimeout(step, INTRO_STEPS[i++]);
+      const t = performance.now() - t0;
+      if (t >= ends[ends.length - 1]) return finish(false);
+      const k = ends.findIndex((e) => t < e);
+      if (k !== shown && loaded.length) { shown = k; pic.src = loaded[k % loaded.length]; }
+      requestAnimationFrame(tick);
     })();
   });
 }
