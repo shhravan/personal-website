@@ -176,7 +176,7 @@ function pourKit(rolls) {
   const dl = new THREE.DirectionalLight(0xffffff, 1.1); dl.position.set(-.5, .9, 1); sc.add(dl);
   const maps = rolls.map(filmTexture), map = maps[0];
   // standard (not physical) material: one lighting pass instead of two, much lighter with many layers of film on top of each other
-  const mat = new THREE.MeshStandardMaterial({ map, alphaMap: map.userData.alpha, alphaTest: .5, side: THREE.DoubleSide, roughness: .42, metalness: 0, envMapIntensity: .6, depthTest: false, depthWrite: false });
+  const mat = new THREE.MeshBasicMaterial({ map, alphaMap: map.userData.alpha, alphaTest: .5, side: THREE.DoubleSide, vertexColors: true, toneMapped: false, depthTest: false, depthWrite: false });
   const geo = new THREE.BufferGeometry(), mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false; sc.add(mesh);
   const cam = new THREE.PerspectiveCamera(30, 1, 10, 10000);
   r2.compile(sc, cam);
@@ -190,7 +190,7 @@ function startPour(kit, o, roll) {
   // a real perspective camera, set so the z = 0 plane lines up with the page's pixels
   const dist = (H2 / 2) / Math.tan(15 * Math.PI / 180);
   cam.aspect = W2 / H2; cam.far = dist * 3; cam.position.set(W2 / 2, -H2 / 2, dist); cam.lookAt(W2 / 2, -H2 / 2, 0); cam.updateProjectionMatrix();
-  const wFly = Math.max(150, Math.min(280, Math.max(o.w || 0, H2 / 3.6))); let rh = wFly;
+  const wFly = W2 < 700 ? Math.max(110, Math.min(170, W2 * .42)) : Math.max(150, Math.min(280, Math.max(o.w || 0, H2 / 3.6))); let rh = wFly;
   const curve = new THREE.CatmullRomCurve3(sweepPath(o, W2, H2, wFly), false, "centripetal", .5), Lc = curve.getLength();
   const w0 = Math.max(40, Math.min(wFly, o.w || wFly));   // the tongue's width on screen, where the film comes out
   const SEG = Math.min(2600, Math.round(Lc / 10)), taper = Math.max(1, SEG * 520 / Lc);
@@ -221,6 +221,9 @@ function startPour(kit, o, roll) {
   geo.setAttribute("position", new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage));
   geo.setAttribute("normal", new THREE.BufferAttribute(nor, 3).setUsage(THREE.DynamicDrawUsage));
   geo.setAttribute("uv", new THREE.BufferAttribute(uv, 2).setUsage(THREE.DynamicDrawUsage));
+  const col = new Float32Array((SEG + 1) * 6);
+  geo.setAttribute("color", new THREE.BufferAttribute(col, 3).setUsage(THREE.DynamicDrawUsage));
+  const LX = -.36, LY = .56, LZ = .75;   // where the light comes from (up, left, in front)
   geo.setIndex(new THREE.BufferAttribute(idx, 1));
   // a steady, eased speed: it starts gently, runs, and slows as the last of it lands
   const ease = (x) => -(Math.cos(Math.PI * x) - 1) / 2, inout = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
@@ -247,11 +250,14 @@ function startPour(kit, o, roll) {
       const o6 = s * 6, hw = e > 0 ? hwT : (w0 + (wFly - w0) * Math.min(1, s / taper)) / 2;
       pos[o6] = vx - Bx * hw; pos[o6 + 1] = vy - By * hw; pos[o6 + 2] = vz - Bz * hw;
       pos[o6 + 3] = vx + Bx * hw; pos[o6 + 4] = vy + By * hw; pos[o6 + 5] = vz + Bz * hw;
-      nor[o6] = nor[o6 + 3] = nx * c - bx * si; nor[o6 + 1] = nor[o6 + 4] = ny * c - by * si; nor[o6 + 2] = nor[o6 + 5] = nz * c - bz * si;
+      const Nx = nx * c - bx * si, Ny = ny * c - by * si, Nz = nz * c - bz * si;
+      nor[o6] = nor[o6 + 3] = Nx; nor[o6 + 1] = nor[o6 + 4] = Ny; nor[o6 + 2] = nor[o6 + 5] = Nz;
+      const sh = .7 + .3 * Math.abs(Nx * LX + Ny * LY + Nz * LZ);   // either face: film is lit the same from both sides
+      col[o6] = col[o6 + 1] = col[o6 + 2] = col[o6 + 3] = col[o6 + 4] = col[o6 + 5] = sh;
       // on sweeps running right to left the picture would come out upside down; show it as film seen from the back instead
       const u = (s / SEG * L - feed) / texLen, up = tx < 0 ? 0 : 1; uv[s * 4] = u; uv[s * 4 + 1] = up; uv[s * 4 + 2] = u; uv[s * 4 + 3] = 1 - up;
     }
-    geo.attributes.position.needsUpdate = true; geo.attributes.normal.needsUpdate = true; geo.attributes.uv.needsUpdate = true;
+    geo.attributes.position.needsUpdate = true; geo.attributes.normal.needsUpdate = true; geo.attributes.uv.needsUpdate = true; geo.attributes.color.needsUpdate = true;
     geo.setDrawRange(0, count * 6);
     cvs.style.opacity = 1 - fade;
     r2.render(sc, cam);
@@ -265,7 +271,7 @@ function startPour(kit, o, roll) {
     done(now) {
       if (now) return stop();
       const t1 = performance.now();
-      const out = (t) => { fade = Math.min(1, (t - t1) / 450); if (fade < 1 && alive) requestAnimationFrame(out); else stop(); };
+      const out = (t) => { fade = Math.min(1, (t - t1) / 320); if (fade < 1 && alive) requestAnimationFrame(out); else stop(); };
       requestAnimationFrame(out);
     },
   };
@@ -367,7 +373,7 @@ export function start(root, tabs) {
   function develop() {
     // the frames come up like a print in the tray
     const pane = document.querySelector(".photo-pane:not([hidden])");
-    if (pane && !still) pane.animate([{ filter: "sepia(1) brightness(1.5) blur(4px)", opacity: .2 }, { filter: "none", opacity: 1 }], { duration: 1000, easing: "ease-out" });
+    if (pane && !still) pane.animate([{ filter: "saturate(.25) brightness(.85) blur(3px)", opacity: .55 }, { filter: "none", opacity: 1 }], { duration: 900, easing: "ease-out" });
   }
   function mark(i) {
     names.forEach((n, k) => { n.setAttribute("aria-pressed", k === i ? "true" : "false"); });
