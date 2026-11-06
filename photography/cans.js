@@ -148,7 +148,11 @@ function filmTexture(names) {
 // Fewer, calmer passes than a tangle of loops, and they straighten naturally into the gallery rows.
 function sweepPath(o, W2, H2, w) {
   const passes = Math.max(3, Math.ceil(H2 / (w * .82))), band = H2 / passes, edge = w * .9, ph = Math.random() * 6;
-  const pts = [new THREE.Vector3(o.x, -o.y, 0), new THREE.Vector3(o.x + w * .9, -(o.y - w * .7), 40)];
+  // out along the tongue: rightwards, within a sensible angle, and long enough that the film never folds at the slot
+  let a = Math.atan2(o.dy || 0, o.dx || 1); a = Math.max(-.7, Math.min(.45, a));
+  const ux = Math.cos(a), uy = Math.sin(a), L1 = w * 1.1;
+  const pts = [new THREE.Vector3(o.x, -o.y, 0), new THREE.Vector3(o.x + ux * L1, -(o.y + uy * L1), 0),
+    new THREE.Vector3(o.x + ux * L1 * 2.2 + w * .3, -(o.y + uy * L1 * 2.2) + w * .55, 15)];
   for (let r = 0; r < passes; r++) {
     const y = band * (r + .5), left = r % 2 === 0;   // the film leaves the can heading right, so the first sweep runs right to left
     for (let j = 0; j <= 6; j++) {
@@ -188,7 +192,8 @@ function startPour(kit, o, roll) {
   cam.aspect = W2 / H2; cam.far = dist * 3; cam.position.set(W2 / 2, -H2 / 2, dist); cam.lookAt(W2 / 2, -H2 / 2, 0); cam.updateProjectionMatrix();
   const wFly = Math.max(150, Math.min(280, Math.max(o.w || 0, H2 / 3.6))); let rh = wFly;
   const curve = new THREE.CatmullRomCurve3(sweepPath(o, W2, H2, wFly), false, "centripetal", .5), Lc = curve.getLength();
-  const SEG = Math.min(2600, Math.round(Lc / 10));
+  const w0 = Math.max(40, Math.min(wFly, o.w || wFly));   // the tongue's width on screen, where the film comes out
+  const SEG = Math.min(2600, Math.round(Lc / 10)), taper = Math.max(1, SEG * 520 / Lc);
   // every sample along the film, kept in flat arrays (no new objects while it moves)
   const P = new Float32Array((SEG + 1) * 3), T = new Float32Array((SEG + 1) * 3), TH = new Float32Array(SEG + 1), ph = Math.random() * 6;
   const pts = curve.getSpacedPoints(SEG);
@@ -225,13 +230,13 @@ function startPour(kit, o, roll) {
     if (!alive) return;
     const g = ease(Math.min(1, (now - t0) / POUR_MS));
     const e = TP ? inout(Math.min(1, (now - tautAt) / 1000)) : 0, ie = 1 - e;
-    const w = wFly + (rh - wFly) * e, hw = w / 2, L = Lc + (Lt - Lc) * e, count = Math.max(1, Math.round(g * SEG)), texLen = map.userData.len * w / 256;
+    const w = wFly + (rh - wFly) * e, hwT = w / 2, L = Lc + (Lt - Lc) * e, count = Math.max(1, Math.round(g * SEG)), texLen = map.userData.len * w / 256;
     const feed = TP ? FEED * (now - tautAt) / 1000 : 0;   // once taut it keeps running, like film through a projector
     const last = e > 0 ? SEG : count;   // only the film that's out of the can needs working out
     for (let s = 0; s <= last; s++) {
       const k = s * 3;   // laid from the can outward: what has landed stays where it landed
       // the newest stretch is still in the air: it drops onto the pile and settles over a moment
-      const age = Math.max(0, (g - s / SEG) * POUR), drop = e > 0 ? 0 : Math.exp(-age / .22);
+      const age = Math.max(0, (g - s / SEG) * POUR), drop = e > 0 ? 0 : Math.exp(-age / .22) * Math.min(1, s / taper);   // the first stretch stays attached to the slot
       let vx = P[k], vy = P[k + 1] + 22 * drop, vz = P[k + 2] + 90 * drop, tx = T[k], ty = T[k + 1], tz = T[k + 2];
       if (e > 0) { vx = vx * ie + TP[k] * e; vy = vy * ie + TP[k + 1] * e; vz = vz * ie + TP[k + 2] * e; tx = tx * ie + TT[k] * e; ty = ty * ie + TT[k + 1] * e; tz = tz * ie + TT[k + 2] * e; const l = Math.hypot(tx, ty, tz) || 1; tx /= l; ty /= l; tz /= l; }
       // "across the film": the screen-facing direction square to the film's path, then twisted a little
@@ -239,7 +244,7 @@ function startPour(kit, o, roll) {
       const bx = ty * nz - tz * ny, by = tz * nx - tx * nz, bz = tx * ny - ty * nx;
       const th = (TH[s] + drop * .35) * ie, c = Math.cos(th), si = Math.sin(th);
       const Bx = bx * c + nx * si, By = by * c + ny * si, Bz = bz * c + nz * si;
-      const o6 = s * 6;
+      const o6 = s * 6, hw = e > 0 ? hwT : (w0 + (wFly - w0) * Math.min(1, s / taper)) / 2;
       pos[o6] = vx - Bx * hw; pos[o6 + 1] = vy - By * hw; pos[o6 + 2] = vz - Bz * hw;
       pos[o6 + 3] = vx + Bx * hw; pos[o6 + 4] = vy + By * hw; pos[o6 + 5] = vz + Bz * hw;
       nor[o6] = nor[o6 + 3] = nx * c - bx * si; nor[o6 + 1] = nor[o6 + 4] = ny * c - by * si; nor[o6 + 2] = nor[o6 + 5] = nz * c - bz * si;
@@ -347,10 +352,13 @@ export function start(root, tabs) {
   const later = (f, ms) => timers.push(setTimeout(f, ms));
 
   function toScreen(v) { v.project(camera); const r = glCanvas.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height }; }
-  function slot(c) {   // where the film leaves the can, and how wide 35mm film is there on screen
-    const at = (y) => toScreen(c.userData.inner.localToWorld(new THREE.Vector3(R * Math.sin(PHI) + 4, y, R * Math.cos(PHI) + 8)));
-    const top = at(37.5), bot = at(2.5);
-    return { x: (top.x + bot.x) / 2, y: (top.y + bot.y) / 2, w: Math.hypot(top.x - bot.x, top.y - bot.y) };
+  function slot(c) {   // where the film leaves the can, how wide it is there on screen, and which way the tongue points
+    const u = c.userData, at = (v) => toScreen(u.inner.localToWorld(v));
+    const P = (y) => new THREE.Vector3(R * Math.sin(PHI), y, R * Math.cos(PHI));
+    const T = new THREE.Vector3(-Math.cos(PHI), 0, Math.sin(PHI)), N = new THREE.Vector3(Math.sin(PHI), 0, Math.cos(PHI));
+    const off = new THREE.Vector3((Math.sin(PHI) - .17) * u.pull * 7, 0, (Math.cos(PHI) + .98) * u.pull * 7);
+    const top = at(P(37.5)), bot = at(P(2.5)), base = at(P(20)), tip = at(P(20).addScaledVector(T, 30).addScaledVector(N, 5.5).add(off));
+    return { x: base.x, y: base.y, w: Math.hypot(top.x - bot.x, top.y - bot.y), dx: tip.x - base.x, dy: tip.y - base.y };
   }
   const strips = () => [...document.querySelectorAll(".photo-pane:not([hidden]) .roll canvas")];
   // the photos printed on each can's film: that set's own pictures, in order
@@ -364,11 +372,11 @@ export function start(root, tabs) {
   function mark(i) {
     names.forEach((n, k) => { n.setAttribute("aria-pressed", k === i ? "true" : "false"); });
     cans.forEach((c, k) => { c.userData.liftTo = k === i ? 1 : 0; c.userData.pullTo = k === i ? .35 : 0; c.userData.dimTo = k === i ? 0 : .5; });
-    try { sessionStorage.setItem("photo-roll", String(i)); } catch (e) { /* private mode: just replay next time */ }
   }
   function settle(i) {
     busy = false; body.classList.remove("cans-pouring"); skipBtn.hidden = true;
     if (pour) { pour.done(); pour = null; }
+    cans.forEach((c) => { c.userData.leader.visible = true; });
     mark(i);
   }
   function open(i) {
@@ -379,8 +387,7 @@ export function start(root, tabs) {
     if (still) { body.classList.add("cans-picked"); showPane(i); mark(i); return; }
     busy = true; body.classList.add("cans-pouring"); skipBtn.hidden = false;
     cans.forEach((c, k) => { c.userData.liftTo = k === i ? 1 : 0; c.userData.pullTo = k === i ? 1 : 0; c.userData.dimTo = k === i ? 0 : .5; });
-    const o = slot(cans[i]);
-    later(() => { pour = startPour(kit || (kit = pourKit(rollPhotos())), o, i); }, 180);
+    later(() => { cans[i].userData.leader.visible = false; pour = startPour(kit || (kit = pourKit(rollPhotos())), slot(cans[i]), i); }, 180);
     later(() => {
       // under the film: the cans step back to become the switch, and the roll's strips appear
       body.classList.add("cans-picked"); showPane(i);
@@ -396,7 +403,6 @@ export function start(root, tabs) {
     active = -1; body.classList.remove("cans-picked");
     names.forEach((n) => n.setAttribute("aria-pressed", "false"));
     cans.forEach((c) => { c.userData.liftTo = 0; c.userData.pullTo = 0; c.userData.dimTo = 0; });
-    try { sessionStorage.removeItem("photo-roll"); } catch (e) { /* no storage */ }
     window.scrollTo({ top: 0, behavior: still ? "auto" : "smooth" });
   }
   if (backBtn) backBtn.addEventListener("click", back);
@@ -449,10 +455,8 @@ export function start(root, tabs) {
     raf = requestAnimationFrame(frame);
   }
 
-  // coming back during this visit: go straight to the roll you were on, no pour
-  let seen = null; try { seen = sessionStorage.getItem("photo-roll"); } catch (e) { /* no storage */ }
+  // every visit starts on the two cans
   resize();
-  if (seen !== null) { active = +seen || 0; body.classList.add("cans-picked"); showPane(active); mark(active); cans.forEach((c) => { c.userData.lift = c.userData.liftTo; c.userData.dim = c.userData.dimTo; c.userData.pull = c.userData.pullTo; }); }
   raf = requestAnimationFrame(frame);
   // get the pour ready while the visitor looks at the cans, so the click is instant
   const warm = () => { if (alive && !kit) kit = pourKit(rollPhotos()); };

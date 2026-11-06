@@ -368,9 +368,7 @@ function startFilm(canvas) {
 const INTRO_STEPS = [230, 219, 208, 198, 189, 180, 171, 163, 155, 147, 140, 134, 127, 121, 115, 110, 104, 99, 95, 90];
 function playIntro(heroImg) {
   const root = document.documentElement;
-  let seen = false;
-  try { seen = sessionStorage.getItem("intro-seen") === "1"; sessionStorage.setItem("intro-seen", "1"); } catch (e) {}
-  if (seen || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   root.classList.add("intro-on");
   const stage = document.createElement("div");
@@ -492,14 +490,15 @@ function startPhotography() {
   let stopCans = null, gone = false;
   const cansRoot = document.querySelector(".cans");
   if (cansRoot && window.WebGLRenderingContext) {
-    import(SITE + "photography/cans.js?v=8").then((m) => m.ready().then(() => {
+    import(SITE + "photography/cans.js?v=9").then((m) => m.ready().then(() => {
       if (!gone) stopCans = m.start(cansRoot, tabs);
     })).catch(() => document.body.classList.add("cans-off"));
   } else document.body.classList.add("cans-off");
   return () => { gone = true; if (stopCans) stopCans(); stops.forEach((f) => f()); if (box.open) box.close(); box.remove(); };
 }
 
-function initPage() {
+function initPage(e) {
+  const fresh = !e;   // a real page load (or reload); page swaps from the top links pass the page:load event
   if (stopHero) { stopHero(); stopHero = null; }
   clearInterval(fontTimer);
   nextFont = () => {};
@@ -615,7 +614,8 @@ function initPage() {
 
     stopHero = () => { clearTimeout(timer); document.removeEventListener("click", onClick); };
   }
-  if (img && document.querySelector("main.hero-home")) playIntro(img);
+  // the opening burst plays whenever the site is loaded or reloaded on home, not when you click back to home
+  if (img && fresh && document.querySelector("main.hero-home")) playIntro(img);
 
   // Projects page: the GitHub contribution graph, from data/github.json (refreshed nightly).
   // One square per day, a column per week, in the site's ink at five strengths (styles.css .l0-.l4).

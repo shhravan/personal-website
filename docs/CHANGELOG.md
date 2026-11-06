@@ -4,6 +4,16 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Intro on every load; cans on every visit; film flows from the slot; bigger prompts
+- **Before:** `fd97c8c`
+- **Changed:**
+  - Home: the opening photo burst plays every time the site is loaded or reloaded on home (not when you click back to home from another page).
+  - Photography: every visit starts on the two cans.
+  - The film now continues out of the can's slot: the tongue sticking out is replaced by the pouring film, which leaves the slot at the tongue's width and angle, then widens and curves into the first sweep.
+  - "pick a roll" and "↺ pick another roll" are much larger.
+- **Files:** `script.js`, `photography/cans.js`, `styles.css`, cache numbers, DESIGN.
+- **To revert:** restore those from `fd97c8c`.
+
 ## Photography: calmer pour in long sweeps
 - **Before:** `2ebe1ba`
 - **Changed:** the film now lands in a few long, gently curving sweeps across the page (turning round just past the edges) instead of a tangle of loops; it's a little wider, so fewer passes cover everything. Each new stretch is drawn over the film already down, so strips stack instead of cutting through each other. Softer landing at the tip, gentler twist, photos always upright (right-to-left sweeps show the film from the back). The sweeps straighten straight into the gallery rows.
