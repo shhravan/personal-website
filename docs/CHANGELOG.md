@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## "roll again"; alignment pass
+- **Before:** `e607897`
+- **Changed:** the photography prompt after a pick reads "roll again". Projects on phones: the GitHub count stays on one line beside its icon. Photography: the hidden can names no longer take up room.
+- **Files:** `photography/index.html`, `styles.css`, cache numbers, DESIGN.
+- **To revert:** restore those from `e607897`.
+
 ## Viewfinder prompts, cleaner film, aligned links, phone pass
 - **Before:** `4b9a47d`
 - **Changed:**

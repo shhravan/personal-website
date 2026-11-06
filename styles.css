@@ -1152,3 +1152,7 @@ body:not(.cans-off):not(.cans-picked) main.photos .social { margin-top: 9vh; }
 @media (max-width: 47.99rem) { .topnav { padding-left: 0.05em; } }
 .cans .cans-back { display: none; }
 .cans-picked:not(.cans-pouring) .cans .cans-back { display: inline-flex; }
+/* phones: the GitHub count stays on one line with its icon beside it */
+@media (max-width: 47.99rem) { .gallery .gh-stat { white-space: nowrap; letter-spacing: 0.12em; font-size: 0.56em; } }
+/* photography: the hidden can names take no room */
+.can-name:not(:focus-visible) { width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
