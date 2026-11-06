@@ -26,7 +26,8 @@ function wear(g, w, h, amt) {
 function text(g, s, x, y, font, col, ls = 0, align = "center") { g.font = font; g.fillStyle = col; g.textAlign = align; g.textBaseline = "alphabetic"; if ("letterSpacing" in g) g.letterSpacing = ls + "px"; g.fillText(s, x, y); if ("letterSpacing" in g) g.letterSpacing = "0px"; }
 
 const PHI = 100 * Math.PI / 180;   // where round the can the slot is
-const FEED = 42;   // px a second: how fast the film runs through the rows once taut, like the strips after it
+const FEED = 42;
+const POUR_MS = 3000;   // how long the film takes to bury the page   // px a second: how fast the film runs through the rows once taut, like the strips after it
 
 // ---------- label artwork: a shop roll, pantone 1235 c, the two-line capital lockup up the side ----------
 const C = W / 2;
@@ -114,18 +115,32 @@ function leaderGeometry() {
 }
 const LEADER = leaderGeometry();
 
-function blankFilm() {
-  // black-and-white film: dark base, clear sprocket holes, faint frame edges, white edge printing
-  const FW = 278, LEN = FW * 3, [c, g] = cv(LEN, 256), [ac, ag] = cv(LEN, 256);
+// Black-and-white film with the roll's own photos in the frames: dark base, clear sprocket holes,
+// white edge printing. Drawn blank at once, then each photo is added as it downloads.
+const FRAME = 278;   // one frame on the texture (the film is 256 tall), a real 35mm frame's shape
+function filmTexture(names) {
+  const n = Math.max(3, names.length), LEN = FRAME * n, [c, g] = cv(LEN, 256), [ac, ag] = cv(LEN, 256);
   g.fillStyle = "#151412"; g.fillRect(0, 0, LEN, 256);
-  for (let x = 0; x < LEN; x += FW) { g.fillStyle = "#1f1e1b"; g.fillRect(x + 12, 40, FW - 24, 176); g.strokeStyle = "rgba(255,255,255,.07)"; g.lineWidth = 2; g.strokeRect(x + 12, 40, FW - 24, 176); }
-  g.fillStyle = "rgba(236,232,222,.55)"; g.font = "15px 'Share Tech Mono'";
-  for (let k = 0; k < 3; k++) { g.fillText("SHRVN 400  ▸ " + (k * 2 + 1) + "A", k * FW + 30, 33); g.fillText(String(k * 2 + 2), k * FW + 230, 252); }
+  for (let k = 0; k < n; k++) {
+    const x = k * FRAME; g.fillStyle = "#1f1e1b"; g.fillRect(x + 12, 40, FRAME - 24, 176);
+    g.fillStyle = "rgba(236,232,222,.55)"; g.font = "15px 'Share Tech Mono'";
+    g.fillText("SHRVN 400  ▸ " + (k + 1) + "A", x + 30, 33); g.fillText(String(k + 1), x + 230, 252);
+  }
   ag.fillStyle = "#fff"; ag.fillRect(0, 0, LEN, 256); ag.fillStyle = "#000";
-  for (let x = 6; x < LEN; x += FW / 8) { ag.beginPath(); ag.roundRect(x, 11, 20, 15, 3); ag.fill(); ag.beginPath(); ag.roundRect(x, 230, 20, 15, 3); ag.fill(); }
+  for (let x = 6; x < LEN; x += FRAME / 8) { ag.beginPath(); ag.roundRect(x, 11, 20, 15, 3); ag.fill(); ag.beginPath(); ag.roundRect(x, 230, 20, 15, 3); ag.fill(); }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.anisotropy = 8;
   const am = new THREE.CanvasTexture(ac); am.wrapS = THREE.RepeatWrapping;
   t.userData = { len: LEN, alpha: am };
+  names.forEach((name, k) => {
+    const im = new Image();
+    im.onload = () => {
+      const x = k * FRAME + 12, w = FRAME - 24, h = 176, r = im.width / im.height;
+      let sw = im.width, sh = im.height, sx = 0, sy = 0;
+      if (r > w / h) { sw = im.height * w / h; sx = (im.width - sw) / 2; } else { sh = im.width * h / w; sy = (im.height - sh) / 2; }
+      g.drawImage(im, sx, sy, sw, sh, x, 40, w, h); t.needsUpdate = true;
+    };
+    im.src = new URL("../images/hero/" + name + "-700.webp", import.meta.url).href;
+  });
   return t;
 }
 // a loose, natural unrolling: the film leaves the slot and wanders in big lazy loops,
@@ -153,7 +168,7 @@ function loosePath(o, W2, H2, w) {
 
 // The pour's 3D setup is built once, while the cans are on screen, and its shaders compiled then,
 // so nothing heavy happens at the moment of the click (that was the stutter at the start).
-function pourKit() {
+function pourKit(rolls) {
   const cvs = document.createElement("canvas");
   cvs.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:25;display:none";
   document.body.appendChild(cvs);
@@ -162,16 +177,17 @@ function pourKit() {
   const sc = new THREE.Scene(), pm = new THREE.PMREMGenerator(r2);
   sc.environment = pm.fromScene(new RoomEnvironment(), .04).texture;
   const dl = new THREE.DirectionalLight(0xffffff, 1.1); dl.position.set(-.5, .9, 1); sc.add(dl);
-  const map = blankFilm();
+  const maps = rolls.map(filmTexture), map = maps[0];
   // standard (not physical) material: one lighting pass instead of two, much lighter with many layers of film on top of each other
   const mat = new THREE.MeshStandardMaterial({ map, alphaMap: map.userData.alpha, alphaTest: .5, side: THREE.DoubleSide, roughness: .42, metalness: 0, envMapIntensity: .6 });
   const geo = new THREE.BufferGeometry(), mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false; sc.add(mesh);
   const cam = new THREE.PerspectiveCamera(30, 1, 10, 10000);
   r2.compile(sc, cam);
-  return { cvs, r2, sc, pm, map, mat, geo, mesh, cam, dispose() { geo.dispose(); map.dispose(); map.userData.alpha.dispose(); mat.dispose(); pm.dispose(); r2.dispose(); cvs.remove(); } };
+  return { cvs, r2, sc, pm, maps, mat, geo, mesh, cam, dispose() { geo.dispose(); maps.forEach((m) => { m.dispose(); m.userData.alpha.dispose(); }); mat.dispose(); pm.dispose(); r2.dispose(); cvs.remove(); } };
 }
-function startPour(kit, o) {
-  const { cvs, r2, sc, cam, map, mat } = kit;
+function startPour(kit, o, roll) {
+  const { cvs, r2, sc, cam, mat } = kit, map = kit.maps[roll] || kit.maps[0];
+  mat.map = map; mat.alphaMap = map.userData.alpha; mat.needsUpdate = true;
   const W2 = innerWidth, H2 = innerHeight;
   r2.setSize(W2, H2, false); cvs.style.opacity = 1; cvs.style.display = "block";
   // a real perspective camera, set so the z = 0 plane lines up with the page's pixels
@@ -200,7 +216,7 @@ function startPour(kit, o) {
     });
     const tc = new THREE.CatmullRomCurve3(path, false, "catmullrom", .1); Lt = tc.getLength();
     const tp = tc.getSpacedPoints(SEG); TP = new Float32Array((SEG + 1) * 3); TT = new Float32Array((SEG + 1) * 3);
-    for (let s = 0; s <= SEG; s++) { const t = tc.getTangentAt(s / SEG); TP[s * 3] = tp[s].x; TP[s * 3 + 1] = tp[s].y; TP[s * 3 + 2] = tp[s].z; TT[s * 3] = -t.x; TT[s * 3 + 1] = -t.y; TT[s * 3 + 2] = -t.z; }
+    for (let s = 0; s <= SEG; s++) { const t = tc.getTangentAt(s / SEG); TP[s * 3] = tp[s].x; TP[s * 3 + 1] = tp[s].y; TP[s * 3 + 2] = tp[s].z; TT[s * 3] = t.x; TT[s * 3 + 1] = t.y; TT[s * 3 + 2] = t.z; }
   }
   const geo = kit.geo, pos = new Float32Array((SEG + 1) * 6), nor = new Float32Array((SEG + 1) * 6), uv = new Float32Array((SEG + 1) * 4), idx = new Uint32Array(SEG * 6);
   for (let s = 0; s < SEG; s++) { const b = s * 2, o6 = s * 6; idx[o6] = b; idx[o6 + 1] = b + 1; idx[o6 + 2] = b + 2; idx[o6 + 3] = b + 1; idx[o6 + 4] = b + 3; idx[o6 + 5] = b + 2; }
@@ -211,27 +227,30 @@ function startPour(kit, o) {
   // a steady, eased speed: it starts gently, runs, and slows as the last of it lands
   const ease = (x) => -(Math.cos(Math.PI * x) - 1) / 2, inout = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
   const t0 = performance.now(); let tautAt = 0, alive = true, fade = 0, raf = 0;
+  const POUR = POUR_MS / 1000;
   function draw(now) {
     if (!alive) return;
-    const g = ease(Math.min(1, (now - t0) / 2000));
-    const e = TP ? inout(Math.min(1, (now - tautAt) / 900)) : 0, ie = 1 - e;
+    const g = ease(Math.min(1, (now - t0) / POUR_MS));
+    const e = TP ? inout(Math.min(1, (now - tautAt) / 1000)) : 0, ie = 1 - e;
     const w = wFly + (rh - wFly) * e, hw = w / 2, L = Lc + (Lt - Lc) * e, count = Math.max(1, Math.round(g * SEG)), texLen = map.userData.len * w / 256;
     const feed = TP ? FEED * (now - tautAt) / 1000 : 0;   // once taut it keeps running, like film through a projector
-    const last = e > 0 ? SEG : count;   // only the part that's out of the can needs working out
+    const last = e > 0 ? SEG : count;   // only the film that's out of the can needs working out
     for (let s = 0; s <= last; s++) {
-      const k = Math.min(SEG, Math.max(0, count - s)) * 3;   // the end that left the can first leads
-      let vx = P[k], vy = P[k + 1], vz = P[k + 2], tx = -T[k], ty = -T[k + 1], tz = -T[k + 2];
-      if (e > 0) { const q = (SEG - s) * 3; vx = vx * ie + TP[q] * e; vy = vy * ie + TP[q + 1] * e; vz = vz * ie + TP[q + 2] * e; tx = tx * ie + TT[q] * e; ty = ty * ie + TT[q + 1] * e; tz = tz * ie + TT[q + 2] * e; const l = Math.hypot(tx, ty, tz) || 1; tx /= l; ty /= l; tz /= l; }
+      const k = s * 3;   // laid from the can outward: what has landed stays where it landed
+      // the newest stretch is still in the air: it drops onto the pile and settles over a moment
+      const age = Math.max(0, (g - s / SEG) * POUR), drop = e > 0 ? 0 : Math.exp(-age / .28);
+      let vx = P[k], vy = P[k + 1] + 46 * drop, vz = P[k + 2] + 170 * drop, tx = T[k], ty = T[k + 1], tz = T[k + 2];
+      if (e > 0) { vx = vx * ie + TP[k] * e; vy = vy * ie + TP[k + 1] * e; vz = vz * ie + TP[k + 2] * e; tx = tx * ie + TT[k] * e; ty = ty * ie + TT[k + 1] * e; tz = tz * ie + TT[k + 2] * e; const l = Math.hypot(tx, ty, tz) || 1; tx /= l; ty /= l; tz /= l; }
       // "across the film": the screen-facing direction square to the film's path, then twisted a little
       let nx = -tz * tx, ny = -tz * ty, nz = 1 - tz * tz; const nl = Math.hypot(nx, ny, nz); if (nl < 1e-4) { nx = 0; ny = 1; nz = 0; } else { nx /= nl; ny /= nl; nz /= nl; }
       const bx = ty * nz - tz * ny, by = tz * nx - tx * nz, bz = tx * ny - ty * nx;
-      const th = TH[k / 3] * ie, c = Math.cos(th), si = Math.sin(th);
+      const th = (TH[s] + drop * .9) * ie, c = Math.cos(th), si = Math.sin(th);
       const Bx = bx * c + nx * si, By = by * c + ny * si, Bz = bz * c + nz * si;
       const o6 = s * 6;
       pos[o6] = vx - Bx * hw; pos[o6 + 1] = vy - By * hw; pos[o6 + 2] = vz - Bz * hw;
       pos[o6 + 3] = vx + Bx * hw; pos[o6 + 4] = vy + By * hw; pos[o6 + 5] = vz + Bz * hw;
       nor[o6] = nor[o6 + 3] = nx * c - bx * si; nor[o6 + 1] = nor[o6 + 4] = ny * c - by * si; nor[o6 + 2] = nor[o6 + 5] = nz * c - bz * si;
-      const u = (s / SEG * L + feed) / texLen; uv[s * 4] = u; uv[s * 4 + 1] = 1; uv[s * 4 + 2] = u; uv[s * 4 + 3] = 0;
+      const u = (s / SEG * L - feed) / texLen; uv[s * 4] = u; uv[s * 4 + 1] = 1; uv[s * 4 + 2] = u; uv[s * 4 + 3] = 0;
     }
     geo.attributes.position.needsUpdate = true; geo.attributes.normal.needsUpdate = true; geo.attributes.uv.needsUpdate = true;
     geo.setDrawRange(0, count * 6);
@@ -242,7 +261,7 @@ function startPour(kit, o) {
   raf = requestAnimationFrame(draw);
   const stop = () => { alive = false; cancelAnimationFrame(raf); cvs.style.display = "none"; geo.setDrawRange(0, 0); };
   return {
-    covered: () => performance.now() - t0 > 900,
+    covered: () => performance.now() - t0 > POUR_MS * .55,
     straighten(rects) { setRows(rects); tautAt = performance.now(); },
     done(now) {
       if (now) return stop();
@@ -328,7 +347,7 @@ export function start(root, tabs) {
   const darkMq = matchMedia("(prefers-color-scheme: dark)");
   const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark" : darkMq.matches;
 
-  const cans = [0, 1].map((roll) => { const c = makeCan(roll); c.position.x = roll ? 30 : -30; scene.add(c); return c; });
+  const cans = [0, 1].map((roll) => { const c = makeCan(roll); c.position.x = roll ? 28 : -32; scene.add(c); return c; });
   let active = -1, busy = false, timers = [], pour = null, raf = 0, alive = true, kit = null;
   const backBtn = root.querySelector(".cans-back");
   const later = (f, ms) => timers.push(setTimeout(f, ms));
@@ -340,6 +359,8 @@ export function start(root, tabs) {
     return { x: (top.x + bot.x) / 2, y: (top.y + bot.y) / 2, w: Math.hypot(top.x - bot.x, top.y - bot.y) };
   }
   const strips = () => [...document.querySelectorAll(".photo-pane:not([hidden]) .roll canvas")];
+  // the photos printed on each can's film: that set's own pictures, in order
+  const rollPhotos = () => [...document.querySelectorAll(".photo-pane")].map((p) => [...p.querySelectorAll(".roll-list button")].map((b) => b.dataset.name).slice(0, 12));
   function showPane(i) { if (tabs[i]) tabs[i].click(); }
   function develop() {
     // the frames come up like a print in the tray
@@ -365,13 +386,13 @@ export function start(root, tabs) {
     busy = true; body.classList.add("cans-pouring"); skipBtn.hidden = false;
     cans.forEach((c, k) => { c.userData.liftTo = k === i ? 1 : 0; c.userData.pullTo = k === i ? 1 : 0; c.userData.dimTo = k === i ? 0 : .5; });
     const o = slot(cans[i]);
-    later(() => { pour = startPour(kit || (kit = pourKit()), o); }, 180);
+    later(() => { pour = startPour(kit || (kit = pourKit(rollPhotos())), o, i); }, 180);
     later(() => {
       // under the film: the cans step back to become the switch, and the roll's strips appear
       body.classList.add("cans-picked"); showPane(i);
       requestAnimationFrame(() => { if (pour) pour.straighten(strips().map((s) => s.getBoundingClientRect())); });
-    }, 2250);
-    later(() => { settle(i); develop(); }, 3200);
+    }, 180 + POUR_MS + 150);
+    later(() => { settle(i); develop(); }, 180 + POUR_MS + 1300);
   }
   function skip() { if (!busy) return; timers.forEach(clearTimeout); timers = []; body.classList.add("cans-picked"); showPane(active); settle(active); develop(); }
   names.forEach((n, i) => n.addEventListener("click", () => open(i)));
@@ -408,7 +429,7 @@ export function start(root, tabs) {
   function resize() {
     const w = glCanvas.clientWidth, h = glCanvas.clientHeight; if (!w || !h) return;
     renderer.setSize(w, h, false); camera.aspect = w / h;
-    camera.position.z = Math.max(175, 76 / (Math.tan(12 * Math.PI / 180) * camera.aspect));   // far enough back that both cans and the film tongue fit the width
+    camera.position.z = Math.max(140, 70 / (Math.tan(12 * Math.PI / 180) * camera.aspect));   // far enough back that both cans and the film tongue fit the width
     camera.updateProjectionMatrix();
   }
   addEventListener("resize", resize);
@@ -440,7 +461,7 @@ export function start(root, tabs) {
   if (seen !== null) { active = +seen || 0; body.classList.add("cans-picked"); showPane(active); mark(active); cans.forEach((c) => { c.userData.lift = c.userData.liftTo; c.userData.dim = c.userData.dimTo; c.userData.pull = c.userData.pullTo; }); }
   raf = requestAnimationFrame(frame);
   // get the pour ready while the visitor looks at the cans, so the click is instant
-  const warm = () => { if (alive && !kit) kit = pourKit(); };
+  const warm = () => { if (alive && !kit) kit = pourKit(rollPhotos()); };
   if (!still) (window.requestIdleCallback || setTimeout)(warm, { timeout: 1500 });
 
   return () => {

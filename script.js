@@ -270,7 +270,10 @@ function startFilm(canvas) {
       const tw = wave ? Math.cos(x * k * 0.8 - ph * 1.3) : 1, sc = sf * (0.9 + 0.1 * tw);   // narrows as it turns away
       ctx.save();
       ctx.translate(x, y); ctx.rotate(ang); ctx.scale(1, sc);
-      ctx.drawImage(fr.col, lx, 0, step / sf + 1, H, 0, -H / 2, step + 1, H);
+      // A slice that runs past the end of a frame takes the rest from the next frame, so frames meet with no gap.
+      const sw = step / sf + 1, a = Math.min(sw, FW - lx);
+      ctx.drawImage(fr.col, lx, 0, a, H, 0, -H / 2, a * sf + .5, H);
+      if (a < sw) { const nx = frames[(((f + 1) % N) + N) % N] || fr; ctx.drawImage(nx.col, 0, 0, sw - a, H, a * sf, -H / 2, (sw - a) * sf + .5, H); }
       const shade = 0.22 * (0.5 - 0.5 * tw);                          // light falls off where it turns
       if (!phone && shade > 0.01) { ctx.fillStyle = "rgba(0,0,0," + shade.toFixed(3) + ")"; ctx.fillRect(0, -H / 2, step + 1, H); }
       ctx.restore();
@@ -434,6 +437,9 @@ function startPhotography() {
   const tabs = [...document.querySelectorAll(".photo-tabs button")];
   const panes = [...document.querySelectorAll(".photo-pane")];
   const box = document.querySelector(".lightbox"), big = box.querySelector("img"), cap = box.querySelector(".lb-cap");
+  // The page column is drawn at 80% on desktop (zoom), which shrank and shifted the photo card off centre.
+  // Living directly in <body> keeps it at full size and centred.
+  document.body.appendChild(box);
   const stops = [];
   let frames = [], at = 0, strip = null;
   function show(k) {
@@ -486,11 +492,11 @@ function startPhotography() {
   let stopCans = null, gone = false;
   const cansRoot = document.querySelector(".cans");
   if (cansRoot && window.WebGLRenderingContext) {
-    import(SITE + "photography/cans.js?v=5").then((m) => m.ready().then(() => {
+    import(SITE + "photography/cans.js?v=7").then((m) => m.ready().then(() => {
       if (!gone) stopCans = m.start(cansRoot, tabs);
     })).catch(() => document.body.classList.add("cans-off"));
   } else document.body.classList.add("cans-off");
-  return () => { gone = true; if (stopCans) stopCans(); stops.forEach((f) => f()); if (box.open) box.close(); };
+  return () => { gone = true; if (stopCans) stopCans(); stops.forEach((f) => f()); if (box.open) box.close(); box.remove(); };
 }
 
 function initPage() {
