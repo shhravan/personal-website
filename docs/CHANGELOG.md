@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Outside links open in a new tab
+- **Before:** `6c50a01`
+- **Changed:** every link that leaves the site now opens in a new tab (with `rel="noopener"`, so the new tab can't control this one): the `opticsbyshrvn` footer link on every page, the projects tile, and the five profile icons (GitHub, LinkedIn, X, YouTube Music, Substack). The site's own links keep their quick in-page navigation, so moving between pages doesn't reload. A test fails if a future outside link forgets it.
+- **Files:** the 7 pages with the footer, `projects/index.html`, `theme.js`, `tests/test_site.py`, cache numbers.
+- **To revert:** restore those from `6c50a01`.
+
 ## Cans: symmetric, words always readable
 - **Before:** `97a7b1c`
 - **Changed:** both cans now start at exactly the same angle and height, so the pair is symmetric (before, the second was turned half a radian further, so only one showed its slot and the tongue could cover part of FILM or CLIENT). The lockup is centred on the front of each can. Dragging only tilts them (up to about 35°) and they swing back to facing front when let go, so the barcode side and the cut-off words can't be left on show. A gentle matching sway when idle.

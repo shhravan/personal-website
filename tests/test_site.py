@@ -110,6 +110,18 @@ class PageTests(unittest.TestCase):
                     if tag == "a" and a.get("target") == "_blank":
                         self.assertIn("noopener", (a.get("rel") or ""), a.get("href"))
 
+    def test_outside_links_open_in_a_new_tab(self):
+        # A visitor clicking a link to another site (or an icon) should keep this site open.
+        for f in PAGES:
+            with self.subTest(f):
+                for tag, attrs in Page(read(f)).tags:
+                    a = dict(attrs)
+                    if tag == "a" and (a.get("href") or "").startswith("http"):
+                        self.assertEqual(a.get("target"), "_blank", a.get("href"))
+        # theme.js builds the profile icons as text, so check its text too.
+        for tag in re.findall(r'<a [^>]*href=\\"https?://[^>]*>', read("theme.js")):
+            self.assertIn('target=\\"_blank\\"', tag)
+
     def test_only_https_resources(self):
         for f in PAGES:
             with self.subTest(f):
