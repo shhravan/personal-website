@@ -4,6 +4,7 @@ Keep it simple: a site that is easy to read, explain and maintain.
 
 ## Stack
 - **Plain HTML, CSS and JavaScript.** No frameworks, packages or build step.
+  - One exception, decided with Shravan: **three.js** (0.160.0, MIT, `vendor/three.module.min.js` and `vendor/RoomEnvironment.js`) for the 3D film cans on the photography page. It's a copied file, not a package; `photography/cans.js` imports it, and `script.js` loads that only on the photography page, only if the browser can draw 3D. The site's security policy only runs scripts from this site, so it can't come from a CDN.
 - **Python sync script** (`scripts/substack_sync.py`, standard library only), run by a GitHub Action once a month and on demand:
   - copies the free posts from shrvvn.substack.com into `blog/<slug>/index.html` and the list in `blog/index.html`
   - Substack's JSON API first, the RSS feed as a fallback; HTML cleaned to an allowlist; images downloaded into `images/blog/`
@@ -26,6 +27,8 @@ styles.css          one shared stylesheet
 theme.js            theme switch, record player, in-place page swaps (in every page's <head>)
 script.js           home film strip (canvas) and email links; re-runs on each page swap
 field.js            letter field and shoreline (WebGL)
+photography/cans.js the photography landing: 3D film cans and the film pour (three.js)
+vendor/             copied third-party code (three.js) with its licence
 images/             hero/, covers/, logos/, blog/
 notes/              blog notebook entries (YYYY-MM-DD-words.md), built into blog/index.html by scripts/build_notes.py
 data/github.json    contribution graph data, refreshed nightly by .github/workflows/github-contributions.yml

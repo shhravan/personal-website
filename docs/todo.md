@@ -16,8 +16,7 @@ One slice per branch and pull request: plan, build, check in the browser, open a
 
 ## Next
 - [x] Record player: self-hosted audio instead of YouTube (no ads)
-- [ ] Photography: portfolio sections
-- [ ] Photography: film roll
+- [x] Photography: film cans landing, film gallery and commercial strips, photo card (photos and captions still placeholders)
 - [ ] Rabbit hole: music picks, favorites, facts
 - [ ] Blog: hover image on titles
 - [ ] Polish: link previews, accessibility, speed

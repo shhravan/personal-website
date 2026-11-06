@@ -4,6 +4,18 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Photography film cans; opening shortened; simpler top links
+- **Before:** `40211cd`
+- **Changed:**
+  - Photography: the page opens on two 3D film cans (Pantone 1235 C yellow, "SHRVN FILM" and "SHRVN CLIENT" in a heavy grotesk, black caps) named FILM GALLERY and COMMERCIAL. Hover lifts a can, dragging turns them. Picking one pours black-and-white film out of it until the page is buried, then the film pulls taut through the rows and the photos develop in. The cans then sit small at the top as the switch; switching later just develops the other set in. The pour plays once per visit (then you go straight to your roll), has a skip button, and never runs for reduced motion. Without 3D the page falls back to the plain tabs.
+  - Photography: Film Gallery and Commercial as straight drifting strips (alternate rows run opposite ways); up/down scrolling on a strip scrolls the page. Rolls, photos and the commercial project are placeholders.
+  - Home: the opening burst is about 4 seconds.
+  - Top links: home appears on every page except home; blog and rabbit holes are left out until they're live (their pages still open from a direct link and are hidden from search engines); no "home / page" breadcrumbs.
+  - Link previews only on the work page, and never on the top links or the icon row. Projects: the GitHub count ends in the GitHub icon.
+  - Light or dark follows the device's setting unless the visitor chose one.
+- **Files:** `photography/index.html`, `photography/cans.js`, `vendor/` (three.js 0.160.0, MIT), `script.js`, `theme.js`, `field.js`, `styles.css`, `projects/index.html`, `work/index.html`, `rabbit-hole/index.html`, `tests/test_site.py`, cache numbers, docs.
+- **To revert:** restore those from `40211cd` and delete `photography/cans.js` and `vendor/`.
+
 ## Photo viewer card, roll stops on tap, tighter spacing, nav part of the top bar, blog private
 - **Before:** `d36dde4`
 - **Changed:**
