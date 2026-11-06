@@ -492,7 +492,7 @@ function startPhotography() {
   let stopCans = null, gone = false;
   const cansRoot = document.querySelector(".cans");
   if (cansRoot && window.WebGLRenderingContext) {
-    import(SITE + "photography/cans.js?v=7").then((m) => m.ready().then(() => {
+    import(SITE + "photography/cans.js?v=8").then((m) => m.ready().then(() => {
       if (!gone) stopCans = m.start(cansRoot, tabs);
     })).catch(() => document.body.classList.add("cans-off"));
   } else document.body.classList.add("cans-off");

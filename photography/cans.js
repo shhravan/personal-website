@@ -143,25 +143,18 @@ function filmTexture(names) {
   });
   return t;
 }
-// a loose, natural unrolling: the film leaves the slot and wanders in big lazy loops,
-// steering toward whatever part of the page is still bare, until the page is buried
-function loosePath(o, W2, H2, w) {
-  const cell = w * .9, cols = Math.ceil(W2 / cell) + 2, rows = Math.ceil(H2 / cell) + 2, seen = new Float32Array(cols * rows);
-  const mark = (x, y) => { const cx = Math.floor(x / cell) + 1, cy = Math.floor(y / cell) + 1; if (cx >= 0 && cy >= 0 && cx < cols && cy < rows) seen[cy * cols + cx] += 1; };
-  const pts = []; let x = o.x, y = o.y, a = .35, z = 0, tx = 0, ty = 0, s = 0, next = 0;
-  const step = 12, Ltarget = W2 * H2 / w * 6.2, Rmin = w * .98, p1 = Math.random() * 9, p2 = Math.random() * 9;
-  while (s < Ltarget) {
-    if (s >= next) {   // pick the barest spot as the next place to drift toward
-      let best = 1e9; for (let k = 0; k < 40; k++) { const qx = Math.random() * W2, qy = Math.random() * H2, v = seen[(Math.floor(qy / cell) + 1) * cols + Math.floor(qx / cell) + 1] + Math.hypot(qx - x, qy - y) / (W2 * 1.5); if (v < best) { best = v; tx = qx; ty = qy; } }
-      next = s + 350 + Math.random() * 300;
+// The path the film lands along: out of the slot, then a few long, gently curving sweeps across the
+// page, turning round just past the edges, one band under the next, until the page is covered.
+// Fewer, calmer passes than a tangle of loops, and they straighten naturally into the gallery rows.
+function sweepPath(o, W2, H2, w) {
+  const passes = Math.max(3, Math.ceil(H2 / (w * .82))), band = H2 / passes, edge = w * .9, ph = Math.random() * 6;
+  const pts = [new THREE.Vector3(o.x, -o.y, 0), new THREE.Vector3(o.x + w * .9, -(o.y - w * .7), 40)];
+  for (let r = 0; r < passes; r++) {
+    const y = band * (r + .5), left = r % 2 === 0;   // the film leaves the can heading right, so the first sweep runs right to left
+    for (let j = 0; j <= 6; j++) {
+      const f = j / 6, x = left ? W2 + edge - f * (W2 + 2 * edge) : -edge + f * (W2 + 2 * edge);
+      pts.push(new THREE.Vector3(x, -(y + Math.sin(f * Math.PI * 1.6 + r * 1.7 + ph) * band * .14), Math.sin(f * Math.PI + r) * 50));
     }
-    let d = Math.atan2(ty - y, tx - x) - a; d = Math.atan2(Math.sin(d), Math.cos(d));
-    const wander = (Math.sin(s * .0026 + p1) * .7 + Math.sin(s * .0067 + p2) * .45) / (w * 1.25);   // lazy loops
-    const k = Math.max(-1 / Rmin, Math.min(1 / Rmin, wander + d * .006));
-    a += k * step; x += Math.cos(a) * step; y += Math.sin(a) * step; s += step;
-    z = Math.sin(s * .0024 + p1) * 60 + Math.sin(s * .0061) * 25;
-    if (pts.length === 0 || s % 36 < step) pts.push(new THREE.Vector3(x, -y, z));
-    mark(x, y);
   }
   return pts;
 }
@@ -179,7 +172,7 @@ function pourKit(rolls) {
   const dl = new THREE.DirectionalLight(0xffffff, 1.1); dl.position.set(-.5, .9, 1); sc.add(dl);
   const maps = rolls.map(filmTexture), map = maps[0];
   // standard (not physical) material: one lighting pass instead of two, much lighter with many layers of film on top of each other
-  const mat = new THREE.MeshStandardMaterial({ map, alphaMap: map.userData.alpha, alphaTest: .5, side: THREE.DoubleSide, roughness: .42, metalness: 0, envMapIntensity: .6 });
+  const mat = new THREE.MeshStandardMaterial({ map, alphaMap: map.userData.alpha, alphaTest: .5, side: THREE.DoubleSide, roughness: .42, metalness: 0, envMapIntensity: .6, depthTest: false, depthWrite: false });
   const geo = new THREE.BufferGeometry(), mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false; sc.add(mesh);
   const cam = new THREE.PerspectiveCamera(30, 1, 10, 10000);
   r2.compile(sc, cam);
@@ -193,8 +186,8 @@ function startPour(kit, o, roll) {
   // a real perspective camera, set so the z = 0 plane lines up with the page's pixels
   const dist = (H2 / 2) / Math.tan(15 * Math.PI / 180);
   cam.aspect = W2 / H2; cam.far = dist * 3; cam.position.set(W2 / 2, -H2 / 2, dist); cam.lookAt(W2 / 2, -H2 / 2, 0); cam.updateProjectionMatrix();
-  const wFly = Math.max(110, Math.min(230, o.w || 180)); let rh = wFly;
-  const curve = new THREE.CatmullRomCurve3(loosePath(o, W2, H2, wFly), false, "centripetal"), Lc = curve.getLength();
+  const wFly = Math.max(150, Math.min(280, Math.max(o.w || 0, H2 / 3.6))); let rh = wFly;
+  const curve = new THREE.CatmullRomCurve3(sweepPath(o, W2, H2, wFly), false, "centripetal", .5), Lc = curve.getLength();
   const SEG = Math.min(2600, Math.round(Lc / 10));
   // every sample along the film, kept in flat arrays (no new objects while it moves)
   const P = new Float32Array((SEG + 1) * 3), T = new Float32Array((SEG + 1) * 3), TH = new Float32Array(SEG + 1), ph = Math.random() * 6;
@@ -202,7 +195,7 @@ function startPour(kit, o, roll) {
   for (let s = 0; s <= SEG; s++) {
     const f = s / SEG, t = curve.getTangentAt(f);
     P[s * 3] = pts[s].x; P[s * 3 + 1] = pts[s].y; P[s * 3 + 2] = pts[s].z; T[s * 3] = t.x; T[s * 3 + 1] = t.y; T[s * 3 + 2] = t.z;
-    TH[s] = Math.sin(f * Lc * .0014 + ph) * .55;
+    TH[s] = Math.sin(f * Lc * .0011 + ph) * .3;
   }
   // the taut path: through the gallery rows, turning round just off the screen's edges
   let TP = null, TT = null, Lt = 1;
@@ -238,19 +231,20 @@ function startPour(kit, o, roll) {
     for (let s = 0; s <= last; s++) {
       const k = s * 3;   // laid from the can outward: what has landed stays where it landed
       // the newest stretch is still in the air: it drops onto the pile and settles over a moment
-      const age = Math.max(0, (g - s / SEG) * POUR), drop = e > 0 ? 0 : Math.exp(-age / .28);
-      let vx = P[k], vy = P[k + 1] + 46 * drop, vz = P[k + 2] + 170 * drop, tx = T[k], ty = T[k + 1], tz = T[k + 2];
+      const age = Math.max(0, (g - s / SEG) * POUR), drop = e > 0 ? 0 : Math.exp(-age / .22);
+      let vx = P[k], vy = P[k + 1] + 22 * drop, vz = P[k + 2] + 90 * drop, tx = T[k], ty = T[k + 1], tz = T[k + 2];
       if (e > 0) { vx = vx * ie + TP[k] * e; vy = vy * ie + TP[k + 1] * e; vz = vz * ie + TP[k + 2] * e; tx = tx * ie + TT[k] * e; ty = ty * ie + TT[k + 1] * e; tz = tz * ie + TT[k + 2] * e; const l = Math.hypot(tx, ty, tz) || 1; tx /= l; ty /= l; tz /= l; }
       // "across the film": the screen-facing direction square to the film's path, then twisted a little
       let nx = -tz * tx, ny = -tz * ty, nz = 1 - tz * tz; const nl = Math.hypot(nx, ny, nz); if (nl < 1e-4) { nx = 0; ny = 1; nz = 0; } else { nx /= nl; ny /= nl; nz /= nl; }
       const bx = ty * nz - tz * ny, by = tz * nx - tx * nz, bz = tx * ny - ty * nx;
-      const th = (TH[s] + drop * .9) * ie, c = Math.cos(th), si = Math.sin(th);
+      const th = (TH[s] + drop * .35) * ie, c = Math.cos(th), si = Math.sin(th);
       const Bx = bx * c + nx * si, By = by * c + ny * si, Bz = bz * c + nz * si;
       const o6 = s * 6;
       pos[o6] = vx - Bx * hw; pos[o6 + 1] = vy - By * hw; pos[o6 + 2] = vz - Bz * hw;
       pos[o6 + 3] = vx + Bx * hw; pos[o6 + 4] = vy + By * hw; pos[o6 + 5] = vz + Bz * hw;
       nor[o6] = nor[o6 + 3] = nx * c - bx * si; nor[o6 + 1] = nor[o6 + 4] = ny * c - by * si; nor[o6 + 2] = nor[o6 + 5] = nz * c - bz * si;
-      const u = (s / SEG * L - feed) / texLen; uv[s * 4] = u; uv[s * 4 + 1] = 1; uv[s * 4 + 2] = u; uv[s * 4 + 3] = 0;
+      // on sweeps running right to left the picture would come out upside down; show it as film seen from the back instead
+      const u = (s / SEG * L - feed) / texLen, up = tx < 0 ? 0 : 1; uv[s * 4] = u; uv[s * 4 + 1] = up; uv[s * 4 + 2] = u; uv[s * 4 + 3] = 1 - up;
     }
     geo.attributes.position.needsUpdate = true; geo.attributes.normal.needsUpdate = true; geo.attributes.uv.needsUpdate = true;
     geo.setDrawRange(0, count * 6);
