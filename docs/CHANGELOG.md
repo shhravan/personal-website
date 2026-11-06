@@ -4,6 +4,17 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Viewfinder prompts, cleaner film, aligned links, phone pass
+- **Before:** `4b9a47d`
+- **Changed:**
+  - Photography: "pick a roll" and "another shot" (was "pick another roll") are framed like a camera viewfinder: corner brackets, an exposure readout above and a blinking red dot.
+  - The FILM GALLERY / COMMERCIAL names under the cans are gone (the cans say FILM and CLIENT); they stay for keyboards and screen readers.
+  - The pouring film is evenly shaded on both sides, so no stretch turns pale or washed-out; the develop no longer flashes white; on phones the film is sized to the screen.
+  - Top links sit exactly on the centre line (the letter-spacing after the last letter is balanced).
+  - Phones: prompt and can sizes tuned, tighter space above the strips.
+- **Files:** `photography/index.html`, `photography/cans.js`, `styles.css`, `script.js`, cache numbers, DESIGN.
+- **To revert:** restore those from `4b9a47d`.
+
 ## Intro on every load; cans on every visit; film flows from the slot; bigger prompts
 - **Before:** `fd97c8c`
 - **Changed:**

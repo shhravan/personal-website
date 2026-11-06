@@ -1102,26 +1102,53 @@ body:has(main.hero-home) nav.topnav .home-link { display: none; }
 .cans-off .cans { display: none; }
 body:not(.cans-off) main.photos .photo-tabs { display: none; }
 body:not(.cans-off):not(.cans-picked) main.photos .photo-pane { display: none; }
-.cans-stage { position: absolute; left: 50%; top: 3.4rem; width: min(100vw, 1100px); height: calc(min(72vh, 680px) - 3.4rem); translate: -50% 0; transform-origin: 50% 0; transition: transform .9s cubic-bezier(.65,0,.25,1); }
+.cans-stage { position: absolute; left: 50%; top: 5rem; width: min(100vw, 1100px); height: calc(min(72vh, 680px) - 5rem); translate: -50% 0; transform-origin: 50% 0; transition: transform .9s cubic-bezier(.65,0,.25,1); }
 .cans-gl { width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: grab; }
 .can-name { all: unset; position: absolute; left: -999px; translate: -50% 0; white-space: nowrap; cursor: pointer; font-family: "Schibsted Grotesk", sans-serif; font-weight: 900; font-size: clamp(18px, 2.7vw, 40px); line-height: .92; text-transform: uppercase; color: var(--ink); transition: font-size .6s cubic-bezier(.65,0,.25,1), color .3s; }
 .can-name:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 3px; }
-.cans-hint { position: absolute; left: 0; right: 0; top: 0; margin: 0; text-align: center; color: var(--ink); font-family: "Silkscreen", monospace; font-size: 26px; letter-spacing: .24em; text-transform: uppercase; transition: opacity .3s; }
+.cans-hint { position: absolute; left: 50%; top: 0; translate: -50% 0; margin: 0; transition: opacity .3s; }
 .cans-skip { position: fixed; right: 16px; bottom: 16px; z-index: 30; font: 10px "Silkscreen", monospace; letter-spacing: .18em; text-transform: uppercase; background: var(--bg); color: var(--ink); border: 1.5px solid color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 6px; padding: 8px 11px; cursor: pointer; }
 .cans-skip[hidden] { display: none; }
-.cans-picked .cans { height: 214px; }
-.cans-picked .cans-stage { top: 2.9rem; }
-.cans-back { display: none; position: absolute; left: 50%; top: 0; translate: -50% 0; white-space: nowrap; background: none; border: 0; padding: 4px 8px; cursor: pointer; font: 21px "Silkscreen", monospace; letter-spacing: .2em; text-transform: uppercase; color: var(--ink); transition: opacity .2s; }
+.cans-picked .cans { height: 236px; }
+.cans-picked .cans-stage { top: 4.4rem; }
+.cans-back { display: none; position: absolute; left: 50%; top: 0; translate: -50% 0; cursor: pointer; transition: opacity .2s; }
 .cans-back:hover { opacity: .6; }
 .cans-back:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 3px; }
-.cans-picked:not(.cans-pouring) .cans-back { display: block; }
+
 .cans-picked .cans-stage { transform: scale(.27); }
 .cans-pouring .cans-hint, .cans-picked .cans-hint { opacity: 0; }
 .cans-picked .can-name { font-size: 14px; color: var(--soft); }
 .cans-picked .can-name[aria-pressed="true"] { color: var(--ink); }
-@media (max-width: 47.99rem) { .cans { height: 52vh; } .cans-stage { height: calc(52vh - 2.4rem); } .can-name { font-size: 15px; } .cans-hint { font-size: 17px; } .cans-back { font-size: 14px; } .cans-stage { top: 2.6rem; height: calc(52vh - 2.6rem); } .cans-picked .cans { height: 180px; } .cans-picked .cans-stage { transform: scale(.4); } }
+@media (max-width: 47.99rem) { .cans { height: 52vh; } .cans-stage { height: calc(52vh - 2.4rem); } .can-name { font-size: 15px; } .cans-stage { top: 4.2rem; height: calc(52vh - 4.2rem); } .cans-picked .cans-stage { top: 3.6rem; } .cans-picked .cans { height: 186px; } .cans-picked .cans-stage { transform: scale(.4); } }
 @media (prefers-reduced-motion: reduce) { .cans-stage, .can-name { transition: none; } }
 /* on the landing, the icons and sign-off sit low, near the water, as on the home page */
 body:not(.cans-off):not(.cans-picked) main.photos .social { margin-top: 9vh; }
 /* projects: the one-line notes in a typewriter face */
 .tile-line { font-family: "Courier Prime", "Courier New", monospace; font-style: normal; font-size: 0.82em; letter-spacing: -0.01em; line-height: 1.45; }
+
+/* the viewfinder prompts: corner brackets around the words, an exposure readout above, a focus dot */
+.vf { display: inline-flex; flex-direction: column; align-items: center; gap: .45rem; white-space: nowrap; background: none; border: 0; color: var(--ink); font-family: "Silkscreen", monospace; text-transform: uppercase; }
+.vf-read { font-size: 11px; letter-spacing: .22em; padding-left: .22em; color: var(--soft); }
+.vf-read::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: .7em; border-radius: 50%; background: #d23b2a; vertical-align: 1px; animation: vf-blink 1.6s steps(1) infinite; }
+@keyframes vf-blink { 50% { opacity: 0; } }
+.vf-text { position: relative; font-size: 24px; letter-spacing: .24em; padding: .5em .7em .45em calc(.7em + .24em);
+  --c: var(--ink); --l: 16px; --t: 2px;
+  background:
+    linear-gradient(var(--c), var(--c)) left top / var(--l) var(--t) no-repeat, linear-gradient(var(--c), var(--c)) left top / var(--t) var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) right top / var(--l) var(--t) no-repeat, linear-gradient(var(--c), var(--c)) right top / var(--t) var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) left bottom / var(--l) var(--t) no-repeat, linear-gradient(var(--c), var(--c)) left bottom / var(--t) var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) right bottom / var(--l) var(--t) no-repeat, linear-gradient(var(--c), var(--c)) right bottom / var(--t) var(--l) no-repeat; }
+.cans-back .vf-text { font-size: 18px; --l: 12px; }
+.cans-back:hover .vf-text { --l: 22px; }
+.cans-back:focus-visible { outline: none; }
+.cans-back:focus-visible .vf-text { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .vf-read::after { animation: none; } }
+@media (max-width: 47.99rem) { .vf-text { font-size: 17px; } .cans-back .vf-text { font-size: 14px; } .vf-read { font-size: 9px; } }
+/* the cans already say FILM and CLIENT: their names stay for keyboards and screen readers only */
+.can-name { opacity: 0; pointer-events: none; }
+.can-name:focus-visible { opacity: 1; }
+/* section links: balance the space letter-spacing leaves after the last letter, so the row sits on the centre line */
+.topnav { padding-left: 0.22em; }
+@media (max-width: 47.99rem) { .topnav { padding-left: 0.05em; } }
+.cans .cans-back { display: none; }
+.cans-picked:not(.cans-pouring) .cans .cans-back { display: inline-flex; }
