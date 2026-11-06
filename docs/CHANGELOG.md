@@ -4,6 +4,14 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Photography: back to the cans, smoother pour
+- **Before:** `1a43eb3`
+- **Changed:**
+  - A "↺ pick another roll" button under the small cans goes back to the two big cans; picking again plays the pour again.
+  - The pour is smoother: its 3D setup is prepared while the cans are on screen (no stutter at the click), the film uses a lighter material and fewer, evenly spaced points, nothing is allocated while it moves, the cans stop drawing while the film covers them, and it runs at a steady eased speed over 2 seconds.
+- **Files:** `photography/cans.js`, `photography/index.html`, `styles.css`, `script.js`, cache numbers, DESIGN.
+- **To revert:** restore those from `1a43eb3`.
+
 ## Photography film cans; opening shortened; simpler top links
 - **Before:** `40211cd`
 - **Changed:**

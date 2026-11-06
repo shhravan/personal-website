@@ -1109,10 +1109,14 @@ body:not(.cans-off):not(.cans-picked) main.photos .photo-pane { display: none; }
 .cans-hint { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; text-align: center; color: var(--soft); font-family: "Silkscreen", monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; transition: opacity .3s; }
 .cans-skip { position: fixed; right: 16px; bottom: 16px; z-index: 30; font: 10px "Silkscreen", monospace; letter-spacing: .18em; text-transform: uppercase; background: var(--bg); color: var(--ink); border: 1.5px solid color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 6px; padding: 8px 11px; cursor: pointer; }
 .cans-skip[hidden] { display: none; }
-.cans-picked .cans { height: 150px; }
+.cans-picked .cans { height: 172px; }
+.cans-back { display: none; position: absolute; left: 50%; bottom: 2px; translate: -50% 0; background: none; border: 0; padding: 4px 6px; cursor: pointer; font: 9px "Silkscreen", monospace; letter-spacing: .2em; text-transform: uppercase; color: var(--soft); transition: color .2s; }
+.cans-back:hover { color: var(--ink); }
+.cans-back:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 3px; }
+.cans-picked:not(.cans-pouring) .cans-back { display: block; }
 .cans-picked .cans-stage { transform: scale(.27); }
 .cans-pouring .cans-hint, .cans-picked .cans-hint { opacity: 0; }
 .cans-picked .can-name { font-size: 13px; color: var(--soft); }
 .cans-picked .can-name[aria-pressed="true"] { color: var(--ink); }
-@media (max-width: 47.99rem) { .cans, .cans-stage { height: 46vh; } .can-name { font-size: 15px; } .cans-picked .cans { height: 140px; } .cans-picked .cans-stage { transform: scale(.4); } }
+@media (max-width: 47.99rem) { .cans, .cans-stage { height: 46vh; } .can-name { font-size: 15px; } .cans-picked .cans { height: 162px; } .cans-picked .cans-stage { transform: scale(.4); } }
 @media (prefers-reduced-motion: reduce) { .cans-stage, .can-name { transition: none; } }
