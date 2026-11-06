@@ -111,3 +111,8 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - **Loading only where needed:** `import()` fetches a module on demand, so the 670 KB library downloads only on the photography page.
 - **Fonts on a canvas:** text drawn into a canvas uses whatever font is ready at that instant, so wait for the font (and its stylesheet) before painting labels, or they come out in the fallback serif.
 
+
+## When GitHub Pages doesn't publish
+- Merging to `main` starts GitHub's "pages build and deployment" job: it builds the site, then a deploy step publishes it. Once in a while the deploy step hangs or reports "Deployment cancelled" even though the build was fine.
+- Re-running that job for the same commit can fail the same way, because GitHub already has a (stuck) deployment for that commit. A fresh commit gets a fresh deployment and goes through.
+- Quick check that a change is live: the `?v=` number in the live page's source matches the one in the repo.
