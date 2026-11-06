@@ -1,7 +1,7 @@
 // TEST ONLY: three film can designs for the photography landing, picked with ?__variant=
-// (litho, matte, bulk). Removed, with cans-variants.css, once one is chosen.
+// (litho, matte, bulk, vintage, retro). Removed, with cans-variants.css, once one is chosen.
 (function () {
-  var VARIANTS = [["litho", "Printed tin"], ["matte", "Matte pro"], ["bulk", "Bulk roll"]];
+  var VARIANTS = [["litho", "Printed tin"], ["matte", "Matte pro"], ["bulk", "Bulk roll"], ["vintage", "Vintage tin"], ["retro", "70s retro"]];
   var q = new URLSearchParams(location.search), v = q.get("__variant");
   if (!VARIANTS.some(function (x) { return x[0] === v; })) return;
   var uid = 0;
@@ -9,10 +9,14 @@
   // ---- one can, drawn as an upright cylinder with a lit side, ribbed lids and the film tongue out of the slit ----
   function can(kind, roll) {
     var id = "c" + (++uid), film = roll === 0;
-    var lid = kind === "matte" ? ["#0c0c0c", "#3a3a3a", "#1a1a1a", "#050505"] : ["#6f6f6c", "#f4f3ef", "#b9b8b2", "#5c5c58"];
+    var lid = kind === "matte" ? ["#0c0c0c", "#3a3a3a", "#1a1a1a", "#050505"]
+      : kind === "vintage" ? ["#5f584c", "#ddd3c0", "#a39a88", "#4a443a"]
+      : ["#6f6f6c", "#f4f3ef", "#b9b8b2", "#5c5c58"];
     var body;
     if (kind === "litho") body = film ? ["#f2b705", "#d12f1f"] : ["#efe9da", "#1f5a43"];
     else if (kind === "matte") body = ["#1b1a18", "#1b1a18"];
+    else if (kind === "vintage") body = film ? ["#e6d6b4", "#6e1f1a"] : ["#e6d6b4", "#1f3b57"];
+    else if (kind === "retro") body = ["#f1e2c2", film ? "#e0702b" : "#3f7f86"];
     else body = ["#c9c8c2", "#c9c8c2"];
     var s = '<svg viewBox="0 0 250 270" class="can-art" aria-hidden="true" focusable="false"><defs>' +
       '<linearGradient id="' + id + 'sh" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".62"/><stop offset=".1" stop-color="#000" stop-opacity=".22"/>' +
@@ -25,6 +29,8 @@
       '<pattern id="' + id + 'brush" width="200" height="1.6" patternUnits="userSpaceOnUse"><rect width="200" height=".6" fill="#fff" opacity=".18"/></pattern>' +
       '<linearGradient id="' + id + 'film" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a3414"/><stop offset=".5" stop-color="#b8612c"/><stop offset="1" stop-color="#6b2c10"/></linearGradient>' +
       '<filter id="' + id + 'blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>' +
+      '<filter id="' + id + 'grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="' + (roll + 3) + '"/><feColorMatrix values="0 0 0 0 .35  0 0 0 0 .27  0 0 0 0 .18  0 0 0 1.4 -.55"/></filter>' +
+      '<filter id="' + id + 'rust" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="3" seed="' + (roll + 7) + '"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .25  0 0 0 0 .12  0 0 0 2.2 -1.25"/></filter>' +
       '<clipPath id="' + id + 'body"><rect x="30" y="52" width="120" height="176"/></clipPath></defs>';
     // shadow on the table
     s += '<ellipse class="can-shadow" cx="100" cy="246" rx="78" ry="9" fill="#000" opacity=".32" filter="url(#' + id + 'blur)"/>';
@@ -48,6 +54,32 @@
       s += '<rect x="58" y="164" width="52" height="1" fill="' + (film ? "#e0a32a" : "#5fa37f") + '"/>';
       s += '<text x="84" y="182" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="8" letter-spacing="2.4" fill="#e9e5da" opacity=".75">' + (film ? "FILM GALLERY" : "COMMERCIAL") + '</text>';
       s += '<text x="84" y="210" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="7" letter-spacing="2" fill="#e9e5da" opacity=".45">135-' + (film ? "36" : "24") + '</text>';
+    } else if (kind === "vintage") {
+      // a 1950s tin: deco bands, gold pinstripes, a serif name, and decades of wear
+      s += '<rect x="30" y="52" width="120" height="44" fill="' + body[1] + '"/><rect x="30" y="186" width="120" height="42" fill="' + body[1] + '"/>';
+      s += '<rect x="30" y="98" width="120" height="1.5" fill="#b48a3c"/><rect x="30" y="101" width="120" height=".8" fill="#b48a3c"/>';
+      s += '<rect x="30" y="181" width="120" height=".8" fill="#b48a3c"/><rect x="30" y="183" width="120" height="1.5" fill="#b48a3c"/>';
+      s += '<text x="84" y="82" text-anchor="middle" font-family="EB Garamond, Georgia, serif" font-weight="700" font-size="24" letter-spacing="3" fill="#e9d9b0">SHRVN</text>';
+      s += '<path d="M54 118 h60 M54 166 h60" stroke="' + body[1] + '" stroke-width=".8"/>';
+      s += '<text x="84" y="133" text-anchor="middle" font-family="EB Garamond, Georgia, serif" font-style="italic" font-size="13" fill="' + body[1] + '">' + (film ? "Film Gallery" : "Commercial") + '</text>';
+      s += '<text x="84" y="152" text-anchor="middle" font-family="EB Garamond, Georgia, serif" font-size="8" letter-spacing="2.5" fill="#3b2a1c">PANCHROMATIC</text>';
+      s += '<text x="84" y="161" text-anchor="middle" font-family="EB Garamond, Georgia, serif" font-size="6" letter-spacing="2" fill="#3b2a1c" opacity=".8">' + (film ? "36 EXPOSURES" : "24 EXPOSURES") + '</text>';
+      s += '<text x="84" y="210" text-anchor="middle" font-family="EB Garamond, Georgia, serif" font-size="9" letter-spacing="2" fill="#e9d9b0">NO. 135 · MCMLVI</text>';
+      s += '<rect x="30" y="52" width="120" height="176" filter="url(#' + id + 'grain)"/>';
+      s += '<rect x="30" y="52" width="120" height="176" filter="url(#' + id + 'rust)" opacity=".7"/>';
+      s += '<path d="M48 70 l22 9 M96 140 l30 -6 M60 196 l14 12 M110 64 l-8 20" stroke="#fff" stroke-opacity=".35" stroke-width=".6"/>';
+      s += '<rect x="30" y="52" width="120" height="176" fill="#c9a86a" opacity=".12"/>';
+    } else if (kind === "retro") {
+      // a 1970s roll: sunset stripes wrapping round, chunky rounded type
+      var st = film ? ["#e3a92b", "#e0702b", "#9c3d1c"] : ["#9cc5b7", "#3f7f86", "#24485a"];
+      s += '<rect x="30" y="52" width="120" height="26" fill="' + st[2] + '"/>';
+      s += '<rect x="30" y="150" width="120" height="13" fill="' + st[0] + '"/><rect x="30" y="165" width="120" height="13" fill="' + st[1] + '"/><rect x="30" y="180" width="120" height="13" fill="' + st[2] + '"/>';
+      s += '<text x="84" y="71" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Helvetica, sans-serif" font-weight="700" font-size="14" letter-spacing="1" fill="#f1e2c2">shrvn color</text>';
+      s += '<text x="84" y="125" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Helvetica, sans-serif" font-weight="900" font-size="38" fill="' + st[1] + '">' + (film ? "200" : "100") + '</text>';
+      s += '<text x="84" y="142" text-anchor="middle" font-family="Trebuchet MS, Helvetica, sans-serif" font-weight="700" font-size="8.5" letter-spacing="1.6" fill="#3a2a1e">' + (film ? "FILM GALLERY" : "COMMERCIAL") + '</text>';
+      s += '<text x="84" y="214" text-anchor="middle" font-family="Trebuchet MS, Helvetica, sans-serif" font-weight="700" font-size="8" letter-spacing="1.5" fill="#3a2a1e">C-41 · ' + (film ? "36" : "24") + ' EXP · \'74</text>';
+      s += '<rect x="30" y="52" width="120" height="176" filter="url(#' + id + 'grain)" opacity=".6"/>';
+      s += '<rect x="30" y="52" width="120" height="176" fill="#f6d9a0" opacity=".12"/>';
     } else {
       s += '<rect x="30" y="52" width="120" height="176" fill="url(#' + id + 'brush)"/>';
       // masking tape label, written on in marker
