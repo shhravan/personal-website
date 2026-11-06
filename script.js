@@ -519,13 +519,10 @@ function initPage(e) {
       lastFont = fontDeck.shift();
       [optics.style.fontFamily, optics.style.fontStyle, optics.style.fontWeight] = OPTICS_FONTS[lastFont];
     };
-    // On the home page each move of the film strip calls nextFont(), so they change together.
-    // Pages without the photo run their own 2-second timer.
-    if (!document.getElementById("hero-img") && !document.getElementById("film")) fontTimer = setInterval(nextFont, 1500);
+    // On home the photo rotation calls nextFont(), so the two change together; other pages run their own timer.
+    if (!document.getElementById("hero-img")) fontTimer = setInterval(nextFont, 1500);
   }
-  const canvas = document.getElementById("film");
   if (document.querySelector(".photo-pane")) stopHero = startPhotography();
-  else if (canvas && PHOTOS.length > 1) stopHero = startFilm(canvas);
   const img = document.getElementById("hero-img");
 
   if (img && PHOTOS.length > 1) {
