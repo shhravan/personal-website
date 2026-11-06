@@ -15,7 +15,7 @@ A short home page that links out; each section is its own page.
 | **work** | about, work experience, education, honors, and a "get in touch" banner |
 | **projects** | things Shravan is building, as cards |
 | **blog** | posts synced from Substack: a list of titles and dates, one page per post |
-| **photography** | a film-roll strip of film photos, then portfolio sections |
+| **photography** | two 3D film cans (film gallery, commercial); picking one pours film over the page and it develops into that set's drifting strips |
 | **random rabbit holes** | music and favorites: bands, playlists, facts |
 
 ## Core features

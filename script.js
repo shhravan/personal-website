@@ -432,9 +432,6 @@ function playIntro(heroImg) {
 // that strip; ← back, Esc or the backdrop closes it, the arrows move through that roll.
 function startPhotography() {
   const tabs = [...document.querySelectorAll(".photo-tabs button")];
-  // test only: ?switch=1..6 shows the six tab designs being compared (removed before merge)
-  const sw = new URLSearchParams(location.search).get("switch");
-  if (/^[1-6]$/.test(sw || "")) document.querySelector(".photo-tabs").classList.add("sw" + sw);
   const panes = [...document.querySelectorAll(".photo-pane")];
   const box = document.querySelector(".lightbox"), big = box.querySelector("img"), cap = box.querySelector(".lb-cap");
   const stops = [];
@@ -484,7 +481,16 @@ function startPhotography() {
     if (e.key === "ArrowLeft") show(at - 1);
     if (e.key === "ArrowRight") show(at + 1);
   });
-  return () => { stops.forEach((f) => f()); if (box.open) box.close(); };
+  // The two film cans (photography/cans.js, with three.js) are loaded only here, and only if the
+  // browser can draw 3D; otherwise the page just shows the tabs and strips as before.
+  let stopCans = null, gone = false;
+  const cansRoot = document.querySelector(".cans");
+  if (cansRoot && window.WebGLRenderingContext) {
+    import(SITE + "photography/cans.js?v=3").then((m) => m.ready().then(() => {
+      if (!gone) stopCans = m.start(cansRoot, tabs);
+    })).catch(() => document.body.classList.add("cans-off"));
+  } else document.body.classList.add("cans-off");
+  return () => { gone = true; if (stopCans) stopCans(); stops.forEach((f) => f()); if (box.open) box.close(); };
 }
 
 function initPage() {

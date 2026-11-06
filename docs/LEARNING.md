@@ -103,3 +103,11 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - Paint expensive things once and reuse them. Each film frame (photo, sprocket holes, numbers) is drawn once into its own small canvas, in colour and in black and white; every animation frame just copies slices of those.
 - Anything that moves on its own needs manners: pause while someone is pointing at it, stop when the tab is hidden, and stay still for people who turn on "reduce motion".
 - Before a big redesign, keep the old version on its own branch (`backup/site-before-film-strip`) so switching back is one restore, not an archaeology project.
+
+## Film cans in 3D
+- **three.js** draws 3D in the browser with WebGL. A can is a cylinder (the label, painted onto a flat canvas and wrapped round), two "turned" caps (a profile spun round an axis, called a lathe) and a spool. Lighting from a fake room (an environment map) is what makes plastic and print look real.
+- **Ribbon geometry:** the pouring film is one long strip of triangles following a curve. At each point along it we work out which way is "across" the film, then twist that a little as we go, so it curls the way real film does.
+- **Morphing:** every point has two homes, the loose pile and the taut rows. Sliding each point between them (with easing) pulls the pile straight. Texture coordinates sliding along the strip make the film look like it's running.
+- **Loading only where needed:** `import()` fetches a module on demand, so the 670 KB library downloads only on the photography page.
+- **Fonts on a canvas:** text drawn into a canvas uses whatever font is ready at that instant, so wait for the font (and its stylesheet) before painting labels, or they come out in the fallback serif.
+

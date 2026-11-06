@@ -32,3 +32,6 @@ Site-wide checks added in `tests/test_site.py`: strict CSP on every page (no uns
 
 ## 2026-10 · Record player moved to self-hosted audio
 YouTube's player script and iframe removed. CSP tightened to `script-src 'self'` and `media-src 'self'` (no `frame-src`). Tests check every song has its file and that no YouTube embed remains.
+
+## 2026-11 · three.js vendored for the photography cans
+three.js 0.160.0 copied into `vendor/` from the npm package (via jsDelivr), with its MIT licence; `RoomEnvironment.js`'s one import pointed at the local copy. SHA-256: `three.module.min.js` 3e690ac7d180b0aadf0891bea39eec643e29e2d3e75c99b18689518665f69ba6. No change to the security policy (CSP): it still only runs scripts from this site. Google Fonts adds two families (Schibsted Grotesk, Albert Sans), already allowed.
