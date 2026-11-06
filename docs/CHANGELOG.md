@@ -4,6 +4,17 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Photography: slower, realer pour with the photos on the film; centred photo card; no strip gaps
+- **Before:** `bb28955`
+- **Changed:**
+  - The pour takes about 3 seconds (4.5 with the settle): the film carries that set's own photos, is laid from the can outward and stays where it lands (no more sliding along like a conveyor), and each new stretch drops onto the pile and settles.
+  - "pick a roll" and "↺ pick another roll" sit on top in larger pixel type; the cans are bigger and centred as a pair; on the landing the icons and sign-off sit low, near the water.
+  - The photo card is centred (it now lives outside the page column, which is drawn at 80% on desktop).
+  - The strips no longer show thin gaps where one frame meets the next.
+  - Projects: the one-line notes are in Courier Prime, a typewriter face.
+- **Files:** `photography/cans.js`, `script.js`, `styles.css`, `projects/index.html`, cache numbers, DESIGN.
+- **To revert:** restore those from `bb28955`.
+
 ## Photography: back to the cans, smoother pour
 - **Before:** `1a43eb3`
 - **Changed:**
