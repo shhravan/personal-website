@@ -1134,3 +1134,6 @@ main.ledger { animation: page-in .45s cubic-bezier(.2, .8, .2, 1) both; }   /* o
   background: radial-gradient(circle, var(--ink) 0 0.36rem, transparent 0.4rem) no-repeat 0 50% / 1.1rem 100%; transition: background-position .3s cubic-bezier(.2,.8,.2,1); }
 .photo-tabs.sw6:has(button:last-child[aria-selected="true"])::before { background-position: 100% 50%; }
 .photo-tabs.sw6 button:last-child { order: 2; }
+
+/* "home" in the top links only away from the home page */
+body:has(main.hero-home) nav.topnav .home-link { display: none; }
