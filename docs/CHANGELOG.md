@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Cans: symmetric, words always readable
+- **Before:** `97a7b1c`
+- **Changed:** both cans now start at exactly the same angle and height, so the pair is symmetric (before, the second was turned half a radian further, so only one showed its slot and the tongue could cover part of FILM or CLIENT). The lockup is centred on the front of each can. Dragging only tilts them (up to about 35°) and they swing back to facing front when let go, so the barcode side and the cut-off words can't be left on show. A gentle matching sway when idle.
+- **Files:** `photography/cans.js`, `script.js`, cache numbers, DESIGN.
+- **To revert:** restore those from `97a7b1c`.
+
 ## De-slop pass
 - **Before:** `e78e172`
 - **Changed:**

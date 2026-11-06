@@ -42,8 +42,10 @@ function label(g, roll) {
   const px = Math.floor(300 * Math.min(1, 860 / longest)), lead = px * .9;
   const v = (str, x, y, font, col, ls = 0, align = "left") => { g.save(); g.translate(x, y); g.rotate(-Math.PI / 2); text(g, str, 0, 0, font, col, ls, align); g.restore(); };
   const start = H / 2 - 430;   // left-aligned lockup reads from the bottom of the can up
-  v("SHRVN", C + 40, H - start, `${wt}${px}px ${fam}`, ink, -6);
-  v(roll ? "CLIENT" : "FILM", C + 40 + lead, H - start, `${wt}${px}px ${fam}`, ink, -6);
+  // the two columns together (cap height about .72 of the size, one line-gap apart) are centred on the front of the can
+  const x1 = C - .09 * px - 20;
+  v("SHRVN", x1, H - start, `${wt}${px}px ${fam}`, ink, -6);
+  v(roll ? "CLIENT" : "FILM", x1 + lead, H - start, `${wt}${px}px ${fam}`, ink, -6);
   v(roll ? "35MM SLIDE FILM  ·  E-6  ·  24 EXP" : "35MM COLOUR PRINT FILM  ·  36 EXP", C - 300, H - start, "700 34px 'Albert Sans'", ink, 4);
   // dark band beside the slot, with contact squares top and bottom
   const bx = C + 470, bw = 230;
@@ -352,7 +354,7 @@ export function start(root, tabs) {
   const darkMq = matchMedia("(prefers-color-scheme: dark)");
   const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark" : darkMq.matches;
 
-  const cans = [0, 1].map((roll) => { const c = makeCan(roll); c.position.x = roll ? 28 : -32; scene.add(c); return c; });
+  const cans = [0, 1].map((roll) => { const c = makeCan(roll); c.position.x = roll ? 29 : -31; scene.add(c); return c; });
   let active = -1, busy = false, timers = [], pour = null, raf = 0, alive = true, kit = null;
   const backBtn = root.querySelector(".cans-back");
   const later = (f, ms) => timers.push(setTimeout(f, ms));
@@ -415,7 +417,7 @@ export function start(root, tabs) {
   skipBtn.addEventListener("click", skip);
 
   // hover lifts a can; a click (not a drag) opens it; dragging turns both
-  const ray = new THREE.Raycaster(), m = new THREE.Vector2(), turn = { a: -0.35, v: 0, down: false, x: 0, moved: 0 };
+  const ray = new THREE.Raycaster(), m = new THREE.Vector2(), turn = { a: 0, down: false, x: 0, moved: 0 };   // a: how far both cans are turned from facing front
   function hitCan(e) {
     const r = glCanvas.getBoundingClientRect(); m.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(m, camera); const h = ray.intersectObjects(cans, true)[0]; if (!h) return -1;
@@ -425,7 +427,7 @@ export function start(root, tabs) {
   glCanvas.addEventListener("pointerup", (e) => { turn.down = false; if (turn.moved < 6) { const k = hitCan(e); if (k >= 0) open(k); } });
   glCanvas.addEventListener("pointercancel", () => { turn.down = false; });
   glCanvas.addEventListener("pointermove", (e) => {
-    if (turn.down) { const dx = e.clientX - turn.x; turn.x = e.clientX; turn.moved += Math.abs(dx); turn.v = dx * .01; turn.a += dx * .01; }
+    if (turn.down) { const dx = e.clientX - turn.x; turn.x = e.clientX; turn.moved += Math.abs(dx); turn.a = Math.max(-.6, Math.min(.6, turn.a + dx * .008)); }
     if (busy || e.pointerType !== "mouse") return;
     const k = hitCan(e); glCanvas.style.cursor = k >= 0 ? "pointer" : "grab";
     cans.forEach((c, j) => c.userData.liftTo = j === k || j === active ? 1 : 0);
@@ -443,15 +445,15 @@ export function start(root, tabs) {
   function frame(t) {
     if (!alive) return;
     const dt = Math.min(.05, (t - last) / 1000); last = t;
-    if (!turn.down) { turn.a += turn.v; turn.v *= .92; if (!still) turn.a += Math.sin((t - t0) / 2600) * .0016; }
+    if (!turn.down) turn.a -= turn.a * (1 - Math.exp(-dt * 4));   // let go and they swing back to facing front
     floor.material.opacity = isDark() ? .45 : .22;
     // the name under each can follows it, at both sizes (main is drawn smaller on desktop, so undo that)
     const rr = root.getBoundingClientRect(), scale = rr.width / (root.offsetWidth || rr.width) || 1;
     cans.forEach((c, i) => {
       const u = c.userData, k = 1 - Math.exp(-dt * 9);
       u.lift += (u.liftTo - u.lift) * k; u.pull += (u.pullTo - u.pull) * k; u.dim += (u.dimTo - u.dim) * k;
-      u.inner.rotation.y = turn.a + (i ? .5 : 0);
-      c.position.y = u.lift * 5; u.inner.rotation.z = u.lift * (i ? .03 : -.03);
+      u.inner.rotation.y = turn.a + (still ? 0 : Math.sin((t - t0) / 2600) * .06);
+      c.position.y = u.lift * 5;
       u.leader.position.set((Math.sin(PHI) - .17) * u.pull * 7, 0, (Math.cos(PHI) + .98) * u.pull * 7);
       c.scale.setScalar(1 - u.dim * .12);
       const p = toScreen(c.localToWorld(new THREE.Vector3(0, -2, 0)));
