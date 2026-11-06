@@ -34,6 +34,12 @@ be returned to how it looked.
 - **Files:** `projects/index.html`, `blog/index.html`, `notes/`, `scripts/build_notes.py`, `tests/test_notes.py`, `.github/workflows/notes.yml`, `images/projects/`, `script.js`, `styles.css`, cache numbers, DESIGN, TECH_RULES.
 - **To revert:** restore those from `a651efd`; delete `notes/`, the notes script, test and workflow.
 
+## Lower Claude Code token use in cloud sessions
+- **Before:** `40211cd`
+- **Changed:** nothing on the site. Claude Code now summarises chats at 200k tokens and no longer loads claude.ai connectors (Figma, Gmail and others) in this repo.
+- **Files:** `.claude/settings.json`.
+- **To revert:** delete that file.
+
 ## Claude Code skills available in cloud sessions
 - **Before:** `ee65289`
 - **Changed:** nothing on the site. Added 68 Claude Code skills under `.claude/skills/` so `/skill-name` works in cloud sessions, which can't see the skills on Shravan's Mac. Sources and licences are in `.claude/THIRD_PARTY_SKILLS.md`.
