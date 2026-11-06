@@ -134,7 +134,7 @@ function loosePath(o, W2, H2, w) {
   const cell = w * .9, cols = Math.ceil(W2 / cell) + 2, rows = Math.ceil(H2 / cell) + 2, seen = new Float32Array(cols * rows);
   const mark = (x, y) => { const cx = Math.floor(x / cell) + 1, cy = Math.floor(y / cell) + 1; if (cx >= 0 && cy >= 0 && cx < cols && cy < rows) seen[cy * cols + cx] += 1; };
   const pts = []; let x = o.x, y = o.y, a = .35, z = 0, tx = 0, ty = 0, s = 0, next = 0;
-  const step = 12, Ltarget = W2 * H2 / w * 6.2, Rmin = w * .82, p1 = Math.random() * 9, p2 = Math.random() * 9;
+  const step = 12, Ltarget = W2 * H2 / w * 6.2, Rmin = w * .98, p1 = Math.random() * 9, p2 = Math.random() * 9;
   while (s < Ltarget) {
     if (s >= next) {   // pick the barest spot as the next place to drift toward
       let best = 1e9; for (let k = 0; k < 40; k++) { const qx = Math.random() * W2, qy = Math.random() * H2, v = seen[(Math.floor(qy / cell) + 1) * cols + Math.floor(qx / cell) + 1] + Math.hypot(qx - x, qy - y) / (W2 * 1.5); if (v < best) { best = v; tx = qx; ty = qy; } }
@@ -160,7 +160,7 @@ function startPour(o) {
   r2.toneMapping = THREE.ACESFilmicToneMapping;
   const sc = new THREE.Scene(), pm = new THREE.PMREMGenerator(r2);
   sc.environment = pm.fromScene(new RoomEnvironment(), .04).texture;
-  const dl = new THREE.DirectionalLight(0xffffff, 1.5); dl.position.set(-.5, .9, 1); sc.add(dl);
+  const dl = new THREE.DirectionalLight(0xffffff, 1.1); dl.position.set(-.5, .9, 1); sc.add(dl);
   // a real perspective camera, set so the z = 0 plane lines up with the page's pixels
   const fov = 30, dist = (H2 / 2) / Math.tan(fov / 2 * Math.PI / 180);
   const cam = new THREE.PerspectiveCamera(fov, W2 / H2, 10, dist * 3); cam.position.set(W2 / 2, -H2 / 2, dist); cam.lookAt(W2 / 2, -H2 / 2, 0);
@@ -168,7 +168,7 @@ function startPour(o) {
   const curve = new THREE.CatmullRomCurve3(loosePath(o, W2, H2, wFly), false, "centripetal"), Lc = curve.getLength();
   const SEG = Math.min(4000, Math.round(Lc / 6));
   const P = [], T = [], TH = [], ph = Math.random() * 6;
-  for (let s = 0; s <= SEG; s++) { const f = s / SEG; P.push(curve.getPointAt(f)); T.push(curve.getTangentAt(f)); TH.push(Math.sin(f * Lc * .0016 + ph) * .85); }
+  for (let s = 0; s <= SEG; s++) { const f = s / SEG; P.push(curve.getPointAt(f)); T.push(curve.getTangentAt(f)); TH.push(Math.sin(f * Lc * .0014 + ph) * .55); }
   // the taut path: through the gallery rows, turning round just off the screen's edges
   let target = null, Lt = 1;
   function setRows(rects) {
@@ -186,7 +186,7 @@ function startPour(o) {
   for (let s = 0; s < SEG; s++) { const b = s * 2; idx.push(b, b + 1, b + 2, b + 1, b + 3, b + 2); }
   geo.setAttribute("position", new THREE.BufferAttribute(pos, 3)); geo.setAttribute("normal", new THREE.BufferAttribute(nor, 3)); geo.setAttribute("uv", new THREE.BufferAttribute(uv, 2)); geo.setIndex(idx);
   const map = blankFilm();
-  const mat = new THREE.MeshPhysicalMaterial({ map, alphaMap: map.userData.alpha, alphaTest: .5, side: THREE.DoubleSide, roughness: .35, metalness: 0, clearcoat: .7, clearcoatRoughness: .18 });
+  const mat = new THREE.MeshPhysicalMaterial({ map, alphaMap: map.userData.alpha, alphaTest: .5, side: THREE.DoubleSide, roughness: .45, metalness: 0, clearcoat: .35, clearcoatRoughness: .3, envMapIntensity: .55 });
   const mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false; sc.add(mesh);
   const Z = new THREE.Vector3(0, 0, 1), v = new THREE.Vector3(), tq = new THREE.Vector3(), n0 = new THREE.Vector3(), b0 = new THREE.Vector3(), B = new THREE.Vector3(), N = new THREE.Vector3();
   const inout = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2, grow = (x) => 1 - Math.pow(1 - x, 1.6);
