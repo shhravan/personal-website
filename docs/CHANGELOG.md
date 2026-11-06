@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Photography: calmer pour in long sweeps
+- **Before:** `2ebe1ba`
+- **Changed:** the film now lands in a few long, gently curving sweeps across the page (turning round just past the edges) instead of a tangle of loops; it's a little wider, so fewer passes cover everything. Each new stretch is drawn over the film already down, so strips stack instead of cutting through each other. Softer landing at the tip, gentler twist, photos always upright (right-to-left sweeps show the film from the back). The sweeps straighten straight into the gallery rows.
+- **Files:** `photography/cans.js`, `script.js`, DESIGN.
+- **To revert:** restore those from `2ebe1ba`.
+
 ## Photography: slower, realer pour with the photos on the film; centred photo card; no strip gaps
 - **Before:** `bb28955`
 - **Changed:**
