@@ -57,6 +57,18 @@ def csp_directives(csp):
 
 
 class PageTests(unittest.TestCase):
+    def test_every_page_asks_for_the_same_version_of_each_shared_file(self):
+        # The ?v= number makes browsers fetch a changed file instead of a cached copy. It's typed
+        # into every page by hand, so a page left on an old number would quietly show old code.
+        seen = {}
+        for f in tracked_files():
+            if not f.endswith(".html") or f.startswith(".claude/"):
+                continue
+            for name, v in re.findall(r'(styles\.css|script\.js|theme\.js|field\.js)\?v=(\d+)', read(f)):
+                seen.setdefault(name, {}).setdefault(v, []).append(f)
+        for name, versions in seen.items():
+            self.assertEqual(len(versions), 1, f"{name} is asked for at different versions: {versions}")
+
     def test_there_are_pages(self):
         self.assertIn("index.html", PAGES)
         self.assertGreater(len(PAGES), 5)

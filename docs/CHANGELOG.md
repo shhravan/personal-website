@@ -4,6 +4,18 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## De-slop pass
+- **Before:** `e78e172`
+- **Changed:**
+  - `styles.css`: removed styling for designs no page uses any more (the film-strip home, the first photography layout); each component (top links, photography tabs, cans, viewfinder, photo card, projects) is now styled in one place instead of several patches; 1158 → 1078 lines. Home, photography, blog and rabbit holes are pixel-identical before and after.
+  - The text colour's transparencies are three named shades (`--wash`, `--line`, `--faint`) instead of 19 different percentages.
+  - `script.js`: removed the unused home film-strip start-up.
+  - A test fails if the pages ask for different versions (`?v=`) of the shared files.
+  - Work and projects: title boxes without the border; lowercase titles ("work", "projects", "get in touch"); the generic subtitles are gone.
+  - Projects: the tile note back in Garamond italic (no typewriter font).
+- **Files:** `styles.css`, `script.js`, `work/index.html`, `projects/index.html`, `tests/test_site.py`, cache numbers, DESIGN.
+- **To revert:** restore those from `e78e172`.
+
 ## "roll again"; alignment pass
 - **Before:** `e607897`
 - **Changed:** the photography prompt after a pick reads "roll again". Projects on phones: the GitHub count stays on one line beside its icon. Photography: the hidden can names no longer take up room.

@@ -53,10 +53,14 @@ Values below come from `styles.css`. Where the CSS uses `color-mix()`, the recip
 
 | Name | Recipe | Role |
 |---|---|---|
-| Panel | `--ink` 4% into `--bg`, border `--ink` 9% | Section boxes on the work page |
+| `--wash` | `--ink` at 6% | Faint fills: hover, empty graph cells, soft surfaces |
+| `--line` | `--ink` at 14% | Hairlines and borders |
+| `--faint` | `--ink` at 30% | Muted marks: inactive borders, ticks, hover underlines |
+| Panel | `--wash` on `--bg` | Section boxes on the work page |
 | Card | `--bg` 70% with white (dark: `--ink` 6% into `--bg`) | Project cards |
 | Frost | `--bg` at 78–82% opacity + 10–14px blur | Top bar strip, deck readout, now-playing card |
-| Hairline | `--ink` at 9–18% | Borders, tick marks, dividers |
+
+The three see-through shades (`--wash`, `--line`, `--faint`) are the only transparencies of the text colour; use one of them rather than a new percentage. (The GitHub graph keeps its own five-step scale, since it shows data.)
 
 ---
 
@@ -212,8 +216,8 @@ The sections in one centred row under the top bar, in Silkscreen (sized with the
 Hovering a link (mouse only) shows a 240×150 card with a screenshot of the destination, below-right of the cursor (flipped near window edges). It fades in after 120 ms, glides after the cursor on a soft spring and leans up to 6° into the motion; 0.6rem corners, hairline rim, soft shadow. Covers the site's own pages and outside links; social profiles (LinkedIn, X, Instagram, YouTube Music, Forbes, Substack) and sites that block automated browsers have none. Screenshots: `images/previews/` (listed in `index.json`), taken by `scripts/capture_previews.cjs`.
 
 ### Water Banner
-**Role:** title block on the work and projects pages, and the "Get in touch" block.
-A box filled with water blue mixed into the page color, a 1.5px rim, 0.7rem corners. Two layers move inside it: a fine speckle of dots that jumps in 6 steps every 1.5s like film grain (white specks in dark mode, soft blue on cream) and faint ripples drifting over 16s. Title in 1.7rem Garamond 500, subtitle in `--soft`.
+**Role:** title block on the work and projects pages, and the "get in touch" block.
+A box filled with water blue mixed into the page color, no border, 0.7rem corners. Two layers move inside it: a fine speckle of dots that jumps in 6 steps every 1.5s like film grain (white specks in dark mode, soft blue on cream) and faint ripples drifting over 16s. Title in 1.7rem Garamond 500, lowercase, no subtitle.
 
 ### Panel
 **Role:** groups a section on the work page.
@@ -227,7 +231,7 @@ A 2.5rem logo tile (the Cornell seal repeats on each Education and Honors row; 0
 The last year of contributions as a grid of small squares (one per day, a column per week), in `--ink` at 6/22/42/66/90% strength, so it matches the paper in both themes. Month labels in Silkscreen; the total and a link to github.com/shhravan underneath. Data from `data/github.json`, refreshed nightly by a GitHub job.
 
 ### Project Gallery (projects page)
-Each tile's one-line note is in Courier Prime (a typewriter face).
+Each tile's one-line note is in Garamond italic, slightly smaller, in `--soft`.
 The full contribution graph across the column under the banner, then a two-column gallery (one on phones): a 16:10 picture with soft corners and a faint ring, then the name, the year in Silkscreen and one italic line. Projects without a picture get a plain tile with the name (and logo) set large. Tiles lift 3px on hover.
 
 ### Blog Notebook
