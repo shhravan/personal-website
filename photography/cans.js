@@ -151,26 +151,45 @@ function loosePath(o, W2, H2, w) {
   return pts;
 }
 
-function startPour(o) {
-  const cvs = document.createElement("canvas"); cvs.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:25";
+// The pour's 3D setup is built once, while the cans are on screen, and its shaders compiled then,
+// so nothing heavy happens at the moment of the click (that was the stutter at the start).
+function pourKit() {
+  const cvs = document.createElement("canvas");
+  cvs.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:25;display:none";
   document.body.appendChild(cvs);
-  const W2 = innerWidth, H2 = innerHeight;
-  const r2 = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, alpha: true });
-  r2.setPixelRatio(Math.min(devicePixelRatio, 2)); r2.setSize(W2, H2, false); r2.outputColorSpace = THREE.SRGBColorSpace;
-  r2.toneMapping = THREE.ACESFilmicToneMapping;
+  const r2 = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, alpha: true, powerPreference: "high-performance" });
+  r2.setPixelRatio(Math.min(devicePixelRatio, 1.5)); r2.outputColorSpace = THREE.SRGBColorSpace; r2.toneMapping = THREE.ACESFilmicToneMapping;
   const sc = new THREE.Scene(), pm = new THREE.PMREMGenerator(r2);
   sc.environment = pm.fromScene(new RoomEnvironment(), .04).texture;
   const dl = new THREE.DirectionalLight(0xffffff, 1.1); dl.position.set(-.5, .9, 1); sc.add(dl);
+  const map = blankFilm();
+  // standard (not physical) material: one lighting pass instead of two, much lighter with many layers of film on top of each other
+  const mat = new THREE.MeshStandardMaterial({ map, alphaMap: map.userData.alpha, alphaTest: .5, side: THREE.DoubleSide, roughness: .42, metalness: 0, envMapIntensity: .6 });
+  const geo = new THREE.BufferGeometry(), mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false; sc.add(mesh);
+  const cam = new THREE.PerspectiveCamera(30, 1, 10, 10000);
+  r2.compile(sc, cam);
+  return { cvs, r2, sc, pm, map, mat, geo, mesh, cam, dispose() { geo.dispose(); map.dispose(); map.userData.alpha.dispose(); mat.dispose(); pm.dispose(); r2.dispose(); cvs.remove(); } };
+}
+function startPour(kit, o) {
+  const { cvs, r2, sc, cam, map, mat } = kit;
+  const W2 = innerWidth, H2 = innerHeight;
+  r2.setSize(W2, H2, false); cvs.style.opacity = 1; cvs.style.display = "block";
   // a real perspective camera, set so the z = 0 plane lines up with the page's pixels
-  const fov = 30, dist = (H2 / 2) / Math.tan(fov / 2 * Math.PI / 180);
-  const cam = new THREE.PerspectiveCamera(fov, W2 / H2, 10, dist * 3); cam.position.set(W2 / 2, -H2 / 2, dist); cam.lookAt(W2 / 2, -H2 / 2, 0);
+  const dist = (H2 / 2) / Math.tan(15 * Math.PI / 180);
+  cam.aspect = W2 / H2; cam.far = dist * 3; cam.position.set(W2 / 2, -H2 / 2, dist); cam.lookAt(W2 / 2, -H2 / 2, 0); cam.updateProjectionMatrix();
   const wFly = Math.max(110, Math.min(230, o.w || 180)); let rh = wFly;
   const curve = new THREE.CatmullRomCurve3(loosePath(o, W2, H2, wFly), false, "centripetal"), Lc = curve.getLength();
-  const SEG = Math.min(4000, Math.round(Lc / 6));
-  const P = [], T = [], TH = [], ph = Math.random() * 6;
-  for (let s = 0; s <= SEG; s++) { const f = s / SEG; P.push(curve.getPointAt(f)); T.push(curve.getTangentAt(f)); TH.push(Math.sin(f * Lc * .0014 + ph) * .55); }
+  const SEG = Math.min(2600, Math.round(Lc / 10));
+  // every sample along the film, kept in flat arrays (no new objects while it moves)
+  const P = new Float32Array((SEG + 1) * 3), T = new Float32Array((SEG + 1) * 3), TH = new Float32Array(SEG + 1), ph = Math.random() * 6;
+  const pts = curve.getSpacedPoints(SEG);
+  for (let s = 0; s <= SEG; s++) {
+    const f = s / SEG, t = curve.getTangentAt(f);
+    P[s * 3] = pts[s].x; P[s * 3 + 1] = pts[s].y; P[s * 3 + 2] = pts[s].z; T[s * 3] = t.x; T[s * 3 + 1] = t.y; T[s * 3 + 2] = t.z;
+    TH[s] = Math.sin(f * Lc * .0014 + ph) * .55;
+  }
   // the taut path: through the gallery rows, turning round just off the screen's edges
-  let target = null, Lt = 1;
+  let TP = null, TT = null, Lt = 1;
   function setRows(rects) {
     if (!rects.length) return;
     rh = rects[0].height;
@@ -180,50 +199,55 @@ function startPour(o) {
       for (let j = 0; j <= 8; j++) path.push(new THREE.Vector3(xs[0] + (xs[1] - xs[0]) * j / 8, y, 0));
     });
     const tc = new THREE.CatmullRomCurve3(path, false, "catmullrom", .1); Lt = tc.getLength();
-    target = []; for (let s = 0; s <= SEG; s++) target.push({ p: tc.getPointAt(s / SEG), t: tc.getTangentAt(s / SEG) });
+    const tp = tc.getSpacedPoints(SEG); TP = new Float32Array((SEG + 1) * 3); TT = new Float32Array((SEG + 1) * 3);
+    for (let s = 0; s <= SEG; s++) { const t = tc.getTangentAt(s / SEG); TP[s * 3] = tp[s].x; TP[s * 3 + 1] = tp[s].y; TP[s * 3 + 2] = tp[s].z; TT[s * 3] = -t.x; TT[s * 3 + 1] = -t.y; TT[s * 3 + 2] = -t.z; }
   }
-  const geo = new THREE.BufferGeometry(), pos = new Float32Array((SEG + 1) * 6), nor = new Float32Array((SEG + 1) * 6), uv = new Float32Array((SEG + 1) * 4), idx = [];
-  for (let s = 0; s < SEG; s++) { const b = s * 2; idx.push(b, b + 1, b + 2, b + 1, b + 3, b + 2); }
-  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3)); geo.setAttribute("normal", new THREE.BufferAttribute(nor, 3)); geo.setAttribute("uv", new THREE.BufferAttribute(uv, 2)); geo.setIndex(idx);
-  const map = blankFilm();
-  const mat = new THREE.MeshPhysicalMaterial({ map, alphaMap: map.userData.alpha, alphaTest: .5, side: THREE.DoubleSide, roughness: .45, metalness: 0, clearcoat: .35, clearcoatRoughness: .3, envMapIntensity: .55 });
-  const mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false; sc.add(mesh);
-  const Z = new THREE.Vector3(0, 0, 1), v = new THREE.Vector3(), tq = new THREE.Vector3(), n0 = new THREE.Vector3(), b0 = new THREE.Vector3(), B = new THREE.Vector3(), N = new THREE.Vector3();
-  const inout = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2, grow = (x) => 1 - Math.pow(1 - x, 1.6);
-  const t0 = performance.now(); let tautAt = 0, alive = true, fade = 0;
+  const geo = kit.geo, pos = new Float32Array((SEG + 1) * 6), nor = new Float32Array((SEG + 1) * 6), uv = new Float32Array((SEG + 1) * 4), idx = new Uint32Array(SEG * 6);
+  for (let s = 0; s < SEG; s++) { const b = s * 2, o6 = s * 6; idx[o6] = b; idx[o6 + 1] = b + 1; idx[o6 + 2] = b + 2; idx[o6 + 3] = b + 1; idx[o6 + 4] = b + 3; idx[o6 + 5] = b + 2; }
+  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute("normal", new THREE.BufferAttribute(nor, 3).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute("uv", new THREE.BufferAttribute(uv, 2).setUsage(THREE.DynamicDrawUsage));
+  geo.setIndex(new THREE.BufferAttribute(idx, 1));
+  // a steady, eased speed: it starts gently, runs, and slows as the last of it lands
+  const ease = (x) => -(Math.cos(Math.PI * x) - 1) / 2, inout = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const t0 = performance.now(); let tautAt = 0, alive = true, fade = 0, raf = 0;
   function draw(now) {
     if (!alive) return;
-    const g = Math.min(1, Math.max(0, grow(Math.min(1, (now - t0) / 2000))));
-    const e = target ? inout(Math.min(1, (now - tautAt) / 900)) : 0;
-    const w = wFly + (rh - wFly) * e, L = Lc + (Lt - Lc) * e, count = Math.max(1, Math.round(g * SEG)), texLen = map.userData.len * w / 256;
-    const feed = target ? FEED * (now - tautAt) / 1000 : 0;   // once taut it keeps running, like film through a projector
-    for (let s = 0; s <= SEG; s++) {
-      const f = s / SEG, k = Math.min(SEG, Math.max(0, count - s));   // the end that left the can first leads
-      v.copy(P[k]); tq.copy(T[k]).negate();
-      if (e > 0) { const tg = target[SEG - s]; v.lerp(tg.p, e); tq.lerp(tg.t.clone().negate(), e).normalize(); }
-      n0.copy(Z).addScaledVector(tq, -Z.dot(tq)); if (n0.lengthSq() < 1e-6) n0.set(0, 1, 0); n0.normalize();
-      b0.crossVectors(tq, n0);
-      const th = TH[k] * (1 - e), c = Math.cos(th), si = Math.sin(th);
-      B.copy(b0).multiplyScalar(c).addScaledVector(n0, si); N.copy(n0).multiplyScalar(c).addScaledVector(b0, -si);
+    const g = ease(Math.min(1, (now - t0) / 2000));
+    const e = TP ? inout(Math.min(1, (now - tautAt) / 900)) : 0, ie = 1 - e;
+    const w = wFly + (rh - wFly) * e, hw = w / 2, L = Lc + (Lt - Lc) * e, count = Math.max(1, Math.round(g * SEG)), texLen = map.userData.len * w / 256;
+    const feed = TP ? FEED * (now - tautAt) / 1000 : 0;   // once taut it keeps running, like film through a projector
+    const last = e > 0 ? SEG : count;   // only the part that's out of the can needs working out
+    for (let s = 0; s <= last; s++) {
+      const k = Math.min(SEG, Math.max(0, count - s)) * 3;   // the end that left the can first leads
+      let vx = P[k], vy = P[k + 1], vz = P[k + 2], tx = -T[k], ty = -T[k + 1], tz = -T[k + 2];
+      if (e > 0) { const q = (SEG - s) * 3; vx = vx * ie + TP[q] * e; vy = vy * ie + TP[q + 1] * e; vz = vz * ie + TP[q + 2] * e; tx = tx * ie + TT[q] * e; ty = ty * ie + TT[q + 1] * e; tz = tz * ie + TT[q + 2] * e; const l = Math.hypot(tx, ty, tz) || 1; tx /= l; ty /= l; tz /= l; }
+      // "across the film": the screen-facing direction square to the film's path, then twisted a little
+      let nx = -tz * tx, ny = -tz * ty, nz = 1 - tz * tz; const nl = Math.hypot(nx, ny, nz); if (nl < 1e-4) { nx = 0; ny = 1; nz = 0; } else { nx /= nl; ny /= nl; nz /= nl; }
+      const bx = ty * nz - tz * ny, by = tz * nx - tx * nz, bz = tx * ny - ty * nx;
+      const th = TH[k / 3] * ie, c = Math.cos(th), si = Math.sin(th);
+      const Bx = bx * c + nx * si, By = by * c + ny * si, Bz = bz * c + nz * si;
       const o6 = s * 6;
-      pos[o6] = v.x - B.x * w / 2; pos[o6 + 1] = v.y - B.y * w / 2; pos[o6 + 2] = v.z - B.z * w / 2;
-      pos[o6 + 3] = v.x + B.x * w / 2; pos[o6 + 4] = v.y + B.y * w / 2; pos[o6 + 5] = v.z + B.z * w / 2;
-      nor[o6] = nor[o6 + 3] = N.x; nor[o6 + 1] = nor[o6 + 4] = N.y; nor[o6 + 2] = nor[o6 + 5] = N.z;
-      const u = (f * L + feed) / texLen; uv[s * 4] = u; uv[s * 4 + 1] = 1; uv[s * 4 + 2] = u; uv[s * 4 + 3] = 0;
+      pos[o6] = vx - Bx * hw; pos[o6 + 1] = vy - By * hw; pos[o6 + 2] = vz - Bz * hw;
+      pos[o6 + 3] = vx + Bx * hw; pos[o6 + 4] = vy + By * hw; pos[o6 + 5] = vz + Bz * hw;
+      nor[o6] = nor[o6 + 3] = nx * c - bx * si; nor[o6 + 1] = nor[o6 + 4] = ny * c - by * si; nor[o6 + 2] = nor[o6 + 5] = nz * c - bz * si;
+      const u = (s / SEG * L + feed) / texLen; uv[s * 4] = u; uv[s * 4 + 1] = 1; uv[s * 4 + 2] = u; uv[s * 4 + 3] = 0;
     }
     geo.attributes.position.needsUpdate = true; geo.attributes.normal.needsUpdate = true; geo.attributes.uv.needsUpdate = true;
     geo.setDrawRange(0, count * 6);
     cvs.style.opacity = 1 - fade;
     r2.render(sc, cam);
-    requestAnimationFrame(draw);
+    raf = requestAnimationFrame(draw);
   }
-  requestAnimationFrame(draw);
+  raf = requestAnimationFrame(draw);
+  const stop = () => { alive = false; cancelAnimationFrame(raf); cvs.style.display = "none"; geo.setDrawRange(0, 0); };
   return {
+    covered: () => performance.now() - t0 > 900,
     straighten(rects) { setRows(rects); tautAt = performance.now(); },
     done(now) {
-      if (now) { alive = false; geo.dispose(); map.dispose(); map.userData.alpha.dispose(); mat.dispose(); pm.dispose(); r2.dispose(); cvs.remove(); return; }
+      if (now) return stop();
       const t1 = performance.now();
-      const out = (now) => { fade = Math.min(1, (now - t1) / 450); if (fade < 1 && alive) requestAnimationFrame(out); else { alive = false; geo.dispose(); map.dispose(); map.userData.alpha.dispose(); mat.dispose(); pm.dispose(); r2.dispose(); cvs.remove(); } };
+      const out = (t) => { fade = Math.min(1, (t - t1) / 450); if (fade < 1 && alive) requestAnimationFrame(out); else stop(); };
       requestAnimationFrame(out);
     },
   };
@@ -305,7 +329,8 @@ export function start(root, tabs) {
   const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark" : darkMq.matches;
 
   const cans = [0, 1].map((roll) => { const c = makeCan(roll); c.position.x = roll ? 30 : -30; scene.add(c); return c; });
-  let active = -1, busy = false, timers = [], pour = null, raf = 0, alive = true;
+  let active = -1, busy = false, timers = [], pour = null, raf = 0, alive = true, kit = null;
+  const backBtn = root.querySelector(".cans-back");
   const later = (f, ms) => timers.push(setTimeout(f, ms));
 
   function toScreen(v) { v.project(camera); const r = glCanvas.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height }; }
@@ -340,7 +365,7 @@ export function start(root, tabs) {
     busy = true; body.classList.add("cans-pouring"); skipBtn.hidden = false;
     cans.forEach((c, k) => { c.userData.liftTo = k === i ? 1 : 0; c.userData.pullTo = k === i ? 1 : 0; c.userData.dimTo = k === i ? 0 : .5; });
     const o = slot(cans[i]);
-    later(() => { pour = startPour(o); }, 200);
+    later(() => { pour = startPour(kit || (kit = pourKit()), o); }, 180);
     later(() => {
       // under the film: the cans step back to become the switch, and the roll's strips appear
       body.classList.add("cans-picked"); showPane(i);
@@ -350,6 +375,16 @@ export function start(root, tabs) {
   }
   function skip() { if (!busy) return; timers.forEach(clearTimeout); timers = []; body.classList.add("cans-picked"); showPane(active); settle(active); develop(); }
   names.forEach((n, i) => n.addEventListener("click", () => open(i)));
+  // back to the two big cans; picking again plays the pour again
+  function back() {
+    if (busy) return;
+    active = -1; body.classList.remove("cans-picked");
+    names.forEach((n) => n.setAttribute("aria-pressed", "false"));
+    cans.forEach((c) => { c.userData.liftTo = 0; c.userData.pullTo = 0; c.userData.dimTo = 0; });
+    try { sessionStorage.removeItem("photo-roll"); } catch (e) { /* no storage */ }
+    window.scrollTo({ top: 0, behavior: still ? "auto" : "smooth" });
+  }
+  if (backBtn) backBtn.addEventListener("click", back);
   skipBtn.addEventListener("click", skip);
 
   // hover lifts a can; a click (not a drag) opens it; dragging turns both
@@ -395,7 +430,7 @@ export function start(root, tabs) {
       const p = toScreen(c.localToWorld(new THREE.Vector3(0, -2, 0)));
       names[i].style.left = (p.x - rr.left) / scale + "px"; names[i].style.top = (p.y - rr.top) / scale + 14 + "px";
     });
-    renderer.render(scene, camera);
+    if (!(pour && pour.covered())) renderer.render(scene, camera);   // no need to draw the cans while the film hides them
     raf = requestAnimationFrame(frame);
   }
 
@@ -404,10 +439,14 @@ export function start(root, tabs) {
   resize();
   if (seen !== null) { active = +seen || 0; body.classList.add("cans-picked"); showPane(active); mark(active); cans.forEach((c) => { c.userData.lift = c.userData.liftTo; c.userData.dim = c.userData.dimTo; c.userData.pull = c.userData.pullTo; }); }
   raf = requestAnimationFrame(frame);
+  // get the pour ready while the visitor looks at the cans, so the click is instant
+  const warm = () => { if (alive && !kit) kit = pourKit(); };
+  if (!still) (window.requestIdleCallback || setTimeout)(warm, { timeout: 1500 });
 
   return () => {
     alive = false; cancelAnimationFrame(raf); timers.forEach(clearTimeout);
     if (pour) { pour.done(true); pour = null; }
+    if (kit) { kit.dispose(); kit = null; }
     removeEventListener("resize", resize);
     body.classList.remove("cans-picked", "cans-pouring");
     scene.traverse((o) => { if (o.geometry && o.geometry !== LID && o.geometry !== LEADER) o.geometry.dispose(); if (o.material) { o.material.map?.dispose(); o.material.alphaMap?.dispose(); o.material.roughnessMap?.dispose(); o.material.dispose(); } });
