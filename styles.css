@@ -1102,16 +1102,16 @@ body:has(main.hero-home) nav.topnav .home-link { display: none; }
 .cans-off .cans { display: none; }
 body:not(.cans-off) main.photos .photo-tabs { display: none; }
 body:not(.cans-off):not(.cans-picked) main.photos .photo-pane { display: none; }
-.cans-stage { position: absolute; left: 50%; top: 2.4rem; width: min(100vw, 1100px); height: calc(min(72vh, 680px) - 2.4rem); translate: -50% 0; transform-origin: 50% 0; transition: transform .9s cubic-bezier(.65,0,.25,1); }
+.cans-stage { position: absolute; left: 50%; top: 3.4rem; width: min(100vw, 1100px); height: calc(min(72vh, 680px) - 3.4rem); translate: -50% 0; transform-origin: 50% 0; transition: transform .9s cubic-bezier(.65,0,.25,1); }
 .cans-gl { width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: grab; }
 .can-name { all: unset; position: absolute; left: -999px; translate: -50% 0; white-space: nowrap; cursor: pointer; font-family: "Schibsted Grotesk", sans-serif; font-weight: 900; font-size: clamp(18px, 2.7vw, 40px); line-height: .92; text-transform: uppercase; color: var(--ink); transition: font-size .6s cubic-bezier(.65,0,.25,1), color .3s; }
 .can-name:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 3px; }
-.cans-hint { position: absolute; left: 0; right: 0; top: 0; margin: 0; text-align: center; color: var(--ink); font-family: "Silkscreen", monospace; font-size: 15px; letter-spacing: .3em; text-transform: uppercase; transition: opacity .3s; }
+.cans-hint { position: absolute; left: 0; right: 0; top: 0; margin: 0; text-align: center; color: var(--ink); font-family: "Silkscreen", monospace; font-size: 26px; letter-spacing: .24em; text-transform: uppercase; transition: opacity .3s; }
 .cans-skip { position: fixed; right: 16px; bottom: 16px; z-index: 30; font: 10px "Silkscreen", monospace; letter-spacing: .18em; text-transform: uppercase; background: var(--bg); color: var(--ink); border: 1.5px solid color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 6px; padding: 8px 11px; cursor: pointer; }
 .cans-skip[hidden] { display: none; }
-.cans-picked .cans { height: 200px; }
-.cans-picked .cans-stage { top: 2.2rem; }
-.cans-back { display: none; position: absolute; left: 50%; top: 0; translate: -50% 0; white-space: nowrap; background: none; border: 0; padding: 4px 8px; cursor: pointer; font: 13px "Silkscreen", monospace; letter-spacing: .26em; text-transform: uppercase; color: var(--ink); transition: opacity .2s; }
+.cans-picked .cans { height: 214px; }
+.cans-picked .cans-stage { top: 2.9rem; }
+.cans-back { display: none; position: absolute; left: 50%; top: 0; translate: -50% 0; white-space: nowrap; background: none; border: 0; padding: 4px 8px; cursor: pointer; font: 21px "Silkscreen", monospace; letter-spacing: .2em; text-transform: uppercase; color: var(--ink); transition: opacity .2s; }
 .cans-back:hover { opacity: .6; }
 .cans-back:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 3px; }
 .cans-picked:not(.cans-pouring) .cans-back { display: block; }
@@ -1119,7 +1119,7 @@ body:not(.cans-off):not(.cans-picked) main.photos .photo-pane { display: none; }
 .cans-pouring .cans-hint, .cans-picked .cans-hint { opacity: 0; }
 .cans-picked .can-name { font-size: 14px; color: var(--soft); }
 .cans-picked .can-name[aria-pressed="true"] { color: var(--ink); }
-@media (max-width: 47.99rem) { .cans { height: 52vh; } .cans-stage { height: calc(52vh - 2.4rem); } .can-name { font-size: 15px; } .cans-hint { font-size: 12px; } .cans-back { font-size: 11px; } .cans-picked .cans { height: 180px; } .cans-picked .cans-stage { transform: scale(.4); } }
+@media (max-width: 47.99rem) { .cans { height: 52vh; } .cans-stage { height: calc(52vh - 2.4rem); } .can-name { font-size: 15px; } .cans-hint { font-size: 17px; } .cans-back { font-size: 14px; } .cans-stage { top: 2.6rem; height: calc(52vh - 2.6rem); } .cans-picked .cans { height: 180px; } .cans-picked .cans-stage { transform: scale(.4); } }
 @media (prefers-reduced-motion: reduce) { .cans-stage, .can-name { transition: none; } }
 /* on the landing, the icons and sign-off sit low, near the water, as on the home page */
 body:not(.cans-off):not(.cans-picked) main.photos .social { margin-top: 9vh; }
