@@ -25,10 +25,11 @@ A short home page that links out; each section is its own page.
 4. **Letter field** and shoreline animation behind every page.
 5. **Blog sync** from Substack, run automatically by GitHub Actions.
 6. Every page works on a phone and respects reduced-motion settings.
+7. **The desk** (owner only): a private dashboard at an unlisted address behind a login (Cloudflare Access, email code) where Shravan adds photos, groups them into rolls, writes captions, saves to a preview and publishes. Decided with Shravan in November 2026; the public site stays fully static. A blog editor in the same desk is the next slice.
 
 ## Non-goals
-- Login, database, accounts or forms (the site is fully static)
-- Blog admin or comments
+- Login, database, accounts or forms for visitors (the public site is fully static; the only login is Shravan's own, for the desk)
+- Comments
 - Print sales
 - Live Spotify integration
 

@@ -17,6 +17,9 @@ One slice per branch and pull request: plan, build, check in the browser, open a
 ## Next
 - [x] Record player: self-hosted audio instead of YouTube (no ads)
 - [x] Photography: film cans landing, film gallery and commercial strips, photo card (photos and captions still placeholders)
+- [x] The desk: private dashboard for the photography rolls (upload, captions, metadata, save to drafts, publish)
+- [ ] Desk setup on Cloudflare (Shravan, see `_desk/README.md`), then the first real rolls from Instagram
+- [ ] The desk, part 2: blog editor (write a post with photos, save, publish)
 - [ ] Rabbit hole: music picks, favorites, facts
 - [ ] Blog: hover image on titles
 - [ ] Polish: link previews, accessibility, speed

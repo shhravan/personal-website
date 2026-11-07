@@ -1007,6 +1007,18 @@ body:has(main.hero-home) main.hero-home {
 .photo-tabs button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 @media (max-width: 47.99rem) { .photo-tabs button { font-size: 10px; letter-spacing: 0.16em; } .photo-pane { gap: 0.7rem; } }
 
+/* Commercial, once there are two or more clients: the same stamped labels, smaller, as a filter. */
+.client-filter { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; margin: 0 0 1rem; }
+.client-filter button {
+  padding: 0.45rem 0.75rem 0.4rem; border: 1px solid var(--line); border-radius: 0.3rem; background: none; cursor: pointer; color: var(--soft);
+  font-family: "Silkscreen", monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+}
+.client-filter button:hover { color: var(--ink); border-color: var(--faint); }
+.client-filter button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
+.client-filter button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.roll[hidden] { display: none; }
+.roll-empty { text-align: center; color: var(--soft); font-style: italic; }
+
 /* The cans. Before a set is picked only the cans show; after, they shrink to the top and become the switch. */
 .cans { position: relative; height: min(72vh, 680px); margin-top: .8rem; }
 .cans-off .cans { display: none; }
