@@ -1,0 +1,496 @@
+{
+  "version": 1,
+  "gallery": [
+    {
+      "id": "g1",
+      "name": "mumbai, monsoon",
+      "hidden": false,
+      "photos": [
+        {
+          "name": "tram",
+          "dir": "images/hero",
+          "caption": "tram, mumbai",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            58,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "classroom",
+          "dir": "images/hero",
+          "caption": "classroom",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            70,
+            68,
+            1.4
+          ],
+          "hidden": false
+        },
+        {
+          "name": "rain",
+          "dir": "images/hero",
+          "caption": "rain",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            52,
+            60,
+            1.25
+          ],
+          "hidden": false
+        },
+        {
+          "name": "crowd",
+          "dir": "images/hero",
+          "caption": "crowd",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            45,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "garden-party",
+          "dir": "images/hero",
+          "caption": "garden party",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            20,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "dwarka",
+          "dir": "images/hero",
+          "caption": "dwarka",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            50,
+            1.22
+          ],
+          "hidden": false
+        },
+        {
+          "name": "wall-street",
+          "dir": "images/hero",
+          "caption": "wall street",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            45,
+            65,
+            1.1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "esplanade-dusk",
+          "dir": "images/hero",
+          "caption": "esplanade at dusk",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            55,
+            1
+          ],
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "name": "home, surat",
+      "hidden": false,
+      "photos": [
+        {
+          "name": "vitthal",
+          "dir": "images/hero",
+          "caption": "vitthal",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            40,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "shivaji",
+          "dir": "images/hero",
+          "caption": "shivaji",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            45,
+            42,
+            1.2
+          ],
+          "hidden": false
+        },
+        {
+          "name": "natsamrat",
+          "dir": "images/hero",
+          "caption": "natsamrat",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            10,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "partha-sarathi",
+          "dir": "images/hero",
+          "caption": "partha sarathi",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            45,
+            52,
+            1.15
+          ],
+          "hidden": false
+        },
+        {
+          "name": "tumbbad",
+          "dir": "images/hero",
+          "caption": "tumbbad",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            75,
+            1.3
+          ],
+          "hidden": false
+        },
+        {
+          "name": "the-choice",
+          "dir": "images/hero",
+          "caption": "the choice",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            35,
+            1.22
+          ],
+          "hidden": false
+        },
+        {
+          "name": "creation-of-adam",
+          "dir": "images/hero",
+          "caption": "creation of adam",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            45,
+            50,
+            1
+          ],
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "name": "ithaca, first winter",
+      "hidden": false,
+      "photos": [
+        {
+          "name": "cornell-1930",
+          "dir": "images/hero",
+          "caption": "cornell, 1930",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            55,
+            35,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "harvey-mike",
+          "dir": "images/hero",
+          "caption": "harvey and mike",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            0,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "stone-cold",
+          "dir": "images/hero",
+          "caption": "stone cold",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            40,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "oasis",
+          "dir": "images/hero",
+          "caption": "oasis",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            8,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "queen",
+          "dir": "images/hero",
+          "caption": "queen",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            20,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "shawshank",
+          "dir": "images/hero",
+          "caption": "shawshank",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            30,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "sisyphus",
+          "dir": "images/hero",
+          "caption": "sisyphus",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            38,
+            1
+          ],
+          "hidden": false
+        }
+      ]
+    }
+  ],
+  "commercial": [
+    {
+      "id": "c1",
+      "name": "sample project",
+      "hidden": false,
+      "client": "client",
+      "year": "2026",
+      "photos": [
+        {
+          "name": "pcrc-beta",
+          "dir": "images/hero",
+          "caption": "frame one",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            15,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "znmd",
+          "dir": "images/hero",
+          "caption": "frame two",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            20,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "great-wave",
+          "dir": "images/hero",
+          "caption": "frame three",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            45,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "shutter-island",
+          "dir": "images/hero",
+          "caption": "frame four",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            50,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "basquiat",
+          "dir": "images/hero",
+          "caption": "frame five",
+          "alt": "",
+          "place": "placeholder place",
+          "year": "2025",
+          "film": "portra 400 · 35mm",
+          "camera": "",
+          "settings": "",
+          "focus": [
+            50,
+            45,
+            1
+          ],
+          "hidden": false
+        }
+      ]
+    }
+  ]
+}

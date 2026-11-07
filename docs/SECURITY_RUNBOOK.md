@@ -26,3 +26,10 @@ After each merge: the Actions tab shows "pages build and deployment" succeeded; 
 - Post HTML is cleaned to an allowlist before it reaches the site, and images are served from our own domain, so the Content-Security-Policy didn't need to change.
 - Relay: `worker/feed-relay.js` on Cloudflare. Allowlisted hosts/paths only, https only, constant-time key check, GET only, 20 MB cap, refuses everything if `RELAY_KEY` is unset. To rotate the key: generate a new random value, update the Worker secret `RELAY_KEY` and the GitHub secret `SUBSTACK_RELAY_KEY`, run the sync once.
 
+
+## The desk
+- Login: Cloudflare Access in front of the desk's Pages site (one Allow policy, the owner's email). The Pages Function checks the Access token itself as well, so a misconfigured Access policy still can't let anyone in.
+- If the GitHub token leaks: revoke it (GitHub → Settings → Developer settings → Fine-grained tokens), make a new one with the same scope, set it as the `GITHUB_TOKEN` secret, redeploy the desk.
+- If a device is lost: Zero Trust → My Team → Users → revoke the owner's sessions.
+- A bad publish: revert the "desk: publish" merge commit on `main`; then use the desk to fix and publish again.
+- The token expires yearly; renew it before then or saves start failing with "Bad credentials".

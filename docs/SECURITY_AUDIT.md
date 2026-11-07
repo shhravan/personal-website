@@ -11,6 +11,8 @@ visitor browser ──HTTPS──> GitHub Pages (static files from main)
 Trust boundary: everything in the repo is public; the browser runs only first-party scripts
 only (songs are self-hosted MP3s).
 ```
+**Update (November 2026): the desk.** A separate owner-only dashboard (`_desk/`, its own Cloudflare Pages site) now writes to the repo. Trust boundary: Cloudflare Access (email code, one email) in front; the Pages Function re-verifies the Access JWT and holds a fine-grained GitHub token (Contents on this repo only) as a Cloudflare secret. Writes go to `drafts`; publishing merges to `main`. The public site is unchanged: still static, and it now reads its rolls from `data/photos.json`. See `SECURITY_CHECKLIST.md` (B, C, F, G, L) and `SECURITY_RUNBOOK.md`.
+
 Data handled: none collected. The site shows one email address (intentionally public, assembled by script) and stores one value, the light/dark choice, in `localStorage`.
 
 ## Scope and limitations
