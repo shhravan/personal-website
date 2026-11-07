@@ -31,6 +31,13 @@ desk page (index.html, desk.js) ──► /api/… (functions/api/[[path]].js on
 - **The repo is public.** "Hidden" keeps a roll or photo off the page, but the files and captions
   are still readable on GitHub. Don't upload anything you'd mind someone finding there.
 
+## What it costs
+Nothing, on these free plans:
+- **Cloudflare Pages**: free (500 builds a month, unlimited visits). The server code runs on Workers' free tier, 100,000 requests a day; the desk uses a few hundred on a busy day.
+- **Cloudflare Zero Trust** (the login wall): free for up to 50 people. Signing up may ask for a card even on the free plan; the free plan isn't charged.
+- **GitHub**: the key and the repo are free. Photos add about 1 MB each to the repo; GitHub Pages allows a 1 GB site, so roughly 800 photos before that matters.
+- **OpenStreetMap** place lookups: free, with fair use (one a second, which the desk keeps to).
+
 ## One-time setup (about 20 minutes)
 
 ### 1. A GitHub key that can only touch this repo
@@ -48,21 +55,7 @@ desk page (index.html, desk.js) ──► /api/… (functions/api/[[path]].js on
 4. Save and deploy. Then Settings → Builds → **Branch control**: turn preview deployments **off**
    (only `main` builds the desk).
 
-### 3. Its settings
-Project → **Settings** → **Variables and secrets** → add (Production):
-
-| name | value |
-|---|---|
-| `GITHUB_TOKEN` | the key from step 1. Choose **Secret** (encrypted, never shown again) |
-| `REPO` | `shhravan/personal-website` |
-| `OWNER_EMAIL` | the email you'll log in with |
-| `ACCESS_TEAM_DOMAIN` | from step 4, e.g. `shravan.cloudflareaccess.com` |
-| `ACCESS_AUD` | from step 4 |
-| `PREVIEW_URL` | from step 5, e.g. `https://drafts.<staging-project>.pages.dev` |
-
-Then Deployments → the latest → **Retry deployment**, so it picks them up.
-
-### 4. The login wall (Cloudflare Access)
+### 3. The login wall (Cloudflare Access)
 1. Cloudflare dashboard → **Zero Trust** (the free plan is enough; pick a team name if asked).
 2. **Access** → **Applications** → **Add an application** → **Self-hosted**.
 3. Name `desk`. Domain: your `<name>.pages.dev`. Session duration: 1 month.
@@ -71,10 +64,24 @@ Then Deployments → the latest → **Retry deployment**, so it picks them up.
 6. Save. Open the application again and copy its **Application Audience (AUD) Tag** → `ACCESS_AUD`.
 7. Your team domain is under Zero Trust → **Settings** → **Custom pages** → `ACCESS_TEAM_DOMAIN`.
 
-### 5. The drafts preview
+### 4. The drafts preview
 In the **staging** Pages project (the one for staging.shravanlad.com) → Settings → Builds → **Branch
 control** → make sure preview deployments include the `drafts` branch. Its address is
 `https://drafts.<staging-project>.pages.dev` → `PREVIEW_URL`.
+
+### 5. Its settings (now you have every value)
+Project → **Settings** → **Variables and secrets** → add (Production):
+
+| name | value |
+|---|---|
+| `GITHUB_TOKEN` | the key from step 1. Choose **Secret** (encrypted, never shown again) |
+| `REPO` | `shhravan/personal-website` |
+| `OWNER_EMAIL` | the email you'll log in with |
+| `ACCESS_TEAM_DOMAIN` | from step 3, e.g. `shravan.cloudflareaccess.com` |
+| `ACCESS_AUD` | from step 3 |
+| `PREVIEW_URL` | from step 4, e.g. `https://drafts.<staging-project>.pages.dev` |
+
+Then Deployments → the latest → **Retry deployment**, so it picks them up.
 
 ### 6. Try it
 Open `https://<name>.pages.dev` in a private window. You should see Cloudflare's login page, then
