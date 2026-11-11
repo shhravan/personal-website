@@ -116,3 +116,24 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - Merging to `main` starts GitHub's "pages build and deployment" job: it builds the site, then a deploy step publishes it. Once in a while the deploy step hangs or reports "Deployment cancelled" even though the build was fine.
 - Re-running that job for the same commit can fail the same way, because GitHub already has a (stuck) deployment for that commit. A fresh commit gets a fresh deployment and goes through.
 - Quick check that a change is live: the `?v=` number in the live page's source matches the one in the repo.
+
+## The desk (a private dashboard on a static site)
+- **A static host can't keep a secret.** GitHub Pages only hands out files, so a password checked in a page's JavaScript is visible to anyone who opens "view source". A real lock needs a server that decides before anything is sent. Here that's **Cloudflare Access**: a login wall run by Cloudflare, in front of a separate little site. It emails a 6-digit code and only lets one email through.
+- **Defence in depth:** the server code checks the login again itself. Access attaches a signed token (a **JWT**: three base64 pieces, header, claims and signature) to every request. We check the signature with Cloudflare's public keys, then that it's for this app (`aud`), from our team (`iss`), not expired (`exp`), and for the owner's email. If Access were ever switched off by mistake, the server would still refuse.
+- **Fail closed:** if any setting is missing, the answer is "no", never "everyone".
+- **Git as the database.** The desk saves by making commits through GitHub's API: upload each file as a *blob*, build a *tree* (the folder listing) on top of the last one, make a *commit* pointing at it, then move the branch to it. Five calls, one tidy commit.
+- **Optimistic locking:** the desk remembers which commit it started from. If the branch moved meanwhile (another tab), the save is refused instead of overwriting. Databases use the same trick with version numbers.
+- **Drafts and publish are just branches.** Save goes to `drafts` (which Cloudflare previews), publish merges `drafts` into `main` (which GitHub Pages serves).
+- **Do heavy work where the data is.** Photos are resized and encoded on the phone (WebAssembly runs Google's libwebp at near-native speed), so a 12 MB photo becomes about 1 MB before it's uploaded, and its GPS location never leaves the device.
+- **Resizing well:** shrink in halves, then once more to the exact size. One giant jump makes fine detail shimmer (aliasing). And 2560px covers a full-screen photo on a retina laptop (1280 CSS pixels × 2).
+
+## The same thing for many people (how it scales)
+The desk is built for one person. If thousands of photographers used it, each piece would be swapped for the industry version, but the shape stays the same: **upload → process → store → serve**, plus **who are you** and **what may you do**.
+- **Login:** Cloudflare Access fits one person. For many, use an identity service (Clerk, Auth0, Supabase Auth, or "sign in with Google" via OAuth) and keep the same rule: the server checks a signed token on every request.
+- **Data:** git stops being a good database once many people write at once (every save is a commit, and merges conflict). Use **Postgres** (a relational database, e.g. Supabase or Neon): tables `users`, `rolls`, `photos`, and a `user_id` column on each, so every query is scoped to its owner (row-level security).
+- **Files:** don't store photos in git or the database. Use **object storage** (Cloudflare R2, Amazon S3). The browser uploads straight to it with a short-lived signed upload link, so big files never pass through your server.
+- **Image processing:** a queue and background workers (or a service like Cloudflare Images or imgix) make the sizes and formats (AVIF, webp) after upload, so one slow photo doesn't block anyone.
+- **Serving:** a **CDN** (content delivery network: copies on servers near each visitor) in front of the storage. Public pages are cached; only the dashboard talks to the database.
+- **Hosting:** the public site could stay static and be rebuilt on publish, or become server-rendered (Next.js/Astro on Vercel or Cloudflare). The API runs as serverless functions, much like the desk's Pages Function today.
+- **Running it:** error tracking (Sentry), logs, rate limits per user, backups of the database, and tests that run before every deploy, as this repo already does.
+- The habits that carry over from here: check permissions on the server, never trust the browser, keep secrets out of code, save atomically, and give people a preview before anything goes live.
