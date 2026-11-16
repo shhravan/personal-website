@@ -1079,3 +1079,8 @@ body:not(.cans-off):not(.cans-picked) main.photos .social { margin-top: 9vh; }  
   .lb-meta { text-align: left; } .lb-title { font-size: 1.35rem; }
   .lightbox .lb-prev, .lightbox .lb-next { top: auto; bottom: 1.2rem; transform: none; }
 }
+
+/* Commercial: client filter chips, in the viewfinder type */
+.client-filter { flex-direction: row; justify-content: center; gap: 1.2rem; }
+.client-filter button { background: none; border: 0; padding: .3rem 0; font: inherit; font-size: 11px; letter-spacing: .22em; color: var(--soft); cursor: pointer; }
+.client-filter button[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-underline-offset: .4em; }

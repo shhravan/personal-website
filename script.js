@@ -432,6 +432,66 @@ function playIntro(heroImg) {
 // strip's list of buttons, for keyboards) opens large in a <dialog> over a darkened page and stops
 // that strip; ← back, Esc or the backdrop closes it, the arrows move through that roll.
 function startPhotography() {
+  let stop = null, gone = false;
+  fetch(SITE + "data/photos.json").then((r) => r.json()).then((doc) => {
+    if (gone) return;
+    buildRolls(doc);
+    stop = runPhotography();
+  }).catch(() => {});
+  return () => { gone = true; if (stop) stop(); };
+}
+
+// Turn data/photos.json into the same strips and buttons the page used to hand-type, so the rest
+// of the page (strips, cans, lightbox) works unchanged. Hidden rolls and photos are skipped.
+function buildRolls(doc) {
+  const panes = document.querySelectorAll(".photo-pane");
+  let n = 0;
+  doc.rolls.filter((r) => !r.hidden).forEach((r) => {
+    const photos = r.photos.map((id) => doc.photos[id]).filter((p) => p && !p.hidden);
+    if (!photos.length) return;
+    const film = r.kind === "film";
+    const sec = document.createElement("section"), canvas = document.createElement("canvas"), ul = document.createElement("ul");
+    sec.className = "roll";
+    if (r.client) sec.dataset.client = r.client;
+    Object.assign(canvas.dataset, { wave: "0", fit: "6", label: film ? r.name + " · roll " + String(++n).padStart(2, "0") : r.name });
+    if (!film) canvas.dataset.leader = r.name + "|" + [r.client, r.year].filter(Boolean).join(" · ");
+    canvas.tabIndex = -1;
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", "film strip: " + r.name);
+    ul.className = "roll-list";
+    photos.forEach((p) => {
+      const li = document.createElement("li"), b = document.createElement("button");
+      b.type = "button";
+      Object.assign(b.dataset, { name: p.file, caption: p.caption, place: p.place || "", year: p.year || "", film: p.film || "", alt: p.alt || p.caption });
+      b.textContent = "open " + p.caption;
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    sec.append(canvas, ul);
+    panes[film ? 0 : 1].appendChild(sec);
+  });
+  // Commercial: one chip per client, to show only that client's projects.
+  const pane = panes[1], clients = [...new Set([...pane.querySelectorAll(".roll[data-client]")].map((s) => s.dataset.client))];
+  if (!clients.length) return;
+  const nav = document.createElement("nav");
+  nav.className = "client-filter vf";
+  nav.setAttribute("aria-label", "filter by client");
+  ["all", ...clients].forEach((c, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = c;
+    b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+    b.addEventListener("click", () => {
+      nav.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+      pane.querySelectorAll(".roll").forEach((s) => { s.hidden = i > 0 && s.dataset.client !== c; });
+      window.dispatchEvent(new Event("resize"));
+    });
+    nav.appendChild(b);
+  });
+  pane.prepend(nav);
+}
+
+function runPhotography() {
   const tabs = [...document.querySelectorAll(".photo-tabs button")];
   const panes = [...document.querySelectorAll(".photo-pane")];
   const box = document.querySelector(".lightbox"), big = box.querySelector("img"), cap = box.querySelector(".lb-cap");
@@ -444,7 +504,7 @@ function startPhotography() {
     at = (k + frames.length) % frames.length;
     const d = frames[at].dataset;
     big.src = filmUrl(d.name).replace("-700.webp", ".webp");
-    big.alt = d.caption;
+    big.alt = d.alt;
     cap.innerHTML = "";
     const left = document.createElement("div"), right = document.createElement("div");
     left.innerHTML = '<span class="lb-title"></span><span class="lb-place"></span>';

@@ -1,0 +1,338 @@
+{
+  "version": 1,
+  "rolls": [
+    {
+      "id": "r-mumbai-monsoon",
+      "kind": "film",
+      "name": "mumbai, monsoon",
+      "hidden": false,
+      "photos": [
+        "tram",
+        "classroom",
+        "rain",
+        "crowd",
+        "garden-party",
+        "dwarka",
+        "wall-street",
+        "esplanade-dusk"
+      ]
+    },
+    {
+      "id": "r-home-surat",
+      "kind": "film",
+      "name": "home, surat",
+      "hidden": false,
+      "photos": [
+        "vitthal",
+        "shivaji",
+        "natsamrat",
+        "partha-sarathi",
+        "tumbbad",
+        "the-choice",
+        "creation-of-adam"
+      ]
+    },
+    {
+      "id": "r-ithaca-first-winter",
+      "kind": "film",
+      "name": "ithaca, first winter",
+      "hidden": false,
+      "photos": [
+        "cornell-1930",
+        "harvey-mike",
+        "stone-cold",
+        "oasis",
+        "queen",
+        "shawshank",
+        "sisyphus"
+      ]
+    },
+    {
+      "id": "r-sample-project",
+      "kind": "commercial",
+      "name": "sample project",
+      "hidden": false,
+      "photos": [
+        "pcrc-beta",
+        "znmd",
+        "great-wave",
+        "shutter-island",
+        "basquiat"
+      ],
+      "client": "client",
+      "year": 2026
+    }
+  ],
+  "photos": {
+    "tram": {
+      "id": "tram",
+      "file": "tram",
+      "caption": "tram, mumbai",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "tram, mumbai",
+      "hidden": false
+    },
+    "classroom": {
+      "id": "classroom",
+      "file": "classroom",
+      "caption": "classroom",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "classroom",
+      "hidden": false
+    },
+    "rain": {
+      "id": "rain",
+      "file": "rain",
+      "caption": "rain",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "rain",
+      "hidden": false
+    },
+    "crowd": {
+      "id": "crowd",
+      "file": "crowd",
+      "caption": "crowd",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "crowd",
+      "hidden": false
+    },
+    "garden-party": {
+      "id": "garden-party",
+      "file": "garden-party",
+      "caption": "garden party",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "garden party",
+      "hidden": false
+    },
+    "dwarka": {
+      "id": "dwarka",
+      "file": "dwarka",
+      "caption": "dwarka",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "dwarka",
+      "hidden": false
+    },
+    "wall-street": {
+      "id": "wall-street",
+      "file": "wall-street",
+      "caption": "wall street",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "wall street",
+      "hidden": false
+    },
+    "esplanade-dusk": {
+      "id": "esplanade-dusk",
+      "file": "esplanade-dusk",
+      "caption": "esplanade at dusk",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "esplanade at dusk",
+      "hidden": false
+    },
+    "vitthal": {
+      "id": "vitthal",
+      "file": "vitthal",
+      "caption": "vitthal",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "vitthal",
+      "hidden": false
+    },
+    "shivaji": {
+      "id": "shivaji",
+      "file": "shivaji",
+      "caption": "shivaji",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "shivaji",
+      "hidden": false
+    },
+    "natsamrat": {
+      "id": "natsamrat",
+      "file": "natsamrat",
+      "caption": "natsamrat",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "natsamrat",
+      "hidden": false
+    },
+    "partha-sarathi": {
+      "id": "partha-sarathi",
+      "file": "partha-sarathi",
+      "caption": "partha sarathi",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "partha sarathi",
+      "hidden": false
+    },
+    "tumbbad": {
+      "id": "tumbbad",
+      "file": "tumbbad",
+      "caption": "tumbbad",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "tumbbad",
+      "hidden": false
+    },
+    "the-choice": {
+      "id": "the-choice",
+      "file": "the-choice",
+      "caption": "the choice",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "the choice",
+      "hidden": false
+    },
+    "creation-of-adam": {
+      "id": "creation-of-adam",
+      "file": "creation-of-adam",
+      "caption": "creation of adam",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "creation of adam",
+      "hidden": false
+    },
+    "cornell-1930": {
+      "id": "cornell-1930",
+      "file": "cornell-1930",
+      "caption": "cornell, 1930",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "cornell, 1930",
+      "hidden": false
+    },
+    "harvey-mike": {
+      "id": "harvey-mike",
+      "file": "harvey-mike",
+      "caption": "harvey and mike",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "harvey and mike",
+      "hidden": false
+    },
+    "stone-cold": {
+      "id": "stone-cold",
+      "file": "stone-cold",
+      "caption": "stone cold",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "stone cold",
+      "hidden": false
+    },
+    "oasis": {
+      "id": "oasis",
+      "file": "oasis",
+      "caption": "oasis",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "oasis",
+      "hidden": false
+    },
+    "queen": {
+      "id": "queen",
+      "file": "queen",
+      "caption": "queen",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "queen",
+      "hidden": false
+    },
+    "shawshank": {
+      "id": "shawshank",
+      "file": "shawshank",
+      "caption": "shawshank",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "shawshank",
+      "hidden": false
+    },
+    "sisyphus": {
+      "id": "sisyphus",
+      "file": "sisyphus",
+      "caption": "sisyphus",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "sisyphus",
+      "hidden": false
+    },
+    "pcrc-beta": {
+      "id": "pcrc-beta",
+      "file": "pcrc-beta",
+      "caption": "frame one",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "frame one",
+      "hidden": false
+    },
+    "znmd": {
+      "id": "znmd",
+      "file": "znmd",
+      "caption": "frame two",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "frame two",
+      "hidden": false
+    },
+    "great-wave": {
+      "id": "great-wave",
+      "file": "great-wave",
+      "caption": "frame three",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "frame three",
+      "hidden": false
+    },
+    "shutter-island": {
+      "id": "shutter-island",
+      "file": "shutter-island",
+      "caption": "frame four",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "frame four",
+      "hidden": false
+    },
+    "basquiat": {
+      "id": "basquiat",
+      "file": "basquiat",
+      "caption": "frame five",
+      "place": "placeholder place",
+      "year": 2025,
+      "film": "portra 400 · 35mm",
+      "alt": "frame five",
+      "hidden": false
+    }
+  }
+}

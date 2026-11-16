@@ -32,6 +32,7 @@ vendor/             copied third-party code (three.js) with its licence
 images/             hero/, covers/, logos/, blog/
 notes/              blog notebook entries (YYYY-MM-DD-words.md), built into blog/index.html by scripts/build_notes.py
 data/github.json    contribution graph data, refreshed nightly by .github/workflows/github-contributions.yml
+data/photos.json    photography rolls, projects and captions; script.js draws the page from it (the future desk edits it)
 audio/              the record player's songs (NAME.mp3, named after the cover)
 scripts/            Substack sync
 worker/             Cloudflare Worker relay

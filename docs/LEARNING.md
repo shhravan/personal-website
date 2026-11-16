@@ -116,3 +116,8 @@ What building this site taught, in plain English. Grouped by topic, newest topic
 - Merging to `main` starts GitHub's "pages build and deployment" job: it builds the site, then a deploy step publishes it. Once in a while the deploy step hangs or reports "Deployment cancelled" even though the build was fine.
 - Re-running that job for the same commit can fail the same way, because GitHub already has a (stuck) deployment for that commit. A fresh commit gets a fresh deployment and goes through.
 - Quick check that a change is live: the `?v=` number in the live page's source matches the one in the repo.
+
+## Content as data
+- Moving the photos from HTML into `data/photos.json` separates **what** is shown from **how** it's drawn. The page fetches the file and builds the buttons with `document.createElement`, never `innerHTML`, so a caption can never become code.
+- Every roll and photo has a permanent **id**. Roll numbers come from order, so reordering never means renumbering. This is the same idea a database table uses, which makes a later move to one painless.
+- A test reads the data file and fails if a roll points at a missing photo or image: catch broken data before visitors do.

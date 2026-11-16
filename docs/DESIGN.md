@@ -202,6 +202,7 @@ Two 35mm cans in 3D (`photography/cans.js`, three.js): label in Pantone 1235 C (
 
 ### Photography Strips
 Straight film strips (the home strip's drawing, without the wave) that drift slowly, alternate rows in opposite directions, full width. Tapping a photo stops its strip and opens the photo card.
+Rolls and projects come from `data/photos.json`; film rolls are numbered by order. On Commercial, a row of client chips (Silkscreen, 11px, `--soft`, the chosen one in ink and underlined) sits under the tabs and shows only that client's projects.
 
 ### Top Navigation and Profile Icons (every page)
 **Role:** site navigation, added by `theme.js` so every page (blog posts included) gets the same.

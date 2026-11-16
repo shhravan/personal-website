@@ -233,5 +233,25 @@ class RepoTests(unittest.TestCase):
                     self.assertRegex(use, r"^actions/[\w-]+@v\d+$", f"third-party or unpinned action: {use}")
 
 
+class PhotoData(unittest.TestCase):
+    """data/photos.json drives the photography page; a broken entry must fail here, not on the live page."""
+
+    def test_photo_data_is_whole(self):
+        import json
+        doc = json.loads(read("data/photos.json"))
+        self.assertEqual(doc["version"], 1)
+        ids = set()
+        for r in doc["rolls"]:
+            self.assertIn(r["kind"], ("film", "commercial"))
+            self.assertNotIn(r["id"], ids)
+            ids.add(r["id"])
+            for pid in r["photos"]:
+                p = doc["photos"][pid]   # every roll entry points at a real photo
+                self.assertEqual(p["id"], pid)
+                self.assertTrue(p["caption"] and p["alt"])
+                for size in ("", "-700"):
+                    self.assertTrue(os.path.exists(os.path.join(REPO, "images/hero", p["file"] + size + ".webp")), p["file"])
+
+
 if __name__ == "__main__":
     unittest.main()

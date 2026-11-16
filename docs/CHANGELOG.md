@@ -4,6 +4,12 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## Photography reads from a data file
+- **Before:** `a7396c4`
+- **Changed:** the rolls, the commercial project and every caption moved out of `photography/index.html` into `data/photos.json` (a permanent id per roll and photo, film or commercial, client and year, a hidden switch, alt text). `script.js` builds the same strips and buttons from it, so the page looks the same. Hidden rolls or photos are skipped. Commercial gets client filter chips. A test checks the data file is whole and every image exists. First step of the private desk (#110, #111).
+- **Files:** `data/photos.json`, `photography/index.html`, `script.js`, `styles.css`, `tests/test_site.py`, cache numbers, docs.
+- **To revert:** restore those from `a7396c4` and delete `data/photos.json`.
+
 ## Outside links open in a new tab
 - **Before:** `3d72a57`
 - **Changed:** every link that leaves the site now opens in a new tab (with `rel="noopener"`, so the new tab can't control this one): the `opticsbyshrvn` footer link on every page, the projects tile, and the five profile icons (GitHub, LinkedIn, X, YouTube Music, Substack). The site's own links keep their quick in-page navigation, so moving between pages doesn't reload. A test fails if a future outside link forgets it.

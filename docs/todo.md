@@ -17,6 +17,7 @@ One slice per branch and pull request: plan, build, check in the browser, open a
 ## Next
 - [x] Record player: self-hosted audio instead of YouTube (no ads)
 - [x] Photography: film cans landing, film gallery and commercial strips, photo card (photos and captions still placeholders)
+- [x] Photography data in `data/photos.json`, client filter on commercial (desk ticket #111)
 - [ ] Rabbit hole: music picks, favorites, facts
 - [ ] Blog: hover image on titles
 - [ ] Polish: link previews, accessibility, speed
