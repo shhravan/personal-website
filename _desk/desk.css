@@ -1,0 +1,119 @@
+/* The desk. Same paper and ink as the public site, so it feels like the back room of the same
+   house, but plainer: it's a tool. Designed for a phone first, then widened. */
+:root {
+  --bg: #f3ecdc;
+  --ink: #1a1a1a;
+  --soft: #57544e;
+  --card: #fbf7ee;
+  --line: color-mix(in srgb, var(--ink) 14%, transparent);
+  --wash: color-mix(in srgb, var(--ink) 6%, transparent);
+  --accent: #b4441f;      /* the one colour that means "do something": unsaved, publish, delete */
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161512; --ink: #ece8de; --soft: #c2bdb1; --card: #1f1d19; --accent: #e8794f;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 1.1rem/1.45 "EB Garamond", Georgia, serif;
+  padding-bottom: 6rem;   /* room for the bar */
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+/* labels and small print share the site's pixel font */
+.tabs button, .roll-no, .bar .status, .ed-count, .links a, .found, .new-roll, .add {
+  font-family: "Silkscreen", monospace; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+}
+.hint { display: block; font-style: italic; color: var(--soft); margin: 0.1rem 0 0.2rem; }
+
+.top { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1rem 1rem 0.4rem; max-width: 64rem; margin: 0 auto; }
+.top h1 { margin: 0; font-weight: 400; font-style: italic; font-size: 2rem; }
+.links { display: flex; gap: 1rem; flex-wrap: wrap; }
+.links a { color: var(--soft); text-decoration: none; }
+.links a:hover { color: var(--ink); }
+
+main { max-width: 64rem; margin: 0 auto; padding: 0 1rem; }
+.loading { color: var(--soft); font-style: italic; }
+
+.tabs { display: flex; gap: 0.4rem; margin: 0.6rem 0 1rem; }
+.tabs button { flex: 1; padding: 0.75rem 0.5rem; border: 1px solid var(--line); border-radius: 0.4rem; background: none; color: var(--soft); }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* a roll */
+.roll-card { background: var(--card); border-radius: 0.6rem; padding: 0.9rem; margin-bottom: 1rem; box-shadow: 0 1px 2px var(--wash); }
+.roll-card.is-hidden { opacity: 0.6; }
+.roll-head { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 0.7rem; align-items: center; }
+.roll-no { color: var(--soft); }
+.roll-name { font-size: 1.35rem; border: 0; border-bottom: 1px solid var(--line); background: none; padding: 0.2rem 0; min-width: 0; }
+.roll-meta { grid-column: 1 / -1; display: flex; gap: 0.6rem; }
+.roll-meta input { flex: 1; min-width: 0; border: 0; border-bottom: 1px solid var(--line); background: none; padding: 0.2rem 0; }
+.roll-tools { grid-column: 1 / -1; display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; margin-top: 0.3rem; }
+.roll-tools button, .ed-tools button { min-height: 2.75rem; padding: 0 0.8rem; border: 1px solid var(--line); border-radius: 0.4rem; background: none; }
+.roll-tools .grow { flex: 1; }
+.check { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2.75rem; }
+.check input { width: 1.2rem; height: 1.2rem; accent-color: var(--ink); }
+.danger { color: var(--accent); }
+
+/* the photos on a roll: 3 across on a phone, more on wider screens */
+.thumbs { list-style: none; margin: 0.8rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; }
+@media (min-width: 40rem) { .thumbs { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 60rem) { .thumbs { grid-template-columns: repeat(7, 1fr); } }
+.thumb { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; border-radius: 0.3rem; overflow: hidden; background: var(--wash); }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb.is-hidden img { opacity: 0.35; }
+.thumb .tag { position: absolute; left: 0.25rem; bottom: 0.25rem; font: 0.6rem "Silkscreen", monospace; background: var(--ink); color: var(--bg); padding: 0.1rem 0.3rem; border-radius: 0.2rem; }
+.thumb.is-working { display: grid; place-items: center; font-style: italic; font-size: 0.85rem; color: var(--soft); }
+.add { display: grid; place-items: center; aspect-ratio: 1; border: 1.5px dashed var(--line); border-radius: 0.3rem; color: var(--soft); text-align: center; cursor: pointer; padding: 0.3rem; }
+.add:hover, .add:focus-within { border-color: var(--soft); color: var(--ink); }
+.add input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+
+.new-roll { width: 100%; min-height: 3rem; border: 1.5px dashed var(--line); border-radius: 0.6rem; background: none; color: var(--soft); }
+
+/* the bar */
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 0.5rem; align-items: center;
+  padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--line);
+}
+.bar .status { flex: 1; margin: 0; color: var(--soft); }
+.bar .status.is-dirty { color: var(--accent); }
+.bar button { min-height: 2.9rem; padding: 0 1.1rem; border-radius: 0.4rem; border: 1px solid var(--ink); background: none; }
+.bar .publish { background: var(--ink); color: var(--bg); }
+.bar button:disabled { opacity: 0.35; cursor: default; }
+
+/* the photo editor: full screen on a phone, a large card on a computer */
+.editor { width: 100%; max-width: 64rem; height: 100%; max-height: 100%; margin: 0 auto; padding: 0; border: 0; background: var(--bg); color: var(--ink); }
+@media (min-width: 48rem) { .editor { height: auto; max-height: 92vh; margin-top: 4vh; border-radius: 0.6rem; } }
+.editor::backdrop { background: rgba(0, 0, 0, 0.55); }
+.ed-top { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.8rem; background: var(--bg); border-bottom: 1px solid var(--line); }
+.ed-top button { min-height: 2.75rem; min-width: 2.75rem; border: 0; background: none; font-size: 1.1rem; }
+.ed-count { color: var(--soft); }
+.ed-body { display: grid; gap: 1rem; padding: 1rem; }
+@media (min-width: 48rem) { .ed-body { grid-template-columns: 1.2fr 1fr; align-items: start; } }
+
+.focus { position: relative; margin: 0; }
+.focus img { display: block; width: 100%; max-height: 60vh; object-fit: contain; background: var(--wash); border-radius: 0.3rem; cursor: crosshair; }
+.focus-dot { position: absolute; width: 1.4rem; height: 1.4rem; margin: -0.7rem 0 0 -0.7rem; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6); pointer-events: none; }
+.focus figcaption { font-size: 0.85rem; font-style: italic; color: var(--soft); margin-top: 0.3rem; }
+
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem 0.8rem; }
+.fields .wide { grid-column: 1 / -1; }
+.fields label { display: block; font-size: 0.85rem; color: var(--soft); }
+.fields input:not([type]), .fields textarea, .fields select {
+  display: block; width: 100%; margin-top: 0.15rem; padding: 0.45rem 0.55rem; font-size: 1.05rem; color: var(--ink);
+  background: var(--card); border: 1px solid var(--line); border-radius: 0.35rem;
+}
+.fields input[type="range"] { width: 100%; accent-color: var(--ink); }
+.found { margin: 0; color: var(--soft); text-transform: none; letter-spacing: 0.04em; }
+.ed-tools { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: end; }
+.ed-tools > label:first-child { flex: 1 1 10rem; }
+.ed-tools .check { color: var(--ink); font-size: 1rem; }
+
+.toast { position: fixed; left: 1rem; right: 1rem; bottom: 5rem; margin: 0 auto; max-width: 30rem; padding: 0.7rem 1rem; border-radius: 0.4rem; background: var(--ink); color: var(--bg); }

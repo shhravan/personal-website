@@ -4,6 +4,16 @@ Every change that reached the live site, newest first, with what it replaced and
 Each entry names the pull request (PR) and the commit on `main` just before it, so the site can
 be returned to how it looked.
 
+## The desk: private photo dashboard; rolls from data/photos.json
+- **Before:** `6a8683e`
+- **Changed:**
+  - The photography rolls moved out of `photography/index.html` into `data/photos.json`; `script.js` draws them when the page opens. The page looks the same. Hidden rolls and photos are left out.
+  - The photo card also shows camera and settings when a photo has them. Commercial gets a client filter once there are two or more clients.
+  - New `_desk/`: a private dashboard (its own Cloudflare Pages site behind Cloudflare Access) to add photos (resized to 2560/700 webp on the device, metadata read then stripped), edit captions, place, year, film, camera, settings, alt text and framing, reorder and hide, then save to the `drafts` branch and publish to `main`. Not live until Shravan does the setup in `_desk/README.md`.
+  - Tests for the desk's server code and for `data/photos.json`.
+- **Files:** `data/photos.json`, `photography/index.html`, `script.js`, `photography/cans.js`, `styles.css`, `_desk/`, `tests/test_desk.py`, `tests/desk_api_test.mjs`, cache numbers, PRD, TECH_RULES, DESIGN, todo, LEARNING, SECURITY docs, CLAUDE.md.
+- **To revert:** restore those from `6a8683e` and delete `_desk/`, `data/photos.json` and the two new tests. If the desk was set up, also delete its Cloudflare Pages project and Access application, and revoke the GitHub token.
+
 ## Outside links open in a new tab
 - **Before:** `3d72a57`
 - **Changed:** every link that leaves the site now opens in a new tab (with `rel="noopener"`, so the new tab can't control this one): the `opticsbyshrvn` footer link on every page, the projects tile, and the five profile icons (GitHub, LinkedIn, X, YouTube Music, Substack). The site's own links keep their quick in-page navigation, so moving between pages doesn't reload. A test fails if a future outside link forgets it.

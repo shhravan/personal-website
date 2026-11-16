@@ -78,9 +78,13 @@ const FRAME_SECONDS_MUSIC = 2.4;
 // new page a moment before the home page's photo timer stops.
 const SITE = new URL(".", (document.currentScript && document.currentScript.src) || location.href).href;
 
+// Which folder each photo lives in. The home page's photos are all in images/hero/; photos added
+// from the desk (the private dashboard) go to images/photos/, and data/photos.json says which.
+const PHOTO_DIR = {};
+
 // The film strip: phones get the smaller files.
 function filmUrl(name) {
-  return SITE + "images/hero/" + name + (window.innerWidth < 700 ? "-700" : "") + ".webp";
+  return SITE + (PHOTO_DIR[name] || "images/hero") + "/" + name + (window.innerWidth < 700 ? "-700" : "") + ".webp";
 }
 
 // Pick the smaller file when the frame is small enough (phones), the larger one otherwise.
@@ -431,7 +435,95 @@ function playIntro(heroImg) {
 // drifts sideways, alternate strips the other way. A photo tapped on a strip (or chosen from the
 // strip's list of buttons, for keyboards) opens large in a <dialog> over a darkened page and stops
 // that strip; ← back, Esc or the backdrop closes it, the arrows move through that roll.
+// The rolls come from data/photos.json (edited in the desk), drawn into the two tabs here.
+// Hidden rolls and photos are left out. "no-cache" asks GitHub for the file again each visit
+// (a quick "has it changed?" check), so a newly published roll shows straight away.
 function startPhotography() {
+  let stop = null, gone = false;
+  fetch(SITE + "data/photos.json", { cache: "no-cache" }).then((r) => r.json()).then((data) => {
+    if (gone) return;
+    drawRolls(data);
+    stop = runPhotography();
+  }).catch(() => {});
+  return () => { gone = true; if (stop) stop(); };
+}
+
+// Builds each roll's strip and its list of buttons (the same photos for keyboards and screen
+// readers). Everything is set as text or data, never as HTML, so a caption can't inject anything.
+function drawRolls(data) {
+  const panes = document.querySelectorAll(".photo-pane");
+  const shown = (list) => (list || []).filter((x) => !x.hidden);
+  ["gallery", "commercial"].forEach((kind, p) => {
+    const pane = panes[p];
+    if (!pane) return;
+    pane.textContent = "";
+    const rolls = shown(data[kind]).map((r) => ({ ...r, photos: shown(r.photos) })).filter((r) => r.photos.length);
+    if (!rolls.length) {
+      const empty = document.createElement("p");
+      empty.className = "roll-empty";
+      empty.textContent = "nothing on this roll yet.";
+      pane.appendChild(empty);
+      return;
+    }
+    if (kind === "commercial") clientFilter(pane, rolls);
+    rolls.forEach((roll, i) => {
+      const sec = document.createElement("section");
+      sec.className = "roll";
+      if (roll.client) sec.dataset.client = roll.client;
+      const canvas = document.createElement("canvas");
+      canvas.dataset.wave = "0";
+      canvas.dataset.fit = "6";
+      canvas.tabIndex = -1;
+      canvas.setAttribute("role", "img");
+      canvas.setAttribute("aria-label", "film strip: " + roll.name);
+      if (kind === "gallery") canvas.dataset.label = roll.name + " · roll " + String(i + 1).padStart(2, "0");
+      else {
+        canvas.dataset.label = roll.name;
+        canvas.dataset.leader = roll.name + "|" + [roll.client, roll.year].filter(Boolean).join(" · ");
+      }
+      const list = document.createElement("ul");
+      list.className = "roll-list";
+      roll.photos.forEach((ph) => {
+        PHOTO_DIR[ph.name] = ph.dir;
+        if (ph.focus) FOCUS[ph.name] = ph.focus;
+        const li = document.createElement("li"), b = document.createElement("button");
+        b.type = "button";
+        Object.assign(b.dataset, { name: ph.name, src: ph.dir + "/" + ph.name, caption: ph.caption || "", alt: ph.alt || ph.caption || "",
+          place: ph.place || "", year: ph.year || "", film: ph.film || "", camera: ph.camera || "", settings: ph.settings || "" });
+        b.textContent = "open " + (ph.caption || "photo");
+        li.appendChild(b);
+        list.appendChild(li);
+      });
+      sec.append(canvas, list);
+      pane.appendChild(sec);
+    });
+  });
+}
+
+// Commercial: once there's more than one client, a row of buttons shows one client's work at a time.
+function clientFilter(pane, rolls) {
+  const clients = [...new Set(rolls.map((r) => r.client).filter(Boolean))];
+  if (clients.length < 2) return;
+  const row = document.createElement("div");
+  row.className = "client-filter";
+  row.setAttribute("role", "group");
+  row.setAttribute("aria-label", "filter by client");
+  ["all", ...clients].forEach((c, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = c;
+    b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+    b.addEventListener("click", () => {
+      row.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+      pane.querySelectorAll(".roll").forEach((sec) => { sec.hidden = i > 0 && sec.dataset.client !== c; });
+      window.dispatchEvent(new Event("resize"));   // strips that were hidden need their size
+    });
+    row.appendChild(b);
+  });
+  pane.appendChild(row);
+}
+
+function runPhotography() {
   const tabs = [...document.querySelectorAll(".photo-tabs button")];
   const panes = [...document.querySelectorAll(".photo-pane")];
   const box = document.querySelector(".lightbox"), big = box.querySelector("img"), cap = box.querySelector(".lb-cap");
@@ -444,7 +536,7 @@ function startPhotography() {
     at = (k + frames.length) % frames.length;
     const d = frames[at].dataset;
     big.src = filmUrl(d.name).replace("-700.webp", ".webp");
-    big.alt = d.caption;
+    big.alt = d.alt || d.caption;
     cap.innerHTML = "";
     const left = document.createElement("div"), right = document.createElement("div");
     left.innerHTML = '<span class="lb-title"></span><span class="lb-place"></span>';
@@ -452,7 +544,7 @@ function startPhotography() {
     left.querySelector(".lb-place").textContent = [d.place, d.year].filter(Boolean).join(" · ");
     right.className = "lb-meta";
     right.textContent = "frame " + String(at + 1).padStart(2, "0") + " / " + String(frames.length).padStart(2, "0");
-    if (d.film) { right.appendChild(document.createElement("br")); right.appendChild(document.createTextNode(d.film)); }
+    [d.film, d.camera, d.settings].filter(Boolean).forEach((line) => { right.appendChild(document.createElement("br")); right.appendChild(document.createTextNode(line)); });
     cap.append(left, right);
   }
   function open(roll, name) {
@@ -490,7 +582,7 @@ function startPhotography() {
   let stopCans = null, gone = false;
   const cansRoot = document.querySelector(".cans");
   if (cansRoot && window.WebGLRenderingContext) {
-    import(SITE + "photography/cans.js?v=11").then((m) => m.ready().then(() => {
+    import(SITE + "photography/cans.js?v=12").then((m) => m.ready().then(() => {
       if (!gone) stopCans = m.start(cansRoot, tabs);
     })).catch(() => document.body.classList.add("cans-off"));
   } else document.body.classList.add("cans-off");

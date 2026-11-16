@@ -141,7 +141,7 @@ function filmTexture(names) {
       if (r > w / h) { sw = im.height * w / h; sx = (im.width - sw) / 2; } else { sh = im.width * h / w; sy = (im.height - sh) / 2; }
       g.drawImage(im, sx, sy, sw, sh, x, 40, w, h); t.needsUpdate = true;
     };
-    im.src = new URL("../images/hero/" + name + "-700.webp", import.meta.url).href;
+    im.src = new URL("../" + name + "-700.webp", import.meta.url).href;   // name is the folder and file, e.g. images/hero/tram
   });
   return t;
 }
@@ -370,7 +370,7 @@ export function start(root, tabs) {
   }
   const strips = () => [...document.querySelectorAll(".photo-pane:not([hidden]) .roll canvas")];
   // the photos printed on each can's film: that set's own pictures, in order
-  const rollPhotos = () => [...document.querySelectorAll(".photo-pane")].map((p) => [...p.querySelectorAll(".roll-list button")].map((b) => b.dataset.name).slice(0, 12));
+  const rollPhotos = () => [...document.querySelectorAll(".photo-pane")].map((p) => [...p.querySelectorAll(".roll-list button")].map((b) => b.dataset.src).slice(0, 12));
   function showPane(i) { if (tabs[i]) tabs[i].click(); }
   function develop() {
     // the frames come up like a print in the tray
